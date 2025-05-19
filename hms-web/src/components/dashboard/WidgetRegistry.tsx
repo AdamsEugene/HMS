@@ -5,6 +5,7 @@ import RevenueExpensesChart from "./RevenueExpensesChart";
 import DepartmentDistribution from "./DepartmentDistribution";
 import RecentActivity from "./RecentActivity";
 import CustomWidget from "./CustomWidget";
+import PatientTable from "./PatientTable";
 import type { CustomWidgetData } from "./CustomWidget";
 
 // Common widget component props interface to solve type compatibility issues
@@ -54,6 +55,16 @@ export interface ListWidget extends WidgetBase {
   component: React.ComponentType<WidgetComponentProps>;
 }
 
+export interface TableWidget extends WidgetBase {
+  type: "table";
+  component: React.ComponentType<WidgetComponentProps>;
+}
+
+export interface ActivityWidget extends WidgetBase {
+  type: "activity";
+  component: React.ComponentType<WidgetComponentProps>;
+}
+
 export interface CustomWidgetType extends WidgetBase {
   type: "custom";
   widgetType?: "text" | "stat" | "link";
@@ -64,7 +75,13 @@ export interface CustomWidgetType extends WidgetBase {
   backgroundColor?: string;
 }
 
-export type Widget = StatWidget | ChartWidget | ListWidget | CustomWidgetType;
+export type Widget =
+  | StatWidget
+  | ChartWidget
+  | ListWidget
+  | TableWidget
+  | ActivityWidget
+  | CustomWidgetType;
 
 // SVG Icons for stat cards
 const Icons = {
@@ -331,17 +348,27 @@ export const widgetTypes: Widget[] = [
     id: "department-distribution",
     type: "chart",
     title: "Department Distribution",
-    description: "Patient distribution by department",
+    description: "Patient distribution across departments",
     icon: "🍩",
     component: DepartmentDistribution,
     defaultWidth: 2,
     defaultHeight: 2,
   },
   {
+    id: "patient-records",
+    type: "table",
+    title: "Patient Records",
+    description: "List of current patients and their status",
+    icon: "📋",
+    component: PatientTable,
+    defaultWidth: 3,
+    defaultHeight: 2,
+  },
+  {
     id: "recent-activity",
-    type: "list",
+    type: "activity",
     title: "Recent Activity",
-    description: "Latest events and notifications",
+    description: "Latest hospital activities and events",
     icon: "🔔",
     component: RecentActivity,
     defaultWidth: 2,

@@ -17,9 +17,9 @@
 }
 
 .react-grid-item.react-grid-placeholder {
-  background: rgba(var(--color-primary-rgb), 0.2);
+  background: rgba(var(--color-primary-rgb), 0.15);
   border: 2px dashed var(--color-primary);
-  border-radius: 8px;
+  border-radius: 12px;
   opacity: 0.8;
   z-index: 2;
 }
@@ -33,7 +33,7 @@
   transition: none;
   z-index: 3;
   will-change: transform;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.4);
   cursor: grabbing;
   transform: scale(1.02);
   opacity: 0.9;
@@ -45,66 +45,68 @@
 
 /* Custom styles for widgets */
 .card {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   height: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border-radius: 8px;
+  border-radius: 12px;
   position: relative;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .card:hover {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
 }
 
 /* Customization mode styles */
 .is-customizing .card {
-  border: 1px dashed rgba(var(--color-primary-rgb), 0.3);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.15);
 }
 
 .is-customizing .widget-drag-handle {
   cursor: move;
   cursor: grab;
-  background-color: rgba(255, 255, 255, 0.03);
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .is-customizing .widget-drag-handle:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .is-customizing .widget-drag-handle:active {
   cursor: grabbing;
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 /* Default widget drag handle styles */
 .widget-drag-handle {
   -webkit-user-select: none;
   user-select: none;
-  padding: 10px;
-  border-radius: 6px 6px 0 0;
+  border-radius: 12px 12px 0 0;
   transition: background-color 0.2s ease;
 }
 
 /* Custom scrollbar for dashboard elements */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Dark mode adjustments */
@@ -117,7 +119,7 @@
 
 /* Widget animation */
 .dashboard-grid .card {
-  animation: fadeInUp 0.4s ease-out;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeInUp {
@@ -133,7 +135,7 @@
 
 /* Drag placeholder animation */
 .react-grid-placeholder {
-  animation: pulseBorder 1.5s infinite ease-in-out;
+  animation: pulseBorder 2s infinite ease-in-out;
 }
 
 @keyframes pulseBorder {
@@ -151,9 +153,106 @@
   }
 }
 
+/* Chart enhancements */
+.recharts-wrapper {
+  font-family: inherit !important;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.08) !important;
+}
+
+.recharts-cartesian-axis-line {
+  stroke: rgba(255, 255, 255, 0.15) !important;
+}
+
+.recharts-cartesian-axis-tick-line {
+  stroke: rgba(255, 255, 255, 0.15) !important;
+}
+
+.recharts-text.recharts-cartesian-axis-tick-value {
+  fill: rgba(255, 255, 255, 0.6) !important;
+  font-size: 11px !important;
+}
+
+.recharts-default-legend {
+  padding: 12px 8px !important;
+}
+
+.recharts-legend-item-text {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 12px !important;
+}
+
+.recharts-tooltip-wrapper {
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3)) !important;
+}
+
+/* Table styling enhancements */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+table th:first-child {
+  border-top-left-radius: 8px;
+}
+
+table th:last-child {
+  border-top-right-radius: 8px;
+}
+
+table tr:last-child td:first-child {
+  border-bottom-left-radius: 8px;
+}
+
+table tr:last-child td:last-child {
+  border-bottom-right-radius: 8px;
+}
+
+/* Donut Chart Animations */
+.recharts-pie-sector {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.recharts-pie-sector:hover {
+  transform: scale(1.03);
+  filter: brightness(1.2);
+}
+
+/* Table Row Hover Effects */
+tbody tr {
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+tbody tr:hover {
+  transform: translateX(2px);
+  box-shadow: -3px 0 0 0 var(--color-primary);
+}
+
+/* Status Badge Animations */
+td span.rounded-full {
+  transition: all 0.3s ease;
+}
+
+td span.rounded-full:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
 /* Notification animations */
 .animate-fade-in-up {
-  animation: notificationFadeInUp 0.5s ease-out forwards;
+  animation: notificationFadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes notificationFadeInUp {
@@ -165,6 +264,15 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Striped table effect */
+tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 /* Drawer animations */
@@ -205,17 +313,17 @@
 }
 
 .drawer-enter {
-  animation: slideInRight 0.3s ease-out forwards;
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .drawer-exit {
-  animation: slideOutRight 0.3s ease-in forwards;
+  animation: slideOutRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .backdrop-enter {
-  animation: fadeIn 0.3s ease-out forwards;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .backdrop-exit {
-  animation: fadeOut 0.3s ease-in forwards;
+  animation: fadeOut 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 } 

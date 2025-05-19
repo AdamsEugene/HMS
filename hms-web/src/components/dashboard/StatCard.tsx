@@ -34,69 +34,88 @@ const StatCard = ({
 
   return (
     <div
-      className="card relative group"
+      className="card relative group backdrop-blur-sm"
       style={{
         ...cardStyle,
         background: gradients.content,
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
       }}
     >
       {isCustomizing && (
-        <div className="absolute top-2 right-2 flex space-x-1 z-10">
+        <div className="absolute top-3 right-3 flex space-x-1.5 z-10">
           <button
             onClick={() => onConfigure?.(id)}
-            className="p-1 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="p-1.5 rounded-full bg-black/10 hover:bg-black/20 transition-colors"
             title="Configure widget"
           >
-            <Cog6ToothIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+            <Cog6ToothIcon className="h-3.5 w-3.5 text-white/80" />
           </button>
           <button
             onClick={() => onRemove?.(id)}
-            className="p-1 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
+            className="p-1.5 rounded-full bg-black/10 hover:bg-red-500/20 hover:text-red-500 transition-colors"
             title="Remove widget"
           >
-            <XMarkIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+            <XMarkIcon className="h-3.5 w-3.5 text-white/80" />
           </button>
         </div>
       )}
-      <div className="widget-drag-handle relative pt-4 pb-2 px-4">
+      <div
+        className={`widget-drag-handle relative h-full flex items-center p-5 ${isCustomizing ? "cursor-move" : ""}`}
+      >
         {isCustomizing && (
-          <div className="absolute top-1 left-1/2 transform -translate-x-1/2 text-xs px-2 py-0.5 bg-primary/20 text-primary rounded-full">
-            Drag to move
+          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs px-2 py-0.5 bg-primary/20 text-primary rounded-full flex items-center">
+            <svg
+              className="w-3 h-3 mr-1 opacity-70"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 12H18M6 8H18M6 16H18"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span>Drag</span>
           </div>
         )}
-        <div className="flex justify-between items-center">
-          <div>
+        <div className="flex flex-1 items-center">
+          <div
+            className="flex-shrink-0 p-3 rounded-xl mr-4"
+            style={{
+              background: `linear-gradient(135deg, ${currentTheme.color}30, ${currentTheme.color}10)`,
+              border: `1px solid ${currentTheme.color}30`,
+              color: currentTheme.color,
+            }}
+          >
+            {icon}
+          </div>
+          <div className="flex-1">
             <p
-              className="text-sm"
+              className="text-sm opacity-70 font-medium"
               style={{ color: currentTheme.textColorSecondary }}
             >
               {title}
             </p>
             <h3
-              className="text-2xl font-semibold mt-1"
+              className="text-2xl font-bold mt-1"
               style={{ color: currentTheme.textColor }}
             >
               {value}
             </h3>
             <div
               className={cn(
-                "flex items-center text-sm mt-2",
-                isIncrease ? "text-success" : "text-danger"
+                "flex items-center text-xs font-medium mt-2 rounded-full px-2 py-0.5 w-fit",
+                isIncrease
+                  ? "bg-green-500/10 text-green-500"
+                  : "bg-red-500/10 text-red-500"
               )}
             >
+              <span className="mr-1">{isIncrease ? "↑" : "↓"}</span>
               <span>{change}</span>
-              <span className="ml-1">{isIncrease ? "↑" : "↓"}</span>
-            </div>
-          </div>
-          <div className="flex">
-            <div
-              className="p-3 rounded-full"
-              style={{
-                backgroundColor: `${currentTheme.color}20`,
-                color: currentTheme.color,
-              }}
-            >
-              {icon}
             </div>
           </div>
         </div>
