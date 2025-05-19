@@ -1346,6 +1346,7 @@ interface ThemeContextProps {
     borderColor: string;
   };
   getTextStyle: () => { color: string };
+  getGradientBackground: (theme: Theme) => { primary: string; content: string };
 }
 
 // Create the context with a default value
@@ -1760,6 +1761,20 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     color: currentTheme.textColor || "#111827",
   });
 
+  // Make sure gradients work well with all themes
+  const getGradientBackground = (theme: Theme) => {
+    if (theme.isDark) {
+      return {
+        primary: `linear-gradient(135deg, ${theme.color}22 0%, ${theme.backgroundColor || "#1F2937"}99 100%)`,
+        content: `linear-gradient(135deg, ${theme.backgroundColor || "#1F2937"}99 0%, ${theme.color}11 100%)`,
+      };
+    }
+    return {
+      primary: `linear-gradient(135deg, ${theme.color}22 0%, ${theme.color}11 100%)`,
+      content: `linear-gradient(135deg, ${theme.backgroundColor || "#F9FAFB"}99 0%, ${theme.color}11 100%)`,
+    };
+  };
+
   // Create context value
   const contextValue: ThemeContextProps = {
     currentTheme,
@@ -1770,6 +1785,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     getHeaderStyle,
     getCardStyle,
     getTextStyle,
+    getGradientBackground,
   };
 
   return (

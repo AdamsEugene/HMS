@@ -176,11 +176,18 @@ const StatCard = ({
   isCustomizing = false,
 }: StatCardProps) => {
   // Use theme hook to get card styles
-  const { getCardStyle, currentTheme } = useTheme();
+  const { getCardStyle, currentTheme, getGradientBackground } = useTheme();
   const cardStyle = getCardStyle();
+  const gradients = getGradientBackground(currentTheme);
 
   return (
-    <div className="card relative group" style={cardStyle}>
+    <div
+      className="card relative group"
+      style={{
+        ...cardStyle,
+        background: gradients.content,
+      }}
+    >
       {isCustomizing && (
         <div className="absolute top-2 right-2 flex space-x-1">
           <button
@@ -254,11 +261,18 @@ const ChartContainer = ({
   isCustomizing = false,
 }: ChartContainerProps) => {
   // Use theme hook to get card styles
-  const { getCardStyle, currentTheme } = useTheme();
+  const { getCardStyle, currentTheme, getGradientBackground } = useTheme();
   const cardStyle = getCardStyle();
+  const gradients = getGradientBackground(currentTheme);
 
   return (
-    <div className="card relative group" style={cardStyle}>
+    <div
+      className="card relative group"
+      style={{
+        ...cardStyle,
+        background: gradients.content,
+      }}
+    >
       {isCustomizing && (
         <div className="absolute top-2 right-2 flex space-x-1">
           <button

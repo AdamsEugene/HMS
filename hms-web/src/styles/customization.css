@@ -1473,4 +1473,30 @@
 .reduce-motion * {
   transition: none !important;
   animation: none !important;
+}
+
+/* Background gradients */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+}
+
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dark));
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, var(--color-success), var(--color-success-dark));
+}
+
+.bg-gradient-card {
+  background: linear-gradient(135deg, var(--color-card-bg), var(--color-bg-secondary));
+}
+
+.dark-theme .bg-gradient-card {
+  background: linear-gradient(135deg, var(--color-card-bg), var(--color-bg-tertiary));
+}
+
+/* Add smooth transitions for theme changes */
+body, .card, .sidebar-container, .header-container {
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 } 

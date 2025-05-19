@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
 import { cn } from "../utils/cn";
+import { useTheme } from "../contexts/ThemeContext";
 
 // Layout configurations
 const availableLayouts = [
@@ -99,6 +100,7 @@ const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
+  const { currentTheme, getGradientBackground } = useTheme();
 
   // User preferences (would be loaded from a user settings API in a real app)
   const [currentLayout, setCurrentLayout] = useState(availableLayouts[0]);
@@ -107,7 +109,7 @@ const MainLayout = () => {
   );
 
   // Use useMemo to prevent the theme object from changing on every render
-  const currentTheme = useMemo(
+  const currentThemeMemo = useMemo(
     () => ({
       color: selectedOrganization.color || "#3B82F6",
       isDark: false,
@@ -157,8 +159,8 @@ const MainLayout = () => {
   }, [selectedOrganization]);
 
   useEffect(() => {
-    localStorage.setItem("selectedTheme", JSON.stringify(currentTheme));
-  }, [currentTheme]);
+    localStorage.setItem("selectedTheme", JSON.stringify(currentThemeMemo));
+  }, [currentThemeMemo]);
 
   // Extract the current page name from the location
   const currentPath = location.pathname;
@@ -196,10 +198,11 @@ const MainLayout = () => {
     <div
       className={cn(
         "flex h-screen overflow-hidden",
-        currentTheme.isDark
-          ? "bg-gray-900 text-white"
-          : "bg-gray-100 text-gray-900"
+        currentTheme.isDark ? "text-white" : "text-gray-900"
       )}
+      style={{
+        background: getGradientBackground(currentTheme).primary,
+      }}
     >
       {/* Sidebar - conditionally rendered based on layout */}
       {currentLayout.sidebarPosition !== "none" && (
