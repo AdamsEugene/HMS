@@ -265,20 +265,20 @@ const Sidebar = ({
       {/* Desktop Sidebar */}
       <div
         className={cn(
-          "hidden lg:fixed lg:inset-y-0 lg:z-30 lg:flex lg:flex-col sidebar-container",
+          "hidden lg:fixed lg:inset-y-0 lg:z-30 lg:flex lg:flex-col sidebar-container transition-width duration-300 ease-in-out",
           collapsed ? "sidebar-collapsed" : "sidebar-expanded"
         )}
         style={
           { "--sidebar-accent": organization.color } as React.CSSProperties
         }
       >
-        <div className="sidebar-header flex items-center justify-between border-b border-gray-700 p-4">
+        <div className="sidebar-header flex items-center justify-between border-b border-gray-700 p-4 transition-all duration-300 ease-in-out">
           {collapsed ? (
-            <div className="flex justify-center py-2 w-full">
+            <div className="flex justify-center py-2 w-full transition-all duration-300 ease-in-out">
               <img
                 src={organization.logo}
                 alt={organization.name}
-                className="h-8"
+                className="h-8 transition-all duration-300 ease-in-out"
               />
             </div>
           ) : (
@@ -286,11 +286,11 @@ const Sidebar = ({
               <img
                 src={organization.logo}
                 alt={organization.name}
-                className="h-8"
+                className="h-8 transition-all duration-300 ease-in-out"
               />
               <button
                 onClick={toggleSidebar}
-                className="sidebar-toggle-button rounded-full p-1 hover:bg-gray-700"
+                className="sidebar-toggle-button rounded-full p-1 hover:bg-gray-700 transition-all duration-300 ease-in-out"
                 aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
                 <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -300,12 +300,12 @@ const Sidebar = ({
         </div>
 
         {/* Desktop nav */}
-        <div className="flex-1 overflow-hidden flex flex-col">
+        <div className="flex-1 overflow-hidden flex flex-col transition-all duration-300 ease-in-out">
           {collapsed ? (
-            <div className="flex justify-center p-2">
+            <div className="flex justify-center p-2 transition-all duration-300 ease-in-out">
               <button
                 onClick={toggleSidebar}
-                className="sidebar-toggle-button rounded-full p-1 hover:bg-gray-700"
+                className="sidebar-toggle-button rounded-full p-1 hover:bg-gray-700 transition-all duration-300 ease-in-out"
                 aria-label="Expand sidebar"
               >
                 <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
@@ -313,23 +313,34 @@ const Sidebar = ({
             </div>
           ) : null}
 
-          <nav className="flex-1 p-4 custom-scrollbar">
-            <ul className="flex flex-col gap-y-7">
+          <nav className="flex-1 p-4 custom-scrollbar transition-all duration-300 ease-in-out">
+            <ul className="flex flex-col gap-y-7 transition-all duration-300 ease-in-out">
               {navigationGroups.map((group) => (
-                <li key={group.name}>
+                <li
+                  key={group.name}
+                  className="transition-all duration-300 ease-in-out"
+                >
                   {!collapsed && (
-                    <h3 className="text-xs font-semibold uppercase text-gray-400 px-2 mb-2">
+                    <h3 className="text-xs font-semibold uppercase text-gray-400 px-2 mb-2 transition-all duration-300 ease-in-out">
                       {group.name}
                     </h3>
                   )}
-                  <ul className={cn("space-y-1", collapsed && "mt-0")}>
+                  <ul
+                    className={cn(
+                      "space-y-1 transition-all duration-300 ease-in-out",
+                      collapsed && "mt-0"
+                    )}
+                  >
                     {group.items.map((item) => (
-                      <li key={item.name}>
+                      <li
+                        key={item.name}
+                        className="transition-all duration-300 ease-in-out"
+                      >
                         <NavLink
                           to={item.href}
                           className={({ isActive }) =>
                             cn(
-                              "sidebar-item",
+                              "sidebar-item transition-all duration-300 ease-in-out",
                               collapsed && "justify-center p-2",
                               isActive && "sidebar-item-active"
                             )
@@ -338,12 +349,16 @@ const Sidebar = ({
                         >
                           <item.icon
                             className={cn(
-                              "sidebar-icon h-5 w-5",
+                              "sidebar-icon h-5 w-5 transition-all duration-300 ease-in-out",
                               collapsed ? "m-0" : "mr-3"
                             )}
                             aria-hidden="true"
                           />
-                          {!collapsed && <span>{item.name}</span>}
+                          {!collapsed && (
+                            <span className="transition-opacity duration-300 ease-in-out">
+                              {item.name}
+                            </span>
+                          )}
                         </NavLink>
                       </li>
                     ))}
