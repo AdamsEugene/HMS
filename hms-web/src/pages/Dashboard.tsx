@@ -8,6 +8,7 @@ import { Cog6ToothIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import WidgetSelector from "../components/dashboard/WidgetSelector";
 import ConfigPanel from "../components/dashboard/ConfigPanel";
+import WidgetConfigPanel from "../components/dashboard/WidgetConfigPanel";
 import {
   layoutPresets as dashboardPresets,
   renderWidget,
@@ -37,6 +38,7 @@ interface LayoutPreset {
 // User defined layouts local storage key
 const USER_LAYOUTS_KEY = "hms-dashboard-layouts";
 const DRAG_NOTIFICATION_KEY = "hms-dashboard-drag-notification-shown";
+const WIDGET_CONFIGS_KEY = "hms-dashboard-widget-configs";
 
 const Dashboard = () => {
   // Use theme hook
@@ -52,8 +54,12 @@ const Dashboard = () => {
   const [showConfigPanel, setShowConfigPanel] = useState(false);
   const [userLayouts, setUserLayouts] = useState<LayoutPreset[]>([]);
   const [showDragNotification, setShowDragNotification] = useState(false);
+  const [configuring, setConfiguring] = useState<string | null>(null);
+  const [widgetConfigs, setWidgetConfigs] = useState<{
+    [key: string]: Record<string, unknown>;
+  }>({});
 
-  // Load user-defined layouts from local storage
+  // Load user-defined layouts and widget configs from local storage
   useEffect(() => {
     const savedLayouts = localStorage.getItem(USER_LAYOUTS_KEY);
     if (savedLayouts) {
@@ -61,6 +67,15 @@ const Dashboard = () => {
         setUserLayouts(JSON.parse(savedLayouts));
       } catch (e) {
         console.error("Failed to parse saved layouts", e);
+      }
+    }
+
+    const savedWidgetConfigs = localStorage.getItem(WIDGET_CONFIGS_KEY);
+    if (savedWidgetConfigs) {
+      try {
+        setWidgetConfigs(JSON.parse(savedWidgetConfigs));
+      } catch (e) {
+        console.error("Failed to parse saved widget configs", e);
       }
     }
 
@@ -202,8 +217,31 @@ const Dashboard = () => {
       return;
     }
 
-    // Regular widget configuration would go here
-    console.log(`Configure widget: ${widgetId}`);
+    // Open configuration panel for the widget
+    setConfiguring(widgetId);
+  };
+
+  // Save widget configuration
+  const saveWidgetConfig = (
+    widgetId: string,
+    config: Record<string, unknown>
+  ) => {
+    // Update widget configurations
+    const newWidgetConfigs = {
+      ...widgetConfigs,
+      [widgetId]: config,
+    };
+
+    setWidgetConfigs(newWidgetConfigs);
+
+    // Save to localStorage
+    localStorage.setItem(WIDGET_CONFIGS_KEY, JSON.stringify(newWidgetConfigs));
+
+    // Save individual widget config for component-level access
+    localStorage.setItem(`widget-config-${widgetId}`, JSON.stringify(config));
+
+    // Close configuration panel
+    setConfiguring(null);
   };
 
   // Save dashboard configuration
@@ -215,6 +253,7 @@ const Dashboard = () => {
       activeWidgets,
       layouts,
       selectedLayout,
+      widgetConfigs,
     });
   };
 
@@ -446,7 +485,11 @@ const Dashboard = () => {
               {activeWidgets.map((widgetId) => (
                 <div key={widgetId}>
                   {renderWidget(
-                    { id: widgetId, type: "" },
+                    {
+                      id: widgetId,
+                      type: "",
+                      config: widgetConfigs[widgetId] || {},
+                    },
                     isCustomizing,
                     removeWidget,
                     configureWidget
@@ -469,6 +512,15 @@ const Dashboard = () => {
           onApplyLayout={applyLayoutPreset}
           presets={allPresets}
           onSaveAsNew={saveAsNewLayout}
+        />
+      )}
+
+      {/* Widget Configuration Panel */}
+      {configuring && (
+        <WidgetConfigPanel
+          widgetId={configuring}
+          onClose={() => setConfiguring(null)}
+          onSave={saveWidgetConfig}
         />
       )}
     </div>

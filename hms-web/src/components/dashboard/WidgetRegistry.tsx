@@ -14,6 +14,7 @@ export interface WidgetComponentProps {
   onRemove?: (id: string) => void;
   onConfigure?: (id: string) => void;
   className?: string;
+  config?: Record<string, unknown>;
 }
 
 // Widget type interfaces
@@ -28,6 +29,15 @@ export interface WidgetBase {
   isCreator?: boolean;
   isCustom?: boolean;
   component?: React.ComponentType<WidgetComponentProps>;
+  defaultConfig?: Record<string, unknown>;
+  configOptions?: Array<{
+    key: string;
+    label: string;
+    type: string;
+    options?: Array<{ value: string; label: string }>;
+    default?: unknown;
+    description?: string;
+  }>;
 }
 
 export interface StatWidget extends WidgetBase {
@@ -177,6 +187,27 @@ export const widgetTypes: Widget[] = [
     icon: Icons.patients,
     defaultWidth: 1, // Number of columns in grid
     defaultHeight: 1, // Number of rows in grid
+    configOptions: [
+      {
+        key: "showChange",
+        label: "Show Change Indicator",
+        type: "checkbox",
+        default: true,
+        description: "Show percentage change compared to previous period",
+      },
+      {
+        key: "displayMode",
+        label: "Display Mode",
+        type: "select",
+        options: [
+          { value: "daily", label: "Daily" },
+          { value: "weekly", label: "Weekly" },
+          { value: "monthly", label: "Monthly" },
+        ],
+        default: "daily",
+        description: "Time period for displayed statistics",
+      },
+    ],
   },
   {
     id: "appointments",
@@ -186,6 +217,15 @@ export const widgetTypes: Widget[] = [
     icon: Icons.appointments,
     defaultWidth: 1,
     defaultHeight: 1,
+    configOptions: [
+      {
+        key: "showUpcoming",
+        label: "Show Upcoming",
+        type: "checkbox",
+        default: true,
+        description: "Show upcoming appointments only",
+      },
+    ],
   },
   {
     id: "bed-occupancy",
@@ -241,6 +281,40 @@ export const widgetTypes: Widget[] = [
     component: PatientVolumeChart,
     defaultWidth: 2,
     defaultHeight: 2,
+    configOptions: [
+      {
+        key: "chartType",
+        label: "Chart Type",
+        type: "select",
+        options: [
+          { value: "line", label: "Line Chart" },
+          { value: "bar", label: "Bar Chart" },
+          { value: "area", label: "Area Chart" },
+        ],
+        default: "line",
+        description: "Type of chart to display",
+      },
+      {
+        key: "dataPeriod",
+        label: "Data Period",
+        type: "select",
+        options: [
+          { value: "week", label: "Last 7 Days" },
+          { value: "month", label: "Last 30 Days" },
+          { value: "quarter", label: "Last 90 Days" },
+          { value: "year", label: "Last 365 Days" },
+        ],
+        default: "month",
+        description: "Time period for displayed data",
+      },
+      {
+        key: "showDataPoints",
+        label: "Show Data Points",
+        type: "checkbox",
+        default: true,
+        description: "Show individual data points on the chart",
+      },
+    ],
   },
   {
     id: "revenue-expenses",
@@ -377,7 +451,7 @@ export const getWidgetById = (id: string): Widget | undefined => {
 
 // Function to render widget based on type
 export const renderWidget = (
-  widget: { id: string; type: string },
+  widget: { id: string; type: string; config?: Record<string, unknown> },
   isCustomizing: boolean,
   onRemove: (id: string) => void,
   onConfigure: (id: string) => void
@@ -385,6 +459,9 @@ export const renderWidget = (
   const widgetDef = getWidgetById(widget.id);
 
   if (!widgetDef) return null;
+
+  // Get widget configuration (merged with defaults)
+  const config = widget.config || {};
 
   // Render stat card
   if (widgetDef.type === "stat") {
@@ -394,7 +471,7 @@ export const renderWidget = (
     return (
       <StatCard
         id={widget.id}
-        title={statCardProps.title}
+        title={(config.title as string) || statCardProps.title}
         value={statCardProps.value}
         change={statCardProps.change}
         isIncrease={statCardProps.isIncrease}
@@ -408,10 +485,24 @@ export const renderWidget = (
 
   // Render custom widget
   if (widgetDef.type === "custom") {
+    const customConfig: Partial<CustomWidgetType> = {
+      ...widgetDef,
+      title: (config.title as string) || widgetDef.title,
+    };
+
+    // Apply other custom configs if available
+    if (config.content) customConfig.content = config.content as string;
+    if (config.value) customConfig.value = config.value as string;
+    if (config.change) customConfig.change = config.change as string;
+    if (config.isIncrease !== undefined)
+      customConfig.isIncrease = config.isIncrease as boolean;
+    if (config.backgroundColor)
+      customConfig.backgroundColor = config.backgroundColor as string;
+
     return (
       <CustomWidget
         id={widget.id}
-        widget={widgetDef}
+        widget={customConfig as CustomWidgetType}
         isCustomizing={isCustomizing}
         onRemove={onRemove}
         onConfigure={onConfigure}
@@ -428,6 +519,7 @@ export const renderWidget = (
         isCustomizing={isCustomizing}
         onRemove={onRemove}
         onConfigure={onConfigure}
+        config={config}
       />
     );
   }
