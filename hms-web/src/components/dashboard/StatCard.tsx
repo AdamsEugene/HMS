@@ -2,6 +2,7 @@ import React from "react";
 import { cn } from "../../utils/cn";
 import { useTheme } from "../../contexts/ThemeContext";
 import { XMarkIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
+import DecorativePattern from "./DecorativePattern";
 
 // Stat card component
 export interface StatCardProps {
@@ -14,6 +15,7 @@ export interface StatCardProps {
   onRemove?: (id: string) => void;
   onConfigure?: (id: string) => void;
   isCustomizing?: boolean;
+  patternType?: "dots" | "grid" | "waves" | "circles" | "hex";
 }
 
 const StatCard = ({
@@ -26,15 +28,22 @@ const StatCard = ({
   onRemove,
   onConfigure,
   isCustomizing = false,
+  patternType,
 }: StatCardProps) => {
   // Use theme hook to get card styles
   const { getCardStyle, currentTheme, getGradientBackground } = useTheme();
   const cardStyle = getCardStyle();
   const gradients = getGradientBackground(currentTheme);
 
+  // Select a random pattern if none is provided
+  const patterns = ["dots", "grid", "waves", "circles", "hex"];
+  const pattern =
+    patternType ||
+    (patterns[Math.floor(Math.random() * patterns.length)] as "dots");
+
   return (
     <div
-      className="card relative group backdrop-blur-sm"
+      className="card relative group backdrop-blur-sm overflow-hidden"
       style={{
         ...cardStyle,
         background: gradients.content,
@@ -42,6 +51,24 @@ const StatCard = ({
         border: "1px solid rgba(255, 255, 255, 0.08)",
       }}
     >
+      {/* Decorative gradient blob */}
+      <div
+        className="absolute top-0 right-0 w-48 h-48 -mt-24 -mr-24 rounded-full opacity-20"
+        style={{
+          background: `radial-gradient(circle, ${currentTheme.color}40 0%, transparent 70%)`,
+          filter: "blur(20px)",
+        }}
+      />
+
+      {/* Background pattern */}
+      <DecorativePattern
+        type={pattern}
+        color={currentTheme.color}
+        opacity={0.05}
+        density="medium"
+        animate={false}
+      />
+
       {isCustomizing && (
         <div className="absolute top-3 right-3 flex space-x-1.5 z-10">
           <button
@@ -84,14 +111,23 @@ const StatCard = ({
         )}
         <div className="flex flex-1 items-center">
           <div
-            className="flex-shrink-0 p-3 rounded-xl mr-4"
+            className="flex-shrink-0 p-3 rounded-xl mr-4 relative overflow-hidden"
             style={{
               background: `linear-gradient(135deg, ${currentTheme.color}30, ${currentTheme.color}10)`,
               border: `1px solid ${currentTheme.color}30`,
               color: currentTheme.color,
             }}
           >
-            {icon}
+            {/* Icon glow effect */}
+            <div
+              className="absolute inset-0 opacity-50"
+              style={{
+                background: `radial-gradient(circle, ${currentTheme.color}30 0%, transparent 70%)`,
+                filter: "blur(5px)",
+              }}
+            />
+
+            <div className="relative z-10">{icon}</div>
           </div>
           <div className="flex-1">
             <p
