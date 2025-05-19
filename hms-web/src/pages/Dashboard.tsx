@@ -214,9 +214,12 @@ const Dashboard = () => {
     }
 
     // If this is a custom widget that needs to be added (new widget was created)
-    if (widgetId.startsWith("custom-") && !activeWidgets.includes(widgetId)) {
-      addWidget(widgetId);
-      return;
+    if (widgetId.startsWith("custom-")) {
+      // Always add custom widgets when they are clicked
+      if (!activeWidgets.includes(widgetId)) {
+        addWidget(widgetId);
+        return;
+      }
     }
 
     // Open configuration panel for the widget

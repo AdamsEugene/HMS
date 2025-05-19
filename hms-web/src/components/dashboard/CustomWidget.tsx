@@ -10,6 +10,7 @@ export interface CustomWidgetProps {
   widget: {
     id: string;
     type: string;
+    widgetType?: "text" | "stat" | "link";
     title: string;
     description: string;
     icon: React.ReactNode | string;
@@ -27,7 +28,8 @@ export interface CustomWidgetProps {
 
 export interface CustomWidgetData {
   id: string;
-  type: string;
+  type: string; // Always "custom" for widget system
+  widgetType?: "text" | "stat" | "link"; // The actual widget subtype
   title: string;
   description: string;
   icon: string;
@@ -78,7 +80,8 @@ const CustomWidget = ({
     // Create the widget data
     const newWidget: CustomWidgetData = {
       id: newWidgetId,
-      type: widgetType,
+      type: "custom",
+      widgetType,
       title,
       description,
       icon,
@@ -307,7 +310,7 @@ const CustomWidget = ({
   }
 
   // Render different types of custom widgets
-  switch (widget.type) {
+  switch (widget.widgetType || widget.type) {
     case "text":
       return (
         <ChartContainer
@@ -368,6 +371,39 @@ const CustomWidget = ({
                   );
                 })}
             </ul>
+          </div>
+        </ChartContainer>
+      );
+
+    case "stat":
+      return (
+        <ChartContainer
+          id={id}
+          title={widget.title}
+          onRemove={onRemove}
+          onConfigure={onConfigure}
+          isCustomizing={isCustomizing}
+        >
+          <div
+            className="p-4 h-full flex flex-col justify-center"
+            style={{
+              backgroundColor: widget.backgroundColor
+                ? `${widget.backgroundColor}10`
+                : undefined,
+            }}
+          >
+            <div className="text-3xl font-semibold">
+              {widget.value || "N/A"}
+            </div>
+            {widget.change && (
+              <div
+                className={`text-sm mt-1 ${
+                  widget.isIncrease ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                {widget.isIncrease ? "↑" : "↓"} {widget.change}
+              </div>
+            )}
           </div>
         </ChartContainer>
       );

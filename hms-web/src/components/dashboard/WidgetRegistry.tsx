@@ -56,6 +56,7 @@ export interface ListWidget extends WidgetBase {
 
 export interface CustomWidgetType extends WidgetBase {
   type: "custom";
+  widgetType?: "text" | "stat" | "link";
   content?: string;
   value?: string;
   change?: string;
@@ -357,7 +358,7 @@ export const getCustomWidgets = (): CustomWidgetType[] => {
       return widgets.map((widget) => ({
         ...widget,
         isCustom: true,
-        type: widget.type as "custom",
+        type: "custom", // Ensure the type is always set to "custom"
       }));
     }
   } catch (e) {

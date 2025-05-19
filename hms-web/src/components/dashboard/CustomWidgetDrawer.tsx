@@ -61,7 +61,8 @@ const CustomWidgetDrawer: React.FC<CustomWidgetDrawerProps> = ({
     // Create the widget data
     const newWidget: CustomWidgetData = {
       id: newWidgetId,
-      type: widgetType,
+      type: "custom", // Always set type to "custom" for widget system
+      widgetType, // Store actual widget type (text, stat, link) in a separate property
       title,
       description,
       icon,
