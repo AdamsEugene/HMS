@@ -383,6 +383,8 @@
   background-color: var(--color-header-bg);
   color: var(--color-header-text);
   border-bottom: 1px solid var(--color-header-border);
+  z-index: 1000;
+  position: relative;
 }
 
 .header-title {
@@ -1244,6 +1246,8 @@
   background-color: var(--color-header-bg);
   color: var(--color-header-text);
   border-bottom: 1px solid var(--color-header-border);
+  z-index: 1000;
+  position: relative;
 }
 
 .header-menu-button {
@@ -1563,4 +1567,23 @@ body {
   background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
   transform: translateY(-1px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Popover and dropdown fixes */
+.headlessui-popover-panel,
+.headlessui-menu-items {
+  z-index: 1100 !important; /* Ensure dropdowns are above header */
+}
+
+/* Increase z-index for all popup/dropdown elements from HeadlessUI */
+[data-headlessui-state="open"] > div,
+[role="menu"],
+[role="dialog"] {
+  z-index: 1100 !important;
+}
+
+/* Ensure dropdowns from header appear above other content */
+.header-container .absolute,
+.header-container [class*="absolute"] {
+  z-index: 1100; /* Higher than the header z-index */
 } 
