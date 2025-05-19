@@ -5,6 +5,7 @@ import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import Administration from "./pages/Administration";
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -25,6 +26,7 @@ function App() {
             <Route path="/" element={<MainLayout />}>
               <Route index element={<Dashboard />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="administration" element={<Administration />} />
 
               {/* Add more routes here as we build them */}
 
