@@ -196,7 +196,7 @@ const Header = ({
 
             <div className="flex flex-col">
               {/* Organization name and tagline */}
-              <div className="mb-1">
+              <div className="">
                 <h1 className="text-lg font-semibold header-title">
                   {selectedOrg.name || organizationName}
                 </h1>
@@ -209,7 +209,7 @@ const Header = ({
 
               {/* Title area - Only show when no breadcrumbs */}
               {(title || subtitle) && displayBreadcrumbs.length === 0 && (
-                <div className="mb-1">
+                <div className="">
                   {title && (
                     <h2 className="text-lg font-semibold header-title">
                       {title}

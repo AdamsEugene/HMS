@@ -43,15 +43,17 @@ const ChartContainer = ({
             onClick={() => onConfigure?.(id)}
             className="p-1.5 rounded-full bg-black/10 hover:bg-black/20 transition-colors"
             title="Configure widget"
+            style={{ color: cardStyle.color }}
           >
-            <Cog6ToothIcon className="h-3.5 w-3.5 text-white/80" />
+            <Cog6ToothIcon className="h-3.5 w-3.5 opacity-80" />
           </button>
           <button
             onClick={() => onRemove?.(id)}
             className="p-1.5 rounded-full bg-black/10 hover:bg-red-500/20 hover:text-red-500 transition-colors"
             title="Remove widget"
+            style={{ color: cardStyle.color }}
           >
-            <XMarkIcon className="h-3.5 w-3.5 text-white/80" />
+            <XMarkIcon className="h-3.5 w-3.5 opacity-80" />
           </button>
         </div>
       )}
@@ -59,11 +61,15 @@ const ChartContainer = ({
         className={`widget-drag-handle flex justify-between items-center px-5 py-3 border-b border-white/[0.06] ${
           isCustomizing ? "cursor-move" : ""
         }`}
+        style={{ color: cardStyle.color }} // Use the theme text color
       >
         <h3 className="text-base font-medium tracking-wide">{title}</h3>
         <div className="flex items-center">
           {isCustomizing && (
-            <div className="mr-2 text-xs px-2 py-0.5 bg-primary/20 text-primary rounded-full flex items-center">
+            <div
+              className="mr-2 text-xs px-2 py-0.5 bg-primary/20 rounded-full flex items-center"
+              style={{ color: currentTheme.primaryColor }}
+            >
               <svg
                 className="w-3 h-3 mr-1 opacity-70"
                 viewBox="0 0 24 24"
@@ -84,7 +90,8 @@ const ChartContainer = ({
           {isCustomizing && onConfigure && (
             <button
               onClick={() => onConfigure(id)}
-              className="p-1 text-gray-400 hover:text-white transition-colors"
+              className="p-1 hover:opacity-80 transition-colors"
+              style={{ color: cardStyle.color }}
               aria-label="Configure widget"
             >
               <Cog6ToothIcon className="h-4 w-4" />

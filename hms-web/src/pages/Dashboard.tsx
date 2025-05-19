@@ -4,18 +4,22 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import "../styles/dashboard.css";
-import { Cog6ToothIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  Cog6ToothIcon,
+  XMarkIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 
-import WidgetSelector from "../components/dashboard/WidgetSelector";
 import ConfigPanel from "../components/dashboard/ConfigPanel";
 import WidgetConfigPanel from "../components/dashboard/WidgetConfigPanel";
 import CustomWidgetDrawer from "../components/dashboard/CustomWidgetDrawer";
+import WidgetSelectorModal from "../components/dashboard/WidgetSelectorModal";
 import {
   layoutPresets as dashboardPresets,
   renderWidget,
   getWidgetById,
 } from "../components/dashboard/WidgetRegistry";
-import { cn } from "../utils/cn";
+// import { cn } from "../utils/cn";
 import DashboardBanner from "../components/dashboard/DashboardBanner";
 import DecorativePattern from "../components/dashboard/DecorativePattern";
 import StatsOverviewCard from "../components/dashboard/StatsOverviewCard";
@@ -49,7 +53,7 @@ const Dashboard = () => {
   const { currentTheme } = useTheme();
 
   // Dashboard state
-  const [selectedTimeframe, setSelectedTimeframe] = useState("month");
+  // const [selectedTimeframe, setSelectedTimeframe] = useState("month");
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [activeWidgets, setActiveWidgets] = useState<string[]>([]);
   const [layouts, setLayouts] = useState<{ [key: string]: LayoutItem[] }>({});
@@ -60,6 +64,7 @@ const Dashboard = () => {
   const [showDragNotification, setShowDragNotification] = useState(false);
   const [configuring, setConfiguring] = useState<string | null>(null);
   const [showCreateWidgetDrawer, setShowCreateWidgetDrawer] = useState(false);
+  const [showWidgetSelector, setShowWidgetSelector] = useState(false);
   const [widgetConfigs, setWidgetConfigs] = useState<{
     [key: string]: Record<string, unknown>;
   }>({});
@@ -94,7 +99,7 @@ const Dashboard = () => {
 
   // Initialize dashboard with default layout
   useEffect(() => {
-    applyLayoutPreset("comprehensive");
+    applyLayoutPreset("enterprise-full");
   }, []);
 
   // Apply layout preset
@@ -434,10 +439,16 @@ const Dashboard = () => {
             </div>
             <div className="flex space-x-3">
               <button
-                onClick={() => setShowCreateWidgetDrawer(true)}
+                onClick={() => setShowWidgetSelector(true)}
                 className="flex items-center bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-md transition-colors"
               >
-                <span className="text-lg mr-1">+</span> Create Widget
+                <PlusIcon className="h-5 w-5 mr-1" /> Add Widgets
+              </button>
+              <button
+                onClick={() => setShowCreateWidgetDrawer(true)}
+                className="flex items-center bg-primary/80 hover:bg-primary/90 text-white py-2 px-4 rounded-md transition-colors"
+              >
+                <span className="text-lg mr-1">✨</span> Create Custom
               </button>
               <button
                 onClick={() => setShowConfigPanel(true)}
@@ -535,6 +546,15 @@ const Dashboard = () => {
         <CustomWidgetDrawer
           onClose={() => setShowCreateWidgetDrawer(false)}
           onWidgetCreated={handleWidgetCreated}
+        />
+      )}
+
+      {/* Widget Selector Modal */}
+      {showWidgetSelector && (
+        <WidgetSelectorModal
+          activeWidgets={activeWidgets}
+          onAddWidget={addWidget}
+          onClose={() => setShowWidgetSelector(false)}
         />
       )}
     </div>

@@ -59,6 +59,7 @@ const DashboardBanner: React.FC<DashboardBannerProps> = ({
       style={{
         background: `linear-gradient(135deg, ${currentTheme.color}15, ${currentTheme.color}05)`,
         border: `1px solid ${currentTheme.color}20`,
+        color: currentTheme.textColor || currentTheme.light.text.primary,
       }}
     >
       {/* Decorative elements */}
@@ -83,8 +84,9 @@ const DashboardBanner: React.FC<DashboardBannerProps> = ({
         {Array.from({ length: 20 }).map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 rounded-full bg-white"
+            className="absolute w-1 h-1 rounded-full"
             style={{
+              backgroundColor: currentTheme.primaryColor,
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
               opacity: Math.random() * 0.5 + 0.25,
@@ -98,8 +100,8 @@ const DashboardBanner: React.FC<DashboardBannerProps> = ({
           <h1 className="text-3xl font-bold mb-1">
             {getGreeting()}, {userName}
           </h1>
-          <p className="text-white/70">Welcome to {hospitalName} dashboard</p>
-          <div className="mt-2 text-white/60 text-sm">
+          <p className="opacity-70">Welcome to {hospitalName} dashboard</p>
+          <div className="mt-2 opacity-60 text-sm">
             {formatDate(currentTime)}
           </div>
         </div>
@@ -108,7 +110,7 @@ const DashboardBanner: React.FC<DashboardBannerProps> = ({
           <div className="text-4xl font-bold">{formatTime(currentTime)}</div>
           <div className="mt-2 flex items-center">
             <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-            <span className="text-white/70">System Status: Operational</span>
+            <span className="opacity-70">System Status: Operational</span>
           </div>
         </div>
       </div>

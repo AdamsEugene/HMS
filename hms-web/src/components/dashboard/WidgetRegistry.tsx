@@ -6,6 +6,11 @@ import DepartmentDistribution from "./DepartmentDistribution";
 import RecentActivity from "./RecentActivity";
 import CustomWidget from "./CustomWidget";
 import PatientTable from "./PatientTable";
+import StaffScheduleWidget from "./StaffScheduleWidget";
+import EquipmentStatusWidget from "./EquipmentStatusWidget";
+import ComplianceWidget from "./ComplianceWidget";
+import QualityMetricsWidget from "./QualityMetricsWidget";
+import MultiBranchWidget from "./MultiBranchWidget";
 import type { CustomWidgetData } from "./CustomWidget";
 
 // Common widget component props interface to solve type compatibility issues
@@ -178,6 +183,72 @@ const Icons = {
   pharmacy: (
     <svg
       className="h-6 w-6 text-red-500"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+      />
+    </svg>
+  ),
+  equipment: (
+    <svg
+      className="h-6 w-6 text-violet-500"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+      />
+    </svg>
+  ),
+  compliance: (
+    <svg
+      className="h-6 w-6 text-emerald-500"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+      />
+    </svg>
+  ),
+  quality: (
+    <svg
+      className="h-6 w-6 text-amber-500"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+      />
+    </svg>
+  ),
+  multiBranch: (
+    <svg
+      className="h-6 w-6 text-sky-500"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -374,6 +445,169 @@ export const widgetTypes: Widget[] = [
     defaultWidth: 2,
     defaultHeight: 2,
   },
+  {
+    id: "staff-schedule",
+    type: "table",
+    title: "Staff Schedule",
+    description: "Staff scheduling and availability",
+    icon: Icons.staff,
+    component: StaffScheduleWidget,
+    defaultWidth: 2,
+    defaultHeight: 2,
+    configOptions: [
+      {
+        key: "showDepartment",
+        label: "Show Department Column",
+        type: "checkbox",
+        default: true,
+        description: "Display the department column in the staff table",
+      },
+      {
+        key: "filterByStatus",
+        label: "Filter by Status",
+        type: "select",
+        options: [
+          { value: "", label: "All Statuses" },
+          { value: "On Duty", label: "On Duty" },
+          { value: "On Call", label: "On Call" },
+          { value: "Off Duty", label: "Off Duty" },
+        ],
+        default: "",
+        description: "Filter staff list by status",
+      },
+    ],
+  },
+  {
+    id: "equipment-status",
+    type: "chart",
+    title: "Equipment Status",
+    description: "Medical equipment status and maintenance",
+    icon: Icons.equipment,
+    component: EquipmentStatusWidget,
+    defaultWidth: 2,
+    defaultHeight: 2,
+    configOptions: [
+      {
+        key: "showPieChart",
+        label: "Show Status Chart",
+        type: "checkbox",
+        default: true,
+        description: "Display the equipment status pie chart",
+      },
+      {
+        key: "showList",
+        label: "Show Equipment List",
+        type: "checkbox",
+        default: true,
+        description: "Display the list of critical equipment",
+      },
+    ],
+  },
+  {
+    id: "compliance-status",
+    type: "chart",
+    title: "Compliance Status",
+    description: "Regulatory compliance and audit tracking",
+    icon: Icons.compliance,
+    component: ComplianceWidget,
+    defaultWidth: 2,
+    defaultHeight: 2,
+    configOptions: [
+      {
+        key: "showChart",
+        label: "Show Compliance Chart",
+        type: "checkbox",
+        default: true,
+        description: "Display the compliance scores chart",
+      },
+      {
+        key: "showTable",
+        label: "Show Upcoming Audits",
+        type: "checkbox",
+        default: true,
+        description: "Display the list of upcoming audits",
+      },
+    ],
+  },
+  {
+    id: "quality-metrics",
+    type: "chart",
+    title: "Quality Metrics",
+    description: "Key quality indicators and improvement metrics",
+    icon: Icons.quality,
+    component: QualityMetricsWidget,
+    defaultWidth: 2,
+    defaultHeight: 2,
+    configOptions: [
+      {
+        key: "showIndicators",
+        label: "Show Key Indicators",
+        type: "checkbox",
+        default: true,
+        description: "Display the quality indicators summary",
+      },
+      {
+        key: "showTrends",
+        label: "Show Metric Trends",
+        type: "checkbox",
+        default: true,
+        description: "Display the quality trends chart",
+      },
+      {
+        key: "metricToShow",
+        label: "Focus Metric",
+        type: "select",
+        options: [
+          { value: "all", label: "All Metrics" },
+          { value: "Readmission", label: "Readmission Rate" },
+          { value: "Infection", label: "Infection Rate" },
+          { value: "Satisfaction", label: "Patient Satisfaction" },
+          { value: "Medication", label: "Medication Errors" },
+        ],
+        default: "all",
+        description: "Metric to highlight in the dashboard",
+      },
+    ],
+  },
+  {
+    id: "multi-branch",
+    type: "chart",
+    title: "Multi-Branch Performance",
+    description: "Metrics across different hospital branches",
+    icon: Icons.multiBranch,
+    component: MultiBranchWidget,
+    defaultWidth: 2,
+    defaultHeight: 2,
+    configOptions: [
+      {
+        key: "showChart",
+        label: "Show Branch Comparison",
+        type: "checkbox",
+        default: true,
+        description: "Display the branch comparison chart",
+      },
+      {
+        key: "showTable",
+        label: "Show Branch Table",
+        type: "checkbox",
+        default: true,
+        description: "Display the branch metrics table",
+      },
+      {
+        key: "metricToShow",
+        label: "Comparison Metric",
+        type: "select",
+        options: [
+          { value: "bedOccupancy", label: "Bed Occupancy" },
+          { value: "avgWaitTime", label: "Average Wait Time" },
+          { value: "patientSatisfaction", label: "Patient Satisfaction" },
+          { value: "staffUtilization", label: "Staff Utilization" },
+        ],
+        default: "bedOccupancy",
+        description: "Metric to compare across branches",
+      },
+    ],
+  },
 ];
 
 // Get custom widgets from localStorage
@@ -457,6 +691,98 @@ export const layoutPresets = [
       { i: "revenue-expenses", x: 2, y: 1, w: 2, h: 2 },
       { i: "department-distribution", x: 0, y: 3, w: 2, h: 2 },
       { i: "recent-activity", x: 2, y: 3, w: 2, h: 2 },
+    ],
+  },
+  {
+    id: "hr-and-staff",
+    name: "HR & Staff Management",
+    description: "Focus on workforce management and scheduling",
+    layout: [
+      { i: "staff-metrics", x: 0, y: 0, w: 1, h: 1 },
+      { i: "bed-occupancy", x: 1, y: 0, w: 1, h: 1 },
+      { i: "revenue", x: 2, y: 0, w: 1, h: 1 },
+      { i: "patient-stats", x: 3, y: 0, w: 1, h: 1 },
+      { i: "staff-schedule", x: 0, y: 1, w: 2, h: 2 },
+      { i: "patient-volume", x: 2, y: 1, w: 2, h: 2 },
+      { i: "recent-activity", x: 0, y: 3, w: 2, h: 2 },
+      { i: "multi-branch", x: 2, y: 3, w: 2, h: 2 },
+    ],
+  },
+  {
+    id: "quality-and-compliance",
+    name: "Quality & Compliance",
+    description: "Focus on quality metrics and regulatory compliance",
+    layout: [
+      { i: "patient-stats", x: 0, y: 0, w: 1, h: 1 },
+      { i: "bed-occupancy", x: 1, y: 0, w: 1, h: 1 },
+      { i: "appointments", x: 2, y: 0, w: 1, h: 1 },
+      { i: "revenue", x: 3, y: 0, w: 1, h: 1 },
+      { i: "quality-metrics", x: 0, y: 1, w: 2, h: 2 },
+      { i: "compliance-status", x: 2, y: 1, w: 2, h: 2 },
+      { i: "patient-volume", x: 0, y: 3, w: 2, h: 2 },
+      { i: "recent-activity", x: 2, y: 3, w: 2, h: 2 },
+    ],
+  },
+  {
+    id: "operations-and-equipment",
+    name: "Operations & Equipment",
+    description: "Focus on operational efficiency and equipment management",
+    layout: [
+      { i: "patient-stats", x: 0, y: 0, w: 1, h: 1 },
+      { i: "revenue", x: 1, y: 0, w: 1, h: 1 },
+      { i: "bed-occupancy", x: 2, y: 0, w: 1, h: 1 },
+      { i: "staff-metrics", x: 3, y: 0, w: 1, h: 1 },
+      { i: "equipment-status", x: 0, y: 1, w: 2, h: 2 },
+      { i: "revenue-expenses", x: 2, y: 1, w: 2, h: 2 },
+      { i: "department-distribution", x: 0, y: 3, w: 2, h: 2 },
+      { i: "multi-branch", x: 2, y: 3, w: 2, h: 2 },
+    ],
+  },
+  {
+    id: "multi-branch-overview",
+    name: "Multi-Branch Overview",
+    description: "Focus on performance across different hospital branches",
+    layout: [
+      { i: "patient-stats", x: 0, y: 0, w: 1, h: 1 },
+      { i: "revenue", x: 1, y: 0, w: 1, h: 1 },
+      { i: "bed-occupancy", x: 2, y: 0, w: 1, h: 1 },
+      { i: "staff-metrics", x: 3, y: 0, w: 1, h: 1 },
+      { i: "multi-branch", x: 0, y: 1, w: 3, h: 2 },
+      { i: "revenue-expenses", x: 3, y: 1, w: 1, h: 2 },
+      { i: "quality-metrics", x: 0, y: 3, w: 2, h: 2 },
+      { i: "equipment-status", x: 2, y: 3, w: 2, h: 2 },
+    ],
+  },
+  {
+    id: "enterprise-full",
+    name: "Enterprise Full Dashboard",
+    description: "Complete hospital management system dashboard",
+    layout: [
+      { i: "patient-stats", x: 0, y: 0, w: 1, h: 1 },
+      { i: "bed-occupancy", x: 1, y: 0, w: 1, h: 1 },
+      { i: "revenue", x: 2, y: 0, w: 1, h: 1 },
+      { i: "staff-metrics", x: 3, y: 0, w: 1, h: 1 },
+      { i: "patient-volume", x: 0, y: 1, w: 2, h: 2 },
+      { i: "multi-branch", x: 2, y: 1, w: 2, h: 2 },
+      { i: "quality-metrics", x: 0, y: 3, w: 2, h: 2 },
+      { i: "compliance-status", x: 2, y: 3, w: 2, h: 2 },
+      { i: "staff-schedule", x: 0, y: 5, w: 2, h: 2 },
+      { i: "equipment-status", x: 2, y: 5, w: 2, h: 2 },
+    ],
+  },
+  {
+    id: "hr-and-staff",
+    name: "HR & Staff Management",
+    description: "Focus on workforce management and scheduling",
+    layout: [
+      { i: "staff-metrics", x: 0, y: 0, w: 1, h: 1 },
+      { i: "bed-occupancy", x: 1, y: 0, w: 1, h: 1 },
+      { i: "revenue", x: 2, y: 0, w: 1, h: 1 },
+      { i: "patient-stats", x: 3, y: 0, w: 1, h: 1 },
+      { i: "staff-schedule", x: 0, y: 1, w: 2, h: 2 },
+      { i: "patient-volume", x: 2, y: 1, w: 2, h: 2 },
+      { i: "recent-activity", x: 0, y: 3, w: 2, h: 2 },
+      { i: "multi-branch", x: 2, y: 3, w: 2, h: 2 },
     ],
   },
 ];
