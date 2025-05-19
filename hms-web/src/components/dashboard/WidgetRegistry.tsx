@@ -346,16 +346,6 @@ export const widgetTypes: Widget[] = [
     defaultWidth: 2,
     defaultHeight: 2,
   },
-  {
-    id: "create-custom",
-    type: "custom",
-    title: "Create Custom Widget",
-    description: "Build your own custom widget",
-    icon: "✨",
-    defaultWidth: 2,
-    defaultHeight: 2,
-    isCreator: true,
-  },
 ];
 
 // Get custom widgets from localStorage
@@ -459,6 +449,28 @@ export const renderWidget = (
   const widgetDef = getWidgetById(widget.id);
 
   if (!widgetDef) return null;
+
+  // Special case for create-custom widget - we'll render just a placeholder that opens drawer on click
+  if (widget.id === "create-custom") {
+    return (
+      <div
+        className="widget-container bg-gradient-card backdrop-filter backdrop-blur-md p-4 rounded-lg border border-white/10 h-full flex flex-col cursor-pointer"
+        onClick={() => onConfigure("create-custom")}
+      >
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3">
+              <span className="text-2xl">✨</span>
+            </div>
+            <h3 className="text-lg font-medium">Create Custom Widget</h3>
+            <p className="text-sm text-gray-400 mt-1">
+              Build your own custom widget
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Get widget configuration (merged with defaults)
   const config = widget.config || {};

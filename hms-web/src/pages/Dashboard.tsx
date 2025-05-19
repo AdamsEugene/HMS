@@ -9,6 +9,7 @@ import { Cog6ToothIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import WidgetSelector from "../components/dashboard/WidgetSelector";
 import ConfigPanel from "../components/dashboard/ConfigPanel";
 import WidgetConfigPanel from "../components/dashboard/WidgetConfigPanel";
+import CustomWidgetDrawer from "../components/dashboard/CustomWidgetDrawer";
 import {
   layoutPresets as dashboardPresets,
   renderWidget,
@@ -55,6 +56,7 @@ const Dashboard = () => {
   const [userLayouts, setUserLayouts] = useState<LayoutPreset[]>([]);
   const [showDragNotification, setShowDragNotification] = useState(false);
   const [configuring, setConfiguring] = useState<string | null>(null);
+  const [showCreateWidgetDrawer, setShowCreateWidgetDrawer] = useState(false);
   const [widgetConfigs, setWidgetConfigs] = useState<{
     [key: string]: Record<string, unknown>;
   }>({});
@@ -205,9 +207,9 @@ const Dashboard = () => {
 
   // Configure a widget (or create new custom widget)
   const configureWidget = (widgetId: string) => {
-    // If this is the create-custom widget, add it to dashboard immediately
+    // If this is the create-custom widget, show the drawer
     if (widgetId === "create-custom") {
-      addWidget(widgetId);
+      setShowCreateWidgetDrawer(true);
       return;
     }
 
@@ -219,6 +221,11 @@ const Dashboard = () => {
 
     // Open configuration panel for the widget
     setConfiguring(widgetId);
+  };
+
+  // Handle custom widget creation
+  const handleWidgetCreated = (widgetId: string) => {
+    addWidget(widgetId);
   };
 
   // Save widget configuration
@@ -338,6 +345,13 @@ const Dashboard = () => {
             </p>
           </div>
           <div className="flex space-x-3">
+            <button
+              onClick={() => setShowCreateWidgetDrawer(true)}
+              className="flex items-center bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-md transition-all"
+            >
+              <span className="mr-2">✨</span>
+              Create Widget
+            </button>
             <button
               onClick={() => setShowConfigPanel(true)}
               className="flex items-center bg-black/20 hover:bg-black/30 text-white py-2 px-4 rounded-md transition-all"
@@ -521,6 +535,14 @@ const Dashboard = () => {
           widgetId={configuring}
           onClose={() => setConfiguring(null)}
           onSave={saveWidgetConfig}
+        />
+      )}
+
+      {/* Custom Widget Creation Drawer */}
+      {showCreateWidgetDrawer && (
+        <CustomWidgetDrawer
+          onClose={() => setShowCreateWidgetDrawer(false)}
+          onWidgetCreated={handleWidgetCreated}
         />
       )}
     </div>
