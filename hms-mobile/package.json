@@ -1,0 +1,13 @@
+{
+  "name": "hms-mobile",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mobile app for Hospital Management System",
+  "main": "index.js",
+  "scripts": {
+    "start": "echo \"Mobile app start placeholder\" && exit 0",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+} 
