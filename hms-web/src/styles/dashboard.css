@@ -1,0 +1,158 @@
+/* Dashboard styles */
+.dashboard-grid {
+  width: 100%;
+  min-height: 300px;
+  position: relative;
+}
+
+/* React Grid Layout styles */
+.react-grid-layout {
+  position: relative;
+  transition: height 200ms ease;
+}
+
+.react-grid-item {
+  transition: all 200ms ease;
+  transition-property: left, top, width, height;
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: rgba(var(--color-primary-rgb), 0.2);
+  border: 2px dashed var(--color-primary);
+  border-radius: 8px;
+  opacity: 0.8;
+  z-index: 2;
+}
+
+.react-grid-item.resizing {
+  z-index: 1;
+  will-change: width, height;
+}
+
+.react-grid-item.react-draggable-dragging {
+  transition: none;
+  z-index: 3;
+  will-change: transform;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  cursor: grabbing;
+  transform: scale(1.02);
+  opacity: 0.9;
+}
+
+.react-grid-item.dropping {
+  visibility: hidden;
+}
+
+/* Custom styles for widgets */
+.card {
+  transition: all 0.3s ease;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  position: relative;
+}
+
+.card:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.widget-drag-handle {
+  cursor: move;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  padding: 10px;
+  border-radius: 6px 6px 0 0;
+  transition: background-color 0.2s ease;
+}
+
+.widget-drag-handle:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.widget-drag-handle:active {
+  cursor: grabbing;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Custom scrollbar for dashboard elements */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .react-grid-item.react-grid-placeholder {
+    background: rgba(var(--color-primary-rgb), 0.15);
+    border: 2px dashed var(--color-primary);
+  }
+}
+
+/* Widget animation */
+.dashboard-grid .card {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Drag placeholder animation */
+.react-grid-placeholder {
+  animation: pulseBorder 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseBorder {
+  0% {
+    border-color: var(--color-primary);
+    opacity: 0.5;
+  }
+  50% {
+    border-color: var(--color-primary);
+    opacity: 0.8;
+  }
+  100% {
+    border-color: var(--color-primary);
+    opacity: 0.5;
+  }
+}
+
+/* Notification animations */
+.animate-fade-in-up {
+  animation: notificationFadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes notificationFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 
