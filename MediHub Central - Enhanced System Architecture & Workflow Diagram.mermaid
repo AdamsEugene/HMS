@@ -1,0 +1,346 @@
+flowchart TD
+    %% System Architecture
+    subgraph "User Access Layer"
+        A1[Web Portal] --- A2[Mobile Apps]
+        A2 --- A3[Staff Workstations]
+        A3 --- A4[Kiosks]
+        A4 --- A5[IoT Devices]
+        A5 --- A6[Telemedicine Platform]
+        A6 --- A1
+    end
+
+    subgraph "Authentication & Security"
+        B1[Identity Provider] --- B2[MFA Service]
+        B2 --- B3[Role-Based Access]
+        B3 --- B4[Audit Logger]
+        B4 --- B5[Encryption Service]
+        B5 --- B6[Threat Detection]
+        B6 --- B7[Privacy Controls]
+        B7 --- B8[Compliance Monitoring]
+        B8 --- B1
+    end
+
+    subgraph "Core Services"
+        C1[API Gateway] --- C2[Service Mesh]
+        C2 --- C3[Caching Layer]
+        C3 --- C4[Message Queue]
+        C4 --- C5[Event Bus]
+        C5 --- C6[Job Scheduler]
+        C6 --- C7[Notification Service]
+        C7 --- C8[Backup Service]
+        C8 --- C1
+    end
+
+    subgraph "Business Logic Layer"
+        D1[Hospital Administration] --- D2[Patient Management]
+        D2 --- D3[Clinical Services]
+        D3 --- D4[Specialized Care Units]
+        D4 --- D5[Diagnostic Services]
+        D5 --- D6[Pharmacy Services]
+        D6 --- D7[Inventory Management]
+        D7 --- D8[Financial Services]
+        D8 --- D9[Quality Management]
+        D9 --- D10[Staff Management]
+        D10 --- D11[HR & Workforce]
+        D11 --- D12[Education & Training]
+        D12 --- D13[Equipment Management]
+        D13 --- D14[Compliance Management]
+        D14 --- D1
+    end
+
+    subgraph "Data Layer"
+        E1[Relational Database] --- E2[Document Store]
+        E2 --- E3[Time-Series DB]
+        E3 --- E4[Search Engine]
+        E4 --- E5[Data Warehouse]
+        E5 --- E6[PACS Storage]
+        E6 --- E7[Backup System]
+        E7 --- E1
+    end
+
+    subgraph "Integration Layer"
+        F1[HL7/FHIR Service] --- F2[DICOM Service]
+        F2 --- F3[External APIs]
+        F3 --- F4[ETL Pipeline]
+        F4 --- F5[Device Integration]
+        F5 --- F6[Partner Connectors]
+        F6 --- F7[HIE Gateway]
+        F7 --- F8[Public Health Reporting]
+        F8 --- F1
+    end
+
+    subgraph "AI & Analytics"
+        G1[ML Models] --- G2[Prediction Engine]
+        G2 --- G3[Clinical Decision Support]
+        G3 --- G4[BI Dashboards]
+        G4 --- G5[Reporting Service]
+        G5 --- G6[Data Mining]
+        G6 --- G7[NLP Engine]
+        G7 --- G8[Continuous Learning]
+        G8 --- G1
+    end
+
+    subgraph "Multi-Branch Control"
+        H1[Central Admin] --- H2[Branch Configuration]
+        H2 --- H3[Resource Allocation]
+        H3 --- H4[Patient Transfer System]
+        H4 --- H5[Cross-Branch Analytics]
+        H5 --- H6[Emergency Protocols]
+        H6 --- H7[Disaster Recovery]
+        H7 --- H8[Business Continuity]
+        H8 --- H1
+    end
+
+    %% Architecture Connections
+    A1 ==> C1
+    B1 ==> A1
+    C1 ==> D1
+    D1 ==> E1
+    D3 ==> F1
+    F1 ==> E1
+    D9 ==> G1
+    G1 ==> E5
+    H1 ==> D1
+    H1 ==> C1
+    D10 ==> D11
+    D11 ==> D12
+    D9 ==> D14
+    D13 ==> D3
+    H7 ==> C8
+
+    %% Clinical Workflows
+    subgraph "Hospital Registration & Administration"
+        ADM1[Hospital Profile Setup] --> ADM2[Department Configuration]
+        ADM2 --> ADM3[User Role Definition]
+        ADM3 --> ADM4[Master Data Management]
+        ADM4 --> ADM5[System Configuration]
+    end
+
+    subgraph "Patient Registration Flow"
+        P1[Patient Arrives] --> P2[Registration/Check-in]
+        P2 --> P3[Insurance Verification]
+        P3 --> P4[Medical History Update]
+        P4 --> P5[Wait Assignment]
+        P5 --> P6[Patient Portal Setup]
+    end
+
+    subgraph "Outpatient Clinical Workflow"
+        C10[Nurse Assessment] --> C11[Vital Signs Recording]
+        C11 --> C12[Physician Examination]
+        C12 --> C13[Diagnosis & Documentation]
+        C13 --> C14[Order Entry]
+        C14 --> C15[Treatment Plan]
+        C15 --> C16[Follow-up Scheduling]
+    end
+
+    subgraph "Inpatient Admission Process"
+        I1[Admission Decision] --> I2[Bed Assignment]
+        I2 --> I3[Initial Assessment]
+        I3 --> I4[Care Plan Creation]
+        I4 --> I5[Order Management]
+        I5 --> I6[Daily Rounds]
+        I6 --> I7[Discharge Planning]
+    end
+
+    subgraph "Laboratory Workflow"
+        L1[Lab Order Receipt] --> L2[Specimen Collection]
+        L2 --> L3[Specimen Processing]
+        L3 --> L4[Testing & Analysis]
+        L4 --> L5[Result Verification]
+        L5 --> L6[Result Distribution]
+        L6 --> L7[Critical Value Handling]
+    end
+
+    subgraph "Radiology Process"
+        R1[Imaging Order] --> R2[Patient Preparation]
+        R2 --> R3[Image Acquisition]
+        R3 --> R4[Image Processing]
+        R4 --> R5[Radiologist Reading]
+        R5 --> R6[Report Generation]
+        R6 --> R7[Result Communication]
+    end
+
+    subgraph "Pharmacy Workflow"
+        PH1[Prescription Receipt] --> PH2[Pharmacist Review]
+        PH2 --> PH3[Interaction Check]
+        PH3 --> PH4[Preparation]
+        PH4 --> PH5[Verification]
+        PH5 --> PH6[Dispensing]
+        PH6 --> PH7[Patient Education]
+    end
+
+    subgraph "Discharge & Billing Process"
+        B10[Discharge Decision] --> B11[Discharge Instructions]
+        B11 --> B12[Medication Reconciliation]
+        B12 --> B13[Follow-up Planning]
+        B13 --> B14[Charge Capture]
+        B14 --> B15[Claim Generation]
+        B15 --> B16[Payment Processing]
+    end
+
+    subgraph "Emergency Department Workflow"
+        E10[Patient Triage] --> E11[Rapid Assessment]
+        E11 --> E12[Critical Care Team Activation]
+        E12 --> E13[Diagnostics & Treatment]
+        E13 --> E14[Disposition Decision]
+        E14 --> E15[Admission/Discharge/Transfer]
+    end
+
+    subgraph "Operating Room Process"
+        O1[Surgery Scheduling] --> O2[Pre-op Evaluation]
+        O2 --> O3[Surgical Safety Checklist]
+        O3 --> O4[Anesthesia Administration]
+        O4 --> O5[Procedure Documentation]
+        O5 --> O6[Post-op Recovery]
+        O6 --> O7[Surgical Outcome Recording]
+    end
+
+    subgraph "Telemedicine Workflow"
+        T1[Virtual Visit Scheduling] --> T2[Technical Check]
+        T2 --> T3[Virtual Waiting Room]
+        T3 --> T4[Video Consultation]
+        T4 --> T5[Documentation]
+        T5 --> T6[E-Prescription]
+        T6 --> T7[Follow-up Planning]
+    end
+
+    subgraph "Insurance & Claims Process"
+        IC1[Coverage Verification] --> IC2[Pre-authorization]
+        IC2 --> IC3[Claim Creation]
+        IC3 --> IC4[Claim Submission]
+        IC4 --> IC5[Adjudication Tracking]
+        IC5 --> IC6[Payment Posting]
+        IC6 --> IC7[Denial Management]
+    end
+
+    subgraph "Inventory Management Process"
+        IM1[Inventory Monitoring] --> IM2[Purchase Requisition]
+        IM2 --> IM3[Purchase Order]
+        IM3 --> IM4[Receiving & Inspection]
+        IM4 --> IM5[Storage & Distribution]
+        IM5 --> IM6[Usage Tracking]
+        IM6 --> IM7[Reorder Point Trigger]
+    end
+
+    subgraph "Quality Management Process"
+        Q1[Quality Metric Definition] --> Q2[Data Collection]
+        Q2 --> Q3[Performance Analysis]
+        Q3 --> Q4[Variance Identification]
+        Q4 --> Q5[Improvement Planning]
+        Q5 --> Q6[Implementation]
+        Q6 --> Q7[Outcome Measurement]
+    end
+
+    subgraph "Inter-Branch Transfer"
+        TF1[Transfer Request] --> TF2[Bed Availability Check]
+        TF2 --> TF3[Clinical Handoff]
+        TF3 --> TF4[Patient Record Transfer]
+        TF4 --> TF5[Transport Arrangement]
+        TF5 --> TF6[Receiving Team Notification]
+        TF6 --> TF7[Transfer Completion]
+    end
+
+    %% Additional Workflows
+    subgraph "Staff Management Workflow"
+        SM1[Staff Scheduling] --> SM2[Shift Assignment]
+        SM2 --> SM3[Daily Staffing Adjustment]
+        SM3 --> SM4[Time Tracking]
+        SM4 --> SM5[Performance Evaluation]
+        SM5 --> SM6[Competency Assessment]
+        SM6 --> SM1
+    end
+
+    subgraph "HR & Recruitment Process"
+        HR1[Position Definition] --> HR2[Recruitment]
+        HR2 --> HR3[Selection & Hiring]
+        HR3 --> HR4[Onboarding]
+        HR4 --> HR5[Performance Management]
+        HR5 --> HR6[Development Planning]
+        HR6 --> HR7[Separation Process]
+    end
+
+    subgraph "Education & Training Workflow"
+        ET1[Training Needs Assessment] --> ET2[Curriculum Development]
+        ET2 --> ET3[Training Scheduling]
+        ET3 --> ET4[Training Delivery]
+        ET4 --> ET5[Competency Validation]
+        ET5 --> ET6[Continuing Education]
+        ET6 --> ET1
+    end
+
+    subgraph "Equipment Management Workflow"
+        EM1[Equipment Acquisition] --> EM2[Installation & Setup]
+        EM2 --> EM3[Preventive Maintenance]
+        EM3 --> EM4[Service Requests]
+        EM4 --> EM5[Repair Management]
+        EM5 --> EM6[Performance Monitoring]
+        EM6 --> EM7[End-of-Life Management]
+    end
+
+    subgraph "Compliance & Audit Workflow"
+        CA1[Requirement Tracking] --> CA2[Policy Management]
+        CA2 --> CA3[Risk Assessment]
+        CA3 --> CA4[Compliance Monitoring]
+        CA4 --> CA5[Issue Management]
+        CA5 --> CA6[Corrective Actions]
+        CA6 --> CA7[Effectiveness Evaluation]
+        CA7 --> CA1
+    end
+
+    subgraph "Disaster Recovery Workflow"
+        DR1[Business Impact Analysis] --> DR2[Recovery Planning]
+        DR2 --> DR3[Backup Management]
+        DR3 --> DR4[Disaster Recovery Testing]
+        DR4 --> DR5[Incident Response]
+        DR5 --> DR6[System Restoration]
+        DR6 --> DR7[Post-Incident Review]
+        DR7 --> DR1
+    end
+
+    %% Workflow Connections
+    P5 --> C10
+    C16 --> B10
+    P5 --> L1
+    P5 --> R1
+    C14 --> L1
+    C14 --> R1
+    C14 --> PH1
+    I1 --> I2
+    E14 --> I1
+    E14 --> B10
+    B13 --> T1
+    L6 --> C12
+    R6 --> C12
+    I7 --> B10
+    O1 --> I1
+    I5 --> PH1
+    B12 --> PH1
+    L1 --> L2
+    R1 --> R2
+    ADM1 --> P1
+    E10 --> E11
+    O6 --> I1
+    TF7 --> I3
+    SM1 --> P1
+    SM3 --> C10
+    SM6 --> ET5
+    HR4 --> ET3
+    EM3 --> O1
+    EM4 --> EM5
+    CA4 --> CA5
+    CA7 --> DR1
+    DR6 --> CA5
+
+    %% Styling
+    classDef primary fill:#f9f,stroke:#333,stroke-width:2px
+    classDef secondary fill:#bbf,stroke:#33f,stroke-width:1px
+    classDef tertiary fill:#fbb,stroke:#f33,stroke-width:1px
+    classDef quaternary fill:#bfb,stroke:#3f3,stroke-width:1px
+    classDef newModules fill:#fbf,stroke:#606,stroke-width:2px
+    
+    class A1,B1,C1,D1,E1,F1,G1,H1 primary
+    class P1,C10,I1,L1,R1,PH1,B10,E10,O1,T1,IC1,IM1,Q1,TF1,ADM1 secondary
+    class P6,C16,I7,L7,R7,PH7,B16,E15,O7,T7,IC7,IM7,Q7,TF7,ADM5 tertiary
+    class P3,C13,I4,L4,R4,PH4,B13,E13,O4,T4,IC4,IM4,Q4,TF4 quaternary
+    class D11,D12,D13,D14,B8,C8,F8,G8,H8 newModules
+    class SM1,HR1,ET1,EM1,CA1,DR1 newModules
