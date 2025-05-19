@@ -198,7 +198,9 @@ const MainLayout = () => {
     <div
       className={cn(
         "flex h-screen overflow-hidden",
-        currentTheme.isDark ? "text-white" : "text-gray-900"
+        currentTheme.isDark
+          ? "main-gradient-dark text-white"
+          : "main-gradient-light text-gray-900"
       )}
       style={{
         background: getGradientBackground(currentTheme).primary,

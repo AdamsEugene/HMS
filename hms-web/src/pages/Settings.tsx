@@ -382,91 +382,68 @@ const Settings = () => {
             <Tab.Panel>
               <div className="space-y-8">
                 {/* Theme Selection */}
-                <div
-                  style={{
-                    ...getCardStyle(),
-                    padding: "1.5rem",
-                    borderRadius: "0.5rem",
-                  }}
-                >
-                  <h2
-                    className="text-lg font-medium mb-4"
-                    style={{ color: currentTheme.textColor }}
-                  >
-                    Select Theme
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="theme-selection mt-6">
+                  <h3 className="text-lg font-medium mb-4">Theme</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {availableThemes.map((theme) => (
-                      <button
+                      <div
                         key={theme.name}
-                        onClick={() => setTheme(theme)}
                         className={cn(
-                          "flex flex-col rounded-lg border-2 transition-all overflow-hidden",
-                          currentTheme.name === theme.name
-                            ? "border-primary shadow-md"
-                            : "border-transparent hover:border-gray-300 dark:hover:border-gray-600"
+                          "theme-option relative rounded-lg overflow-hidden cursor-pointer transition-all hover:shadow-md",
+                          currentTheme.name === theme.name &&
+                            "ring-2 ring-primary"
                         )}
-                        title={`Select ${theme.name} theme`}
+                        onClick={() => setTheme(theme)}
                       >
-                        {/* Theme preview header */}
                         <div
-                          className="p-4 text-center"
+                          className={cn(
+                            "h-40 p-4 flex flex-col justify-between",
+                            theme.isDark
+                              ? "main-gradient-dark"
+                              : "main-gradient-light"
+                          )}
                           style={{
-                            backgroundColor: theme.headerBg || theme.color,
-                            color: theme.headerText || "#FFFFFF",
+                            background: `linear-gradient(135deg, ${theme.color}20 0%, ${theme.color}05 100%)`,
+                            color: theme.isDark
+                              ? "#fff"
+                              : theme.textColor || "#111827",
                           }}
                         >
-                          <span className="font-medium">{theme.name}</span>
-                        </div>
-
-                        {/* Theme preview body */}
-                        <div
-                          className="p-4 flex flex-col"
-                          style={{
-                            backgroundColor: theme.backgroundColor || "#FFFFFF",
-                            color: theme.textColor || "#111827",
-                          }}
-                        >
-                          {/* Color palette */}
-                          <div className="flex space-x-2 mb-3 justify-center">
+                          <div className="flex justify-between">
+                            <div className="flex flex-col">
+                              <span className="font-medium">{theme.name}</span>
+                              <span className="text-xs mt-1">
+                                {theme.isDark ? "Dark Mode" : "Light Mode"}
+                              </span>
+                            </div>
                             <div
                               className="w-6 h-6 rounded-full"
                               style={{ backgroundColor: theme.color }}
-                            />
-                            <div
-                              className="w-6 h-6 rounded-full"
-                              style={{ backgroundColor: theme.secondaryColor }}
-                            />
-                            <div
-                              className="w-6 h-6 rounded-full"
-                              style={{ backgroundColor: theme.accentColor }}
-                            />
+                            ></div>
                           </div>
 
-                          {/* Sample text */}
                           <div
-                            className="text-sm text-center"
-                            style={{ color: theme.textColor }}
-                          >
-                            <p>Sample text</p>
-                            <p style={{ color: theme.textColorSecondary }}>
-                              Secondary text
-                            </p>
-                          </div>
-
-                          {/* Sample card */}
-                          <div
-                            className="mt-3 p-2 rounded text-xs text-center"
+                            className="theme-preview mt-auto bg-gradient-card p-3 rounded"
                             style={{
-                              backgroundColor: theme.cardColor || "#FFFFFF",
-                              border: `1px solid ${theme.borderColor || "#E5E7EB"}`,
-                              color: theme.textColor,
+                              background: theme.isDark
+                                ? `linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03))`
+                                : `linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08))`,
+                              backdropFilter: "blur(4px)",
+                              WebkitBackdropFilter: "blur(4px)",
                             }}
                           >
-                            Card Example
+                            <div className="text-xs font-medium mb-1">
+                              Sample Card
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <div className="text-xs opacity-80">Value</div>
+                              <div className="text-xs">
+                                {theme.isDark ? "10.2K" : "10.2K"}
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </button>
+                      </div>
                     ))}
                   </div>
                 </div>

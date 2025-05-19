@@ -670,9 +670,9 @@
 
 /* ======== Sidebar Components ======== */
 .sidebar-container {
+  background-color: var(--color-header-bg, #1F2937);
   display: flex;
   flex-direction: column;
-  background-color: var(--color-sidebar-bg);
   border-right: 1px solid var(--color-sidebar-border);
   width: 16rem;
   height: 100vh;
@@ -786,10 +786,12 @@
 
 /* ======== Card Components ======== */
 .card {
-  background-color: var(--color-card-bg);
-  border: 1px solid var(--color-card-border);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
-  box-shadow: var(--color-card-shadow);
   padding: 1.5rem;
   transition: box-shadow var(--transition-quick), transform var(--transition-quick);
 }
@@ -1300,7 +1302,7 @@
 
 /* ======== Sidebar Components ======== */
 .sidebar-container {
-  background-color: var(--color-sidebar-bg);
+  background-color: var(--color-header-bg, #1F2937);
   color: var(--color-sidebar-text);
   border-right: 1px solid var(--color-sidebar-border);
   transition: width 0.3s ease;
@@ -1477,26 +1479,88 @@
 
 /* Background gradients */
 .bg-gradient-primary {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  background: linear-gradient(135deg, var(--color-primary)15, var(--color-primary)05);
 }
 
 .bg-gradient-secondary {
-  background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dark));
+  background: linear-gradient(135deg, var(--color-secondary)15, var(--color-secondary)05);
 }
 
 .bg-gradient-success {
-  background: linear-gradient(135deg, var(--color-success), var(--color-success-dark));
+  background: linear-gradient(135deg, var(--color-success)15, var(--color-success)05);
 }
 
 .bg-gradient-card {
-  background: linear-gradient(135deg, var(--color-card-bg), var(--color-bg-secondary));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .dark-theme .bg-gradient-card {
-  background: linear-gradient(135deg, var(--color-card-bg), var(--color-bg-tertiary));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
-/* Add smooth transitions for theme changes */
+/* Main background gradients */
+.main-gradient-light {
+  background: linear-gradient(135deg, var(--color-primary)10, var(--color-primary)02);
+}
+
+.main-gradient-dark {
+  background: linear-gradient(135deg, var(--color-bg-primary), var(--color-primary)15);
+}
+
+/* Card styles with gradients */
+.card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark-theme .card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Explicitly set sidebar color to match header in default theme */
+.sidebar-container {
+  background-color: var(--color-header-bg, #1F2937);
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-sidebar-border);
+  width: 16rem;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Add smooth transitions for all theme changes */
 body, .card, .sidebar-container, .header-container {
   transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Apply theme background to entire page */
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-theme body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+/* Additional button gradients */
+.bg-gradient-button {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  transition: all 0.2s ease;
+}
+
+.bg-gradient-button:hover {
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 } 

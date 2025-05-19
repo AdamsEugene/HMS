@@ -47,69 +47,6 @@ const departmentData = [
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
-// Available widget types for dashboard customization
-const availableWidgets = [
-  {
-    id: "patient-stats",
-    title: "Patient Statistics",
-    description: "Overview of patient volume and distribution",
-    icon: "👥",
-    type: "stat-card",
-  },
-  {
-    id: "appointments",
-    title: "Appointment Tracking",
-    description: "Summary of scheduled appointments",
-    icon: "📅",
-    type: "stat-card",
-  },
-  {
-    id: "bed-occupancy",
-    title: "Bed Occupancy",
-    description: "Current bed utilization rates",
-    icon: "🏥",
-    type: "stat-card",
-  },
-  {
-    id: "revenue",
-    title: "Revenue Metrics",
-    description: "Financial performance indicators",
-    icon: "💰",
-    type: "stat-card",
-  },
-  {
-    id: "patient-volume",
-    title: "Patient Volume Chart",
-    description: "Visualization of patient volume trends",
-    icon: "📊",
-    type: "chart",
-    chartType: "bar",
-  },
-  {
-    id: "revenue-expenses",
-    title: "Revenue vs Expenses",
-    description: "Financial performance over time",
-    icon: "📈",
-    type: "chart",
-    chartType: "line",
-  },
-  {
-    id: "department-distribution",
-    title: "Department Distribution",
-    description: "Patient distribution by department",
-    icon: "🔄",
-    type: "chart",
-    chartType: "pie",
-  },
-  {
-    id: "recent-activity",
-    title: "Recent Activity",
-    description: "Latest events and notifications",
-    icon: "🔔",
-    type: "list",
-  },
-];
-
 // Dashboard layout presets
 const layoutPresets = [
   {
@@ -304,7 +241,7 @@ const ChartContainer = ({
 
 const Dashboard = () => {
   // Use theme hook
-  const { currentTheme, getCardStyle } = useTheme();
+  const { currentTheme } = useTheme();
   const [selectedTimeframe, setSelectedTimeframe] = useState("month");
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [activeWidgets, setActiveWidgets] = useState<string[]>([
@@ -478,168 +415,517 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="py-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <div className="flex justify-between items-center">
-          <h1
-            className="text-2xl font-semibold"
-            style={{ color: currentTheme.textColor }}
-          >
-            Dashboard
-          </h1>
-
-          {/* Dashboard customization controls */}
-          <div className="flex space-x-2">
-            {isCustomizing ? (
-              <>
-                <div className="relative inline-block text-left mr-2">
-                  <select
-                    className="form-select py-1 text-sm"
-                    value={selectedLayout}
-                    onChange={(e) => applyLayoutPreset(e.target.value)}
-                    title="Select layout preset"
-                  >
-                    <option value="">-- Select Layout --</option>
-                    {layoutPresets.map((preset) => (
-                      <option key={preset.id} value={preset.id}>
-                        {preset.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <button
-                  className="btn btn-secondary text-sm py-1"
-                  onClick={() => setIsCustomizing(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="btn btn-primary text-sm py-1"
-                  onClick={saveDashboardConfig}
-                >
-                  Save Layout
-                </button>
-              </>
-            ) : (
-              <button
-                className="btn bg-primary text-white text-sm"
-                onClick={() => setIsCustomizing(true)}
-              >
-                Customize Dashboard
-              </button>
-            )}
+    <div className="space-y-6">
+      {isCustomizing && (
+        <div className="flex justify-between items-center bg-gradient-card backdrop-filter backdrop-blur-md p-4 rounded-lg mb-6 border border-white/10">
+          <div>
+            <h2 className="text-lg font-medium">Customize Dashboard</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Add, remove, or rearrange widgets to personalize your dashboard
+            </p>
+          </div>
+          <div className="flex space-x-3">
+            <button
+              onClick={() => setIsCustomizing(false)}
+              className="bg-black/20 hover:bg-black/30 text-white py-2 px-4 rounded-md transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={saveDashboardConfig}
+              className="bg-gradient-primary text-white py-2 px-4 rounded-md shadow-sm hover:shadow-md transition-all"
+            >
+              Save Layout
+            </button>
           </div>
         </div>
-      </div>
+      )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        {/* Widget selection panel - only shown when customizing */}
-        {isCustomizing && (
-          <div className="my-6 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-            <h2 className="text-lg font-medium mb-3">Available Widgets</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {availableWidgets.map((widget) => (
-                <button
-                  key={widget.id}
-                  onClick={() => addWidget(widget.id)}
-                  disabled={isWidgetActive(widget.id)}
-                  className={cn(
-                    "flex items-center p-3 rounded-lg text-left transition-colors",
-                    isWidgetActive(widget.id)
-                      ? "bg-gray-200 dark:bg-gray-700 cursor-not-allowed opacity-60"
-                      : "bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-                  )}
-                >
-                  <span className="text-xl mr-3">{widget.icon}</span>
-                  <div>
-                    <p className="font-medium text-sm">{widget.title}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {widget.description}
-                    </p>
+      {/* Dashboard content */}
+      <div className="space-y-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h1
+              className="text-2xl font-semibold"
+              style={{ color: currentTheme.textColor }}
+            >
+              Dashboard
+            </h1>
+
+            {/* Dashboard customization controls */}
+            <div className="flex space-x-2">
+              {isCustomizing ? (
+                <>
+                  <div className="relative inline-block text-left mr-2">
+                    <select
+                      className="form-select bg-gradient-card backdrop-filter backdrop-blur-md text-white border border-white/20 rounded-md py-2 px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                      value={selectedLayout}
+                      onChange={(e) => applyLayoutPreset(e.target.value)}
+                      title="Select layout preset"
+                    >
+                      <option value="" disabled>
+                        -- Select Layout --
+                      </option>
+                      {layoutPresets.map((preset) => (
+                        <option key={preset.id} value={preset.id}>
+                          {preset.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
+                </>
+              ) : (
+                <button
+                  className="bg-gradient-primary text-white text-sm py-2 px-4 rounded-md shadow-sm hover:shadow-md transition-all duration-200 flex items-center"
+                  onClick={() => setIsCustomizing(true)}
+                >
+                  <svg
+                    className="h-4 w-4 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  Customize Dashboard
                 </button>
-              ))}
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Available Widgets Section */}
+        {isCustomizing && (
+          <div className="mb-6">
+            <h2 className="text-lg font-medium mb-4">Available Widgets</h2>
+
+            <div className="bg-gradient-card backdrop-filter backdrop-blur-md rounded-lg p-4 border border-gray-700/30">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Patient Statistics */}
+                <div
+                  className={cn(
+                    "p-4 rounded-lg transition-all cursor-pointer",
+                    isWidgetActive("patient-stats")
+                      ? "bg-primary/20 border border-primary/30"
+                      : "hover:bg-white/10 border border-white/5"
+                  )}
+                  onClick={() => {
+                    if (!isWidgetActive("patient-stats")) {
+                      addWidget("patient-stats");
+                    }
+                  }}
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 mr-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-100/10 flex items-center justify-center">
+                        <svg
+                          className="h-6 w-6 text-info"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium">
+                        Patient Statistics
+                      </h3>
+                      <p className="text-xs text-gray-400">
+                        Overview of patient volume and distribution
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Appointment Tracking */}
+                <div
+                  className={cn(
+                    "p-4 rounded-lg transition-all cursor-pointer",
+                    isWidgetActive("appointments")
+                      ? "bg-primary/20 border border-primary/30"
+                      : "hover:bg-white/10 border border-white/5"
+                  )}
+                  onClick={() => {
+                    if (!isWidgetActive("appointments")) {
+                      addWidget("appointments");
+                    }
+                  }}
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 mr-3">
+                      <div className="w-10 h-10 rounded-full bg-green-100/10 flex items-center justify-center">
+                        <svg
+                          className="h-6 w-6 text-success"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium">
+                        Appointment Tracking
+                      </h3>
+                      <p className="text-xs text-gray-400">
+                        Summary of scheduled appointments
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bed Occupancy */}
+                <div
+                  className={cn(
+                    "p-4 rounded-lg transition-all cursor-pointer",
+                    isWidgetActive("bed-occupancy")
+                      ? "bg-primary/20 border border-primary/30"
+                      : "hover:bg-white/10 border border-white/5"
+                  )}
+                  onClick={() => {
+                    if (!isWidgetActive("bed-occupancy")) {
+                      addWidget("bed-occupancy");
+                    }
+                  }}
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 mr-3">
+                      <div className="w-10 h-10 rounded-full bg-purple-100/10 flex items-center justify-center">
+                        <svg
+                          className="h-6 w-6 text-purple-500"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium">Bed Occupancy</h3>
+                      <p className="text-xs text-gray-400">
+                        Current bed utilization rates
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Revenue */}
+                <div
+                  className={cn(
+                    "p-4 rounded-lg transition-all cursor-pointer",
+                    isWidgetActive("revenue")
+                      ? "bg-primary/20 border border-primary/30"
+                      : "hover:bg-white/10 border border-white/5"
+                  )}
+                  onClick={() => {
+                    if (!isWidgetActive("revenue")) {
+                      addWidget("revenue");
+                    }
+                  }}
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 mr-3">
+                      <div className="w-10 h-10 rounded-full bg-yellow-100/10 flex items-center justify-center">
+                        <svg
+                          className="h-6 w-6 text-warning"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium">Revenue Metrics</h3>
+                      <p className="text-xs text-gray-400">
+                        Financial performance indicators
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Patient Volume Chart */}
+                <div
+                  className={cn(
+                    "p-4 rounded-lg transition-all cursor-pointer",
+                    isWidgetActive("patient-volume")
+                      ? "bg-primary/20 border border-primary/30"
+                      : "hover:bg-white/10 border border-white/5"
+                  )}
+                  onClick={() => {
+                    if (!isWidgetActive("patient-volume")) {
+                      addWidget("patient-volume");
+                    }
+                  }}
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 mr-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-100/10 flex items-center justify-center">
+                        <svg
+                          className="h-6 w-6 text-info"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium">
+                        Patient Volume Chart
+                      </h3>
+                      <p className="text-xs text-gray-400">
+                        Visualization of patient volume trends
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Revenue vs Expenses */}
+                <div
+                  className={cn(
+                    "p-4 rounded-lg transition-all cursor-pointer",
+                    isWidgetActive("revenue-expenses")
+                      ? "bg-primary/20 border border-primary/30"
+                      : "hover:bg-white/10 border border-white/5"
+                  )}
+                  onClick={() => {
+                    if (!isWidgetActive("revenue-expenses")) {
+                      addWidget("revenue-expenses");
+                    }
+                  }}
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 mr-3">
+                      <div className="w-10 h-10 rounded-full bg-green-100/10 flex items-center justify-center">
+                        <svg
+                          className="h-6 w-6 text-success"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium">
+                        Revenue vs Expenses
+                      </h3>
+                      <p className="text-xs text-gray-400">
+                        Financial performance over time
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Department Distribution */}
+                <div
+                  className={cn(
+                    "p-4 rounded-lg transition-all cursor-pointer",
+                    isWidgetActive("department-distribution")
+                      ? "bg-primary/20 border border-primary/30"
+                      : "hover:bg-white/10 border border-white/5"
+                  )}
+                  onClick={() => {
+                    if (!isWidgetActive("department-distribution")) {
+                      addWidget("department-distribution");
+                    }
+                  }}
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 mr-3">
+                      <div className="w-10 h-10 rounded-full bg-purple-100/10 flex items-center justify-center">
+                        <svg
+                          className="h-6 w-6 text-purple-500"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium">
+                        Department Distribution
+                      </h3>
+                      <p className="text-xs text-gray-400">
+                        Patient distribution by department
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Activity */}
+                <div
+                  className={cn(
+                    "p-4 rounded-lg transition-all cursor-pointer",
+                    isWidgetActive("recent-activity")
+                      ? "bg-primary/20 border border-primary/30"
+                      : "hover:bg-white/10 border border-white/5"
+                  )}
+                  onClick={() => {
+                    if (!isWidgetActive("recent-activity")) {
+                      addWidget("recent-activity");
+                    }
+                  }}
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 mr-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-100/10 flex items-center justify-center">
+                        <svg
+                          className="h-6 w-6 text-info"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium">Recent Activity</h3>
+                      <p className="text-xs text-gray-400">
+                        Latest events and notifications
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
         {/* Timeframe selection */}
-        <div className="my-6 flex space-x-2">
-          <button
-            className={cn(
-              "btn",
-              selectedTimeframe === "day"
-                ? "btn-primary"
-                : "bg-white text-text-light border border-border-light dark:bg-background-dark dark:text-text-dark dark:border-border-dark"
-            )}
-            onClick={() => setSelectedTimeframe("day")}
-          >
-            Day
-          </button>
-          <button
-            className={cn(
-              "btn",
-              selectedTimeframe === "week"
-                ? "btn-primary"
-                : "bg-white text-text-light border border-border-light dark:bg-background-dark dark:text-text-dark dark:border-border-dark"
-            )}
-            onClick={() => setSelectedTimeframe("week")}
-          >
-            Week
-          </button>
-          <button
-            className={cn(
-              "btn",
-              selectedTimeframe === "month"
-                ? "btn-primary"
-                : "bg-white text-text-light border border-border-light dark:bg-background-dark dark:text-text-dark dark:border-border-dark"
-            )}
-            onClick={() => setSelectedTimeframe("month")}
-          >
-            Month
-          </button>
-          <button
-            className={cn(
-              "btn",
-              selectedTimeframe === "year"
-                ? "btn-primary"
-                : "bg-white text-text-light border border-border-light dark:bg-background-dark dark:text-text-dark dark:border-border-dark"
-            )}
-            onClick={() => setSelectedTimeframe("year")}
-          >
-            Year
-          </button>
+        <div className="bg-gradient-card backdrop-filter backdrop-blur-md rounded-lg p-3 border border-white/10 my-6 flex justify-center">
+          <div className="inline-flex space-x-1 rounded-md p-1 bg-black/10">
+            <button
+              className={cn(
+                "px-4 py-2 text-sm font-medium rounded-md transition-all",
+                selectedTimeframe === "day"
+                  ? "bg-primary text-white shadow-md"
+                  : "text-gray-300 hover:text-white hover:bg-white/10"
+              )}
+              onClick={() => setSelectedTimeframe("day")}
+            >
+              Day
+            </button>
+            <button
+              className={cn(
+                "px-4 py-2 text-sm font-medium rounded-md transition-all",
+                selectedTimeframe === "week"
+                  ? "bg-primary text-white shadow-md"
+                  : "text-gray-300 hover:text-white hover:bg-white/10"
+              )}
+              onClick={() => setSelectedTimeframe("week")}
+            >
+              Week
+            </button>
+            <button
+              className={cn(
+                "px-4 py-2 text-sm font-medium rounded-md transition-all",
+                selectedTimeframe === "month"
+                  ? "bg-primary text-white shadow-md"
+                  : "text-gray-300 hover:text-white hover:bg-white/10"
+              )}
+              onClick={() => setSelectedTimeframe("month")}
+            >
+              Month
+            </button>
+            <button
+              className={cn(
+                "px-4 py-2 text-sm font-medium rounded-md transition-all",
+                selectedTimeframe === "year"
+                  ? "bg-primary text-white shadow-md"
+                  : "text-gray-300 hover:text-white hover:bg-white/10"
+              )}
+              onClick={() => setSelectedTimeframe("year")}
+            >
+              Year
+            </button>
+          </div>
         </div>
 
-        {/* Stat cards */}
-        {activeWidgets.some((id) =>
-          [
-            "patient-stats",
-            "appointments",
-            "bed-occupancy",
-            "revenue",
-          ].includes(id)
-        ) && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {activeWidgets.includes("patient-stats") &&
-              renderStatCard("patient-stats")}
-            {activeWidgets.includes("appointments") &&
-              renderStatCard("appointments")}
-            {activeWidgets.includes("bed-occupancy") &&
-              renderStatCard("bed-occupancy")}
-            {activeWidgets.includes("revenue") && renderStatCard("revenue")}
-          </div>
-        )}
+        {/* Stat Cards - first row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          {renderStatCard("patient-stats")}
+          {renderStatCard("appointments")}
+          {renderStatCard("bed-occupancy")}
+          {renderStatCard("revenue")}
+        </div>
 
-        {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Patient volume chart */}
+        {/* Charts - second row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {activeWidgets.includes("patient-volume") && (
             <ChartContainer
               title="Patient Volume"
-              isCustomizing={isCustomizing}
               onRemove={() => removeWidget("patient-volume")}
               onConfigure={() => configureWidget("patient-volume")}
+              isCustomizing={isCustomizing}
             >
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -661,13 +947,12 @@ const Dashboard = () => {
             </ChartContainer>
           )}
 
-          {/* Revenue chart */}
           {activeWidgets.includes("revenue-expenses") && (
             <ChartContainer
               title="Revenue vs Expenses"
-              isCustomizing={isCustomizing}
               onRemove={() => removeWidget("revenue-expenses")}
               onConfigure={() => configureWidget("revenue-expenses")}
+              isCustomizing={isCustomizing}
             >
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -694,210 +979,187 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* Department Distribution */}
-        {activeWidgets.includes("department-distribution") && (
-          <ChartContainer
-            title="Department Distribution"
-            isCustomizing={isCustomizing}
-            onRemove={() => removeWidget("department-distribution")}
-            onConfigure={() => configureWidget("department-distribution")}
-          >
-            <div className="h-80 flex justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={departmentData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) =>
-                      `${name}: ${(percent * 100).toFixed(0)}%`
-                    }
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {departmentData.map((_entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value, name) => [value, name]} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </ChartContainer>
-        )}
-
-        {/* Recent Activity */}
-        {activeWidgets.includes("recent-activity") && (
-          <div className="card relative" style={getCardStyle()}>
-            {isCustomizing && (
-              <div className="absolute top-2 right-2 flex space-x-1">
-                <button
-                  onClick={() => configureWidget("recent-activity")}
-                  className="p-1 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                  title="Configure widget"
-                >
-                  <Cog6ToothIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-                </button>
-                <button
-                  onClick={() => removeWidget("recent-activity")}
-                  className="p-1 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
-                  title="Remove widget"
-                >
-                  <XMarkIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-                </button>
+        {/* Other widgets - third row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          {activeWidgets.includes("department-distribution") && (
+            <ChartContainer
+              title="Department Distribution"
+              onRemove={() => removeWidget("department-distribution")}
+              onConfigure={() => configureWidget("department-distribution")}
+              isCustomizing={isCustomizing}
+            >
+              <div className="h-80 flex justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={departmentData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) =>
+                        `${name}: ${(percent * 100).toFixed(0)}%`
+                      }
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {departmentData.map((_entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value, name) => [value, name]} />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
-            )}
-            <div
-              className="px-6 py-5 border-b border-border-light dark:border-border-dark -mx-6 -mt-6"
-              style={{ borderColor: currentTheme.borderColor }}
+            </ChartContainer>
+          )}
+
+          {activeWidgets.includes("recent-activity") && (
+            <ChartContainer
+              title="Recent Activity"
+              onRemove={() => removeWidget("recent-activity")}
+              onConfigure={() => configureWidget("recent-activity")}
+              isCustomizing={isCustomizing}
             >
-              <h3
-                className="text-lg font-medium"
-                style={{ color: currentTheme.textColor }}
+              <ul
+                className="divide-y divide-border-light dark:divide-border-dark"
+                style={{ borderColor: currentTheme.borderColor }}
               >
-                Recent Activity
-              </h3>
-            </div>
-            <ul
-              className="divide-y divide-border-light dark:divide-border-dark"
-              style={{ borderColor: currentTheme.borderColor }}
-            >
-              <li className="py-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex-center">
-                      <svg
-                        className="h-6 w-6 text-info"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
-                      </svg>
+                <li className="py-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0">
+                      <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex-center">
+                        <svg
+                          className="h-6 w-6 text-info"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        New patient admitted - John Doe
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Emergency Department
+                      </p>
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      10 min ago
                     </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      New patient admitted - John Doe
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Emergency Department
-                    </p>
-                  </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    10 min ago
-                  </div>
-                </div>
-              </li>
-              <li className="py-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900 flex-center">
-                      <svg
-                        className="h-6 w-6 text-success"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
+                </li>
+                <li className="py-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0">
+                      <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900 flex-center">
+                        <svg
+                          className="h-6 w-6 text-success"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        Lab results ready - Sarah Johnson
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Hematology
+                      </p>
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      25 min ago
                     </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      Lab results ready - Sarah Johnson
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Hematology
-                    </p>
-                  </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    25 min ago
-                  </div>
-                </div>
-              </li>
-              <li className="py-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900 flex-center">
-                      <svg
-                        className="h-6 w-6 text-purple-600 dark:text-purple-300"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
+                </li>
+                <li className="py-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0">
+                      <div className="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900 flex-center">
+                        <svg
+                          className="h-6 w-6 text-purple-600 dark:text-purple-300"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        Surgery scheduled - Michael Brown
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Orthopedics - Dr. Rodriguez
+                      </p>
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      1 hour ago
                     </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      Surgery scheduled - Michael Brown
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Orthopedics - Dr. Rodriguez
-                    </p>
-                  </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    1 hour ago
-                  </div>
-                </div>
-              </li>
-              <li className="py-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="h-10 w-10 rounded-full bg-yellow-100 dark:bg-yellow-900 flex-center">
-                      <svg
-                        className="h-6 w-6 text-warning"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                        />
-                      </svg>
+                </li>
+                <li className="py-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0">
+                      <div className="h-10 w-10 rounded-full bg-yellow-100 dark:bg-yellow-900 flex-center">
+                        <svg
+                          className="h-6 w-6 text-warning"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        Medication alert - Critical stock
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Pharmacy Department
+                      </p>
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      2 hours ago
                     </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      Medication alert - Critical stock
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Pharmacy Department
-                    </p>
-                  </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    2 hours ago
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        )}
+                </li>
+              </ul>
+            </ChartContainer>
+          )}
+        </div>
       </div>
     </div>
   );

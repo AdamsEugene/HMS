@@ -1766,12 +1766,12 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     if (theme.isDark) {
       return {
         primary: `linear-gradient(135deg, ${theme.color}22 0%, ${theme.backgroundColor || "#1F2937"}99 100%)`,
-        content: `linear-gradient(135deg, ${theme.backgroundColor || "#1F2937"}99 0%, ${theme.color}11 100%)`,
+        content: `linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05))`,
       };
     }
     return {
-      primary: `linear-gradient(135deg, ${theme.color}22 0%, ${theme.color}11 100%)`,
-      content: `linear-gradient(135deg, ${theme.backgroundColor || "#F9FAFB"}99 0%, ${theme.color}11 100%)`,
+      primary: `linear-gradient(135deg, ${theme.color}15 0%, ${theme.color}05 100%)`,
+      content: `linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08))`,
     };
   };
 
