@@ -1,6 +1,6 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { cn } from "../../utils/cn";
-import { widgetTypes } from "./WidgetRegistry";
+import { getAllWidgetTypes } from "./WidgetRegistry";
 
 interface WidgetSelectorProps {
   activeWidgets: string[];
@@ -11,13 +11,20 @@ const WidgetSelector = ({
   activeWidgets,
   onAddWidget,
 }: WidgetSelectorProps) => {
+  const [allWidgets, setAllWidgets] = useState(getAllWidgetTypes());
+
+  // Update widgets when something changes
+  useEffect(() => {
+    setAllWidgets(getAllWidgetTypes());
+  }, [activeWidgets]); // Refresh when active widgets change
+
   return (
     <div className="mb-6">
       <h2 className="text-lg font-medium mb-4">Available Widgets</h2>
 
       <div className="bg-gradient-card backdrop-filter backdrop-blur-md rounded-lg p-4 border border-gray-700/30">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {widgetTypes.map((widget) => (
+          {allWidgets.map((widget) => (
             <div
               key={widget.id}
               className={cn(
@@ -50,6 +57,11 @@ const WidgetSelector = ({
               {activeWidgets.includes(widget.id) && (
                 <div className="mt-2 text-xs text-right text-primary font-medium">
                   Already added
+                </div>
+              )}
+              {widget.isCustom && (
+                <div className="mt-1 text-xs text-gray-400 italic">
+                  Custom widget
                 </div>
               )}
             </div>

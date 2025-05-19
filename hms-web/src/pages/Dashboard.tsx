@@ -188,10 +188,22 @@ const Dashboard = () => {
     setLayouts(newLayouts);
   };
 
-  // Handle widget configuration (placeholder - would open widget settings in real app)
+  // Configure a widget (or create new custom widget)
   const configureWidget = (widgetId: string) => {
+    // If this is the create-custom widget, add it to dashboard immediately
+    if (widgetId === "create-custom") {
+      addWidget(widgetId);
+      return;
+    }
+
+    // If this is a custom widget that needs to be added (new widget was created)
+    if (widgetId.startsWith("custom-") && !activeWidgets.includes(widgetId)) {
+      addWidget(widgetId);
+      return;
+    }
+
+    // Regular widget configuration would go here
     console.log(`Configure widget: ${widgetId}`);
-    // In a real application, this would open a configuration modal
   };
 
   // Save dashboard configuration
@@ -263,8 +275,8 @@ const Dashboard = () => {
             <div>
               <p className="font-medium">New Feature!</p>
               <p className="text-sm text-gray-300">
-                You can now drag and rearrange dashboard widgets at any time.
-                Try it out!
+                You can now drag and rearrange dashboard widgets in
+                customization mode. Click "Customize Dashboard" to try it out!
               </p>
             </div>
           </div>
@@ -413,7 +425,9 @@ const Dashboard = () => {
         </div>
 
         {/* Widgets grid */}
-        <div className="dashboard-grid">
+        <div
+          className={`dashboard-grid ${isCustomizing ? "is-customizing" : ""}`}
+        >
           {layouts.lg && layouts.lg.length > 0 && (
             <ResponsiveGridLayout
               className="layout"
@@ -425,7 +439,7 @@ const Dashboard = () => {
               containerPadding={[0, 0]}
               onLayoutChange={handleLayoutChange}
               onBreakpointChange={handleBreakpointChange}
-              isDraggable={true}
+              isDraggable={isCustomizing}
               isResizable={isCustomizing}
               draggableHandle=".widget-drag-handle"
             >

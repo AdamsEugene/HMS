@@ -58,23 +58,33 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.widget-drag-handle {
+/* Customization mode styles */
+.is-customizing .card {
+  border: 1px dashed rgba(var(--color-primary-rgb), 0.3);
+}
+
+.is-customizing .widget-drag-handle {
   cursor: move;
   cursor: grab;
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.is-customizing .widget-drag-handle:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.is-customizing .widget-drag-handle:active {
+  cursor: grabbing;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Default widget drag handle styles */
+.widget-drag-handle {
   -webkit-user-select: none;
   user-select: none;
   padding: 10px;
   border-radius: 6px 6px 0 0;
   transition: background-color 0.2s ease;
-}
-
-.widget-drag-handle:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.widget-drag-handle:active {
-  cursor: grabbing;
-  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Custom scrollbar for dashboard elements */

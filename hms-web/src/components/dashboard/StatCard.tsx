@@ -1,11 +1,7 @@
 import React from "react";
 import { cn } from "../../utils/cn";
 import { useTheme } from "../../contexts/ThemeContext";
-import {
-  XMarkIcon,
-  Cog6ToothIcon,
-  ArrowsPointingOutIcon,
-} from "@heroicons/react/24/outline";
+import { XMarkIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 
 // Stat card component
 export interface StatCardProps {
@@ -62,7 +58,12 @@ const StatCard = ({
           </button>
         </div>
       )}
-      <div className="widget-drag-handle cursor-move">
+      <div className="widget-drag-handle relative pt-4 pb-2 px-4">
+        {isCustomizing && (
+          <div className="absolute top-1 left-1/2 transform -translate-x-1/2 text-xs px-2 py-0.5 bg-primary/20 text-primary rounded-full">
+            Drag to move
+          </div>
+        )}
         <div className="flex justify-between items-center">
           <div>
             <p
@@ -97,11 +98,6 @@ const StatCard = ({
             >
               {icon}
             </div>
-            {!isCustomizing && (
-              <div className="absolute top-2 right-2 opacity-20 hover:opacity-60 transition-opacity">
-                <ArrowsPointingOutIcon className="h-3 w-3" />
-              </div>
-            )}
           </div>
         </div>
       </div>

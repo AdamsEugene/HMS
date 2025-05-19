@@ -1,10 +1,6 @@
 import React from "react";
 import { useTheme } from "../../contexts/ThemeContext";
-import {
-  XMarkIcon,
-  Cog6ToothIcon,
-  ArrowsPointingOutIcon,
-} from "@heroicons/react/24/outline";
+import { XMarkIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 
 // Chart container component
 export interface ChartContainerProps {
@@ -57,15 +53,27 @@ const ChartContainer = ({
           </button>
         </div>
       )}
-      <div className="widget-drag-handle cursor-move flex items-center justify-between">
-        <h2
-          className="text-lg font-medium mb-4"
-          style={{ color: currentTheme.textColor }}
-        >
-          {title}
-        </h2>
-        <div className="opacity-20 hover:opacity-60 transition-opacity">
-          <ArrowsPointingOutIcon className="h-4 w-4" />
+      <div
+        className={`widget-drag-handle flex justify-between items-center px-4 py-2 ${
+          isCustomizing ? "flex justify-between" : ""
+        }`}
+      >
+        <h3 className="text-base font-medium">{title}</h3>
+        <div className="flex items-center">
+          {isCustomizing && (
+            <div className="mr-2 text-xs px-2 py-0.5 bg-primary/20 text-primary rounded-full">
+              Drag to move
+            </div>
+          )}
+          {isCustomizing && onConfigure && (
+            <button
+              onClick={() => onConfigure(id)}
+              className="p-1 text-gray-400 hover:text-white transition-colors"
+              aria-label="Configure widget"
+            >
+              <Cog6ToothIcon className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
       {children}

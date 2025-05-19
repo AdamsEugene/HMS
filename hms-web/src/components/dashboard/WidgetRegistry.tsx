@@ -4,6 +4,56 @@ import PatientVolumeChart from "./PatientVolumeChart";
 import RevenueExpensesChart from "./RevenueExpensesChart";
 import DepartmentDistribution from "./DepartmentDistribution";
 import RecentActivity from "./RecentActivity";
+import CustomWidget from "./CustomWidget";
+import type { CustomWidgetData } from "./CustomWidget";
+
+// Common widget component props interface to solve type compatibility issues
+export interface WidgetComponentProps {
+  id: string;
+  isCustomizing?: boolean;
+  onRemove?: (id: string) => void;
+  onConfigure?: (id: string) => void;
+  className?: string;
+}
+
+// Widget type interfaces
+export interface WidgetBase {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode | string;
+  defaultWidth: number;
+  defaultHeight: number;
+  isCreator?: boolean;
+  isCustom?: boolean;
+  component?: React.ComponentType<WidgetComponentProps>;
+}
+
+export interface StatWidget extends WidgetBase {
+  type: "stat";
+}
+
+export interface ChartWidget extends WidgetBase {
+  type: "chart";
+  component: React.ComponentType<WidgetComponentProps>;
+}
+
+export interface ListWidget extends WidgetBase {
+  type: "list";
+  component: React.ComponentType<WidgetComponentProps>;
+}
+
+export interface CustomWidgetType extends WidgetBase {
+  type: "custom";
+  content?: string;
+  value?: string;
+  change?: string;
+  isIncrease?: boolean;
+  backgroundColor?: string;
+}
+
+export type Widget = StatWidget | ChartWidget | ListWidget | CustomWidgetType;
 
 // SVG Icons for stat cards
 const Icons = {
@@ -67,10 +117,58 @@ const Icons = {
       />
     </svg>
   ),
+  staff: (
+    <svg
+      className="h-6 w-6 text-blue-500"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+      />
+    </svg>
+  ),
+  laboratory: (
+    <svg
+      className="h-6 w-6 text-green-500"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+      />
+    </svg>
+  ),
+  pharmacy: (
+    <svg
+      className="h-6 w-6 text-red-500"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+      />
+    </svg>
+  ),
 };
 
+// Custom widget key in localStorage
+export const CUSTOM_WIDGETS_KEY = "hms-custom-widgets";
+
 // Define widget metadata
-export const widgetTypes = [
+export const widgetTypes: Widget[] = [
   {
     id: "patient-stats",
     type: "stat",
@@ -104,6 +202,33 @@ export const widgetTypes = [
     title: "Revenue Metrics",
     description: "Financial performance indicators",
     icon: Icons.revenue,
+    defaultWidth: 1,
+    defaultHeight: 1,
+  },
+  {
+    id: "staff-metrics",
+    type: "stat",
+    title: "Staff Metrics",
+    description: "Staff performance and availability",
+    icon: Icons.staff,
+    defaultWidth: 1,
+    defaultHeight: 1,
+  },
+  {
+    id: "lab-stats",
+    type: "stat",
+    title: "Laboratory Stats",
+    description: "Lab test volumes and turnaround times",
+    icon: Icons.laboratory,
+    defaultWidth: 1,
+    defaultHeight: 1,
+  },
+  {
+    id: "pharmacy-metrics",
+    type: "stat",
+    title: "Pharmacy Metrics",
+    description: "Medication dispensing and inventory status",
+    icon: Icons.pharmacy,
     defaultWidth: 1,
     defaultHeight: 1,
   },
@@ -147,7 +272,57 @@ export const widgetTypes = [
     defaultWidth: 2,
     defaultHeight: 2,
   },
+  {
+    id: "create-custom",
+    type: "custom",
+    title: "Create Custom Widget",
+    description: "Build your own custom widget",
+    icon: "✨",
+    defaultWidth: 2,
+    defaultHeight: 2,
+    isCreator: true,
+  },
 ];
+
+// Get custom widgets from localStorage
+export const getCustomWidgets = (): CustomWidgetType[] => {
+  try {
+    const savedWidgets = localStorage.getItem(CUSTOM_WIDGETS_KEY);
+    if (savedWidgets) {
+      const widgets = JSON.parse(savedWidgets) as CustomWidgetData[];
+      return widgets.map((widget) => ({
+        ...widget,
+        isCustom: true,
+        type: widget.type as "custom",
+      }));
+    }
+  } catch (e) {
+    console.error("Failed to parse custom widgets", e);
+  }
+  return [];
+};
+
+// Save custom widget to localStorage
+export const saveCustomWidget = (widget: CustomWidgetData): boolean => {
+  try {
+    const currentWidgets = getCustomWidgets().map((w) => ({
+      ...w,
+      isCustom: undefined, // Remove the isCustom flag for storage
+    }));
+    const updatedWidgets = [...currentWidgets, widget];
+    localStorage.setItem(CUSTOM_WIDGETS_KEY, JSON.stringify(updatedWidgets));
+    return true;
+  } catch (e) {
+    console.error("Failed to save custom widget", e);
+    return false;
+  }
+};
+
+// Get all widget types including custom widgets
+export const getAllWidgetTypes = (): Widget[] => {
+  const customWidgets = getCustomWidgets();
+  return [...widgetTypes, ...customWidgets];
+};
 
 // Layout presets for different dashboard configurations
 export const layoutPresets = [
@@ -195,8 +370,9 @@ export const layoutPresets = [
 ];
 
 // Get widget metadata by ID
-export const getWidgetById = (id: string) => {
-  return widgetTypes.find((widget) => widget.id === id);
+export const getWidgetById = (id: string): Widget | undefined => {
+  const allWidgets = getAllWidgetTypes();
+  return allWidgets.find((widget) => widget.id === id);
 };
 
 // Function to render widget based on type
@@ -230,6 +406,19 @@ export const renderWidget = (
     );
   }
 
+  // Render custom widget
+  if (widgetDef.type === "custom") {
+    return (
+      <CustomWidget
+        id={widget.id}
+        widget={widgetDef}
+        isCustomizing={isCustomizing}
+        onRemove={onRemove}
+        onConfigure={onConfigure}
+      />
+    );
+  }
+
   // Render chart/component widgets
   if (widgetDef.component) {
     const Component = widgetDef.component;
@@ -246,8 +435,16 @@ export const renderWidget = (
   return null;
 };
 
+interface StatCardProps {
+  title: string;
+  value: string;
+  change: string;
+  isIncrease: boolean;
+  icon: React.ReactNode;
+}
+
 // Get stat card props based on widget ID
-const getStatCardProps = (widgetId: string) => {
+const getStatCardProps = (widgetId: string): StatCardProps | null => {
   switch (widgetId) {
     case "patient-stats":
       return {
@@ -281,7 +478,48 @@ const getStatCardProps = (widgetId: string) => {
         isIncrease: true,
         icon: Icons.revenue,
       };
-    default:
+    case "staff-metrics":
+      return {
+        title: "Staff On Duty",
+        value: "42",
+        change: "5%",
+        isIncrease: true,
+        icon: Icons.staff,
+      };
+    case "lab-stats":
+      return {
+        title: "Lab Tests Today",
+        value: "187",
+        change: "12%",
+        isIncrease: true,
+        icon: Icons.laboratory,
+      };
+    case "pharmacy-metrics":
+      return {
+        title: "Medications Dispensed",
+        value: "324",
+        change: "7%",
+        isIncrease: true,
+        icon: Icons.pharmacy,
+      };
+    default: {
+      // Check if it's a custom widget with stat-like data
+      const customWidgets = getCustomWidgets();
+      const customWidget = customWidgets.find((w) => w.id === widgetId);
+
+      if (customWidget && customWidget.value) {
+        return {
+          title: customWidget.title,
+          value: customWidget.value || "N/A",
+          change: customWidget.change || "0%",
+          isIncrease:
+            customWidget.isIncrease !== undefined
+              ? customWidget.isIncrease
+              : true,
+          icon: customWidget.icon || "📊",
+        };
+      }
       return null;
+    }
   }
 };
