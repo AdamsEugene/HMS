@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { useTheme } from "../../contexts/ThemeContext";
 import DecorativePattern from "./DecorativePattern";
@@ -37,10 +38,10 @@ const StatsOverviewCard: React.FC<StatsOverviewCardProps> = ({
   trendType = "neutral",
   icon: IconComponent,
   chartData,
-  gradients,
+  // gradients,
 }) => {
-  const { currentTheme, getGradientBackground } = useTheme();
-  const cardGradients = gradients || getGradientBackground(currentTheme);
+  const { currentTheme } = useTheme();
+  // const cardGradients = gradients || getGradientBackground(currentTheme);
 
   return (
     <div

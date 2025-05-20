@@ -14,10 +14,10 @@ const DashboardBanner: React.FC<DashboardBannerProps> = ({
   hospitalName = "MediHub Central",
   title,
   subtitle,
-  theme,
+  // theme,
 }) => {
-  const { currentTheme, getGradientBackground } = useTheme();
-  const gradients = getGradientBackground(currentTheme);
+  const { currentTheme } = useTheme();
+  // const gradients = getGradientBackground(currentTheme);
 
   // State for current date and time
   const [currentTime, setCurrentTime] = useState(new Date());

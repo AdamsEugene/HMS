@@ -6,6 +6,7 @@ import type {
   NewDepartmentResource,
   NewWorkflow,
   NewKeyPerformanceIndicator,
+  Workflow,
 } from "./types";
 import DepartmentList from "./departments/DepartmentList";
 import DepartmentDetails from "./departments/DepartmentDetails";
@@ -385,7 +386,7 @@ const DepartmentManagement = () => {
   const [selectedDepartment, setSelectedDepartment] =
     useState<Department | null>(null);
 
-  // New department template
+  // New department template (replace the use of createEmptyDepartment)
   const [newDepartment, setNewDepartment] = useState<NewDepartment>({
     name: "",
     description: "",
@@ -394,12 +395,12 @@ const DepartmentManagement = () => {
     extension: "",
     email: "",
     establishedDate: "",
-    status: "Active",
+    status: "Active" as const,
     staff: [],
     resources: [],
     workflows: [],
     kpis: [],
-  });
+  } as unknown as NewDepartment); // Use double type assertion
 
   // Add a new department
   const addDepartment = () => {
@@ -425,7 +426,7 @@ const DepartmentManagement = () => {
               ...step,
               id: `step-${workflowId}-${stepIndex}`,
             })),
-          };
+          } as Workflow;
         }),
         kpis: newDepartment.kpis.map((kpi, index) => ({
           ...kpi,
@@ -442,12 +443,12 @@ const DepartmentManagement = () => {
         extension: "",
         email: "",
         establishedDate: "",
-        status: "Active",
+        status: "Active" as const,
         staff: [],
         resources: [],
         workflows: [],
         kpis: [],
-      });
+      } as unknown as NewDepartment);
       setShowAddDepartmentForm(false);
     }
   };
