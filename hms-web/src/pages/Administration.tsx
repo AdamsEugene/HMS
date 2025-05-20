@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { Tab } from "@headlessui/react";
+import { Responsive, WidthProvider } from "react-grid-layout";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 import {
   BuildingOffice2Icon,
   UsersIcon,
@@ -27,6 +30,9 @@ import {
 import "../styles/dashboard.css";
 import "../styles/customization.css";
 import { useTheme } from "../contexts/ThemeContext";
+
+// Set up responsive grid
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 // Main modules in the Administration section
 const administrationModules = [
@@ -113,6 +119,13 @@ const layoutPresets = [
         icon: UsersIcon,
       },
     ],
+    layout: {
+      lg: [
+        { i: "departments", x: 0, y: 0, w: 1, h: 1 },
+        { i: "integrations", x: 1, y: 0, w: 1, h: 1 },
+        { i: "roles", x: 2, y: 0, w: 1, h: 1 },
+      ],
+    },
   },
   {
     id: "clinical-focus",
@@ -152,6 +165,13 @@ const layoutPresets = [
         icon: ArrowsRightLeftIcon,
       },
     ],
+    layout: {
+      lg: [
+        { i: "departments", x: 0, y: 0, w: 1, h: 1 },
+        { i: "clinical-staff", x: 1, y: 0, w: 1, h: 1 },
+        { i: "referrals", x: 2, y: 0, w: 1, h: 1 },
+      ],
+    },
   },
   {
     id: "administrative-focus",
@@ -187,12 +207,31 @@ const layoutPresets = [
         icon: DocumentDuplicateIcon,
       },
     ],
+    layout: {
+      lg: [
+        { i: "compliance", x: 0, y: 0, w: 1, h: 1 },
+        { i: "certifications", x: 1, y: 0, w: 1, h: 1 },
+        { i: "codes", x: 2, y: 0, w: 1, h: 1 },
+      ],
+    },
   },
 ];
+
+// Define layout item interface
+interface LayoutItem {
+  i: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  minW?: number;
+  minH?: number;
+}
 
 // Local storage keys
 const ADMIN_LAYOUT_KEY = "hms-admin-layout";
 const ADMIN_USER_LAYOUTS_KEY = "hms-admin-user-layouts";
+const ADMIN_LAYOUTS_CONFIG_KEY = "hms-admin-layouts-config";
 
 // Hospital profile data
 interface Accreditation {
@@ -228,7 +267,6 @@ interface HospitalProfile {
   certifications: Certification[];
 }
 
-// Stats card type
 interface StatsCard {
   id: string;
   title: string;
@@ -240,13 +278,13 @@ interface StatsCard {
   chartData?: number[];
 }
 
-// Layout type
 interface LayoutPreset {
   id: string;
   name: string;
   description: string;
   modules: string[];
   statsCards: StatsCard[];
+  layout?: { [key: string]: LayoutItem[] };
 }
 
 const Administration = () => {
@@ -261,6 +299,8 @@ const Administration = () => {
   const [activeStatsCards, setActiveStatsCards] = useState<StatsCard[]>([]);
   const [selectedLayout, setSelectedLayout] = useState("default");
   const [userLayouts, setUserLayouts] = useState<LayoutPreset[]>([]);
+  const [layouts, setLayouts] = useState<{ [key: string]: LayoutItem[] }>({});
+  const [currentBreakpoint, setCurrentBreakpoint] = useState("lg");
 
   // Load saved layout from local storage
   useEffect(() => {
@@ -288,6 +328,16 @@ const Administration = () => {
         console.error("Failed to parse user layouts", e);
       }
     }
+
+    // Load saved grid layouts
+    const savedLayouts = localStorage.getItem(ADMIN_LAYOUTS_CONFIG_KEY);
+    if (savedLayouts) {
+      try {
+        setLayouts(JSON.parse(savedLayouts));
+      } catch (e) {
+        console.error("Failed to parse saved grid layouts", e);
+      }
+    }
   }, []);
 
   // Apply a layout preset
@@ -303,11 +353,85 @@ const Administration = () => {
       setActiveStatsCards(preset.statsCards);
       setSelectedLayout(layoutId);
 
+      // Set grid layout if available
+      if (preset.layout) {
+        // Create responsive layouts if not defined in preset
+        const newLayouts: { [key: string]: LayoutItem[] } = {
+          ...preset.layout,
+        };
+
+        // Add responsive variants if not present
+        if (!newLayouts.md) {
+          newLayouts.md = (newLayouts.lg || []).map((item) => ({
+            ...item,
+            x: item.x % 2, // 2 columns on medium
+            w: Math.min(item.w, 2),
+          }));
+        }
+
+        if (!newLayouts.sm) {
+          newLayouts.sm = (newLayouts.lg || []).map((item) => ({
+            ...item,
+            x: 0, // 1 column on small
+            w: 1,
+          }));
+        }
+
+        setLayouts(newLayouts);
+      } else {
+        // Create default layout based on stats cards
+        const newLayouts = {
+          lg: preset.statsCards.map((card, index) => ({
+            i: card.id,
+            x: index % 3,
+            y: Math.floor(index / 3),
+            w: 1,
+            h: 1,
+            minW: 1,
+            minH: 1,
+          })),
+          md: preset.statsCards.map((card, index) => ({
+            i: card.id,
+            x: index % 2,
+            y: Math.floor(index / 2),
+            w: 1,
+            h: 1,
+            minW: 1,
+            minH: 1,
+          })),
+          sm: preset.statsCards.map((card, index) => ({
+            i: card.id,
+            x: 0,
+            y: index,
+            w: 1,
+            h: 1,
+            minW: 1,
+            minH: 1,
+          })),
+        };
+        setLayouts(newLayouts);
+      }
+
       // If module in activeModules is not in the tabs, set selectedTab to first active module
       if (selectedTab >= preset.modules.length) {
         setSelectedTab(0);
       }
     }
+  };
+
+  // Handle layout change
+  const handleLayoutChange = (
+    layout: LayoutItem[],
+    allLayouts: { [key: string]: LayoutItem[] }
+  ) => {
+    setLayouts(allLayouts);
+    // Save to localStorage
+    localStorage.setItem(ADMIN_LAYOUTS_CONFIG_KEY, JSON.stringify(allLayouts));
+  };
+
+  // Handle breakpoint change
+  const handleBreakpointChange = (breakpoint: string) => {
+    setCurrentBreakpoint(breakpoint);
   };
 
   // Save current layout
@@ -316,11 +440,57 @@ const Administration = () => {
       id: selectedLayout,
       modules: activeModules,
       statsCards: activeStatsCards,
+      layout: layouts,
     };
 
     localStorage.setItem(ADMIN_LAYOUT_KEY, JSON.stringify(currentLayout));
+    localStorage.setItem(ADMIN_LAYOUTS_CONFIG_KEY, JSON.stringify(layouts));
     setIsCustomizing(false);
     setShowConfigPanel(false);
+  };
+
+  // Add a new stats card
+  const addStatsCard = (card: StatsCard) => {
+    if (!activeStatsCards.some((c) => c.id === card.id)) {
+      // Find position for new card
+      let maxY = 0;
+      if (layouts[currentBreakpoint]?.length > 0) {
+        layouts[currentBreakpoint].forEach((item) => {
+          const itemBottom = item.y + item.h;
+          if (itemBottom > maxY) maxY = itemBottom;
+        });
+      }
+
+      // Add to layouts
+      const newLayouts = { ...layouts };
+      const layoutItem = {
+        i: card.id,
+        x: 0,
+        y: maxY,
+        w: 1,
+        h: 1,
+        minW: 1,
+        minH: 1,
+      };
+
+      // Add to all breakpoints
+      Object.keys(newLayouts).forEach((breakpoint) => {
+        if (!newLayouts[breakpoint]) {
+          newLayouts[breakpoint] = [];
+        }
+        newLayouts[breakpoint] = [
+          ...newLayouts[breakpoint],
+          {
+            ...layoutItem,
+            w: breakpoint === "sm" ? 1 : layoutItem.w,
+            x: breakpoint === "sm" ? 0 : layoutItem.x,
+          },
+        ];
+      });
+
+      setLayouts(newLayouts);
+      setActiveStatsCards([...activeStatsCards, card]);
+    }
   };
 
   // Save as new layout
@@ -332,6 +502,7 @@ const Administration = () => {
       description,
       modules: activeModules,
       statsCards: activeStatsCards,
+      layout: layouts,
     };
 
     const updatedUserLayouts = [...userLayouts, newLayout];
@@ -344,6 +515,7 @@ const Administration = () => {
       JSON.stringify(updatedUserLayouts)
     );
     localStorage.setItem(ADMIN_LAYOUT_KEY, JSON.stringify(newLayout));
+    localStorage.setItem(ADMIN_LAYOUTS_CONFIG_KEY, JSON.stringify(layouts));
 
     setIsCustomizing(false);
     setShowConfigPanel(false);
@@ -370,11 +542,20 @@ const Administration = () => {
       setActiveStatsCards(
         activeStatsCards.filter((card) => card.id !== cardId)
       );
+
+      // Remove from layouts
+      const newLayouts = { ...layouts };
+      Object.keys(newLayouts).forEach((breakpoint) => {
+        newLayouts[breakpoint] = newLayouts[breakpoint].filter(
+          (item) => item.i !== cardId
+        );
+      });
+      setLayouts(newLayouts);
     } else {
       // Add card
       const cardToAdd = allCards.find((card) => card.id === cardId);
       if (cardToAdd) {
-        setActiveStatsCards([...activeStatsCards, cardToAdd]);
+        addStatsCard(cardToAdd);
       }
     }
   };
@@ -422,47 +603,71 @@ const Administration = () => {
       />
 
       <div className="container mx-auto px-4 py-6">
-        {/* Stats Overview */}
+        {/* Stats Grid */}
         <div
-          className={cn(
-            "grid grid-cols-1 md:grid-cols-3 gap-6 mb-8",
-            isCustomizing && "is-customizing"
-          )}
+          className={`dashboard-grid ${isCustomizing ? "is-customizing" : ""} mb-8`}
         >
-          {activeStatsCards.map((card) => (
-            <div key={card.id} className="relative group">
-              {isCustomizing && (
-                <button
-                  onClick={() => toggleStatsCard(card.id)}
-                  className="absolute -top-2 -right-2 z-10 bg-red-500 text-white rounded-full p-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                  title="Remove card"
-                >
-                  <XMarkIcon className="h-4 w-4" />
-                </button>
-              )}
-              <StatsOverviewCard
-                title={card.title}
-                value={card.value}
-                trend={card.trend}
-                trendLabel={card.trendLabel}
-                trendType={card.trendType}
-                icon={card.icon}
-                chartData={card.chartData || [25, 20, 22, 18, 24]}
-                gradients={gradients}
-              />
-            </div>
-          ))}
-
-          {isCustomizing && activeStatsCards.length < 3 && (
-            <button
-              onClick={() => setShowConfigPanel(true)}
-              className="h-32 flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white dark:bg-gray-800 text-gray-500 hover:border-primary hover:text-primary transition-colors"
+          {activeStatsCards.length > 0 && layouts.lg && (
+            <ResponsiveGridLayout
+              className="layout"
+              layouts={layouts}
+              breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480 }}
+              cols={{ lg: 3, md: 2, sm: 1, xs: 1 }}
+              rowHeight={160}
+              margin={[16, 16]}
+              containerPadding={[0, 0]}
+              onLayoutChange={handleLayoutChange}
+              onBreakpointChange={handleBreakpointChange}
+              isDraggable={isCustomizing}
+              isResizable={isCustomizing}
+              draggableHandle=".widget-drag-handle"
             >
-              <div className="flex flex-col items-center">
-                <PlusIcon className="h-8 w-8 mb-2" />
-                <span>Add Stat Card</span>
-              </div>
-            </button>
+              {activeStatsCards.map((card) => (
+                <div
+                  key={card.id}
+                  className="card relative overflow-hidden animate-fade-in-up"
+                >
+                  {isCustomizing && (
+                    <>
+                      <div className="widget-drag-handle absolute inset-x-0 top-0 h-8 z-10 flex items-center justify-center cursor-move">
+                        <div className="w-10 h-1 bg-gray-300/30 rounded-full"></div>
+                      </div>
+                      <button
+                        onClick={() => toggleStatsCard(card.id)}
+                        className="absolute top-2 right-2 z-10 bg-red-500 text-white rounded-full p-1 shadow-lg transition-opacity"
+                        title="Remove card"
+                      >
+                        <XMarkIcon className="h-4 w-4" />
+                      </button>
+                    </>
+                  )}
+                  <StatsOverviewCard
+                    title={card.title}
+                    value={card.value}
+                    trend={card.trend}
+                    trendLabel={card.trendLabel}
+                    trendType={card.trendType}
+                    icon={card.icon}
+                    chartData={card.chartData || [25, 20, 22, 18, 24]}
+                    gradients={gradients}
+                  />
+                </div>
+              ))}
+            </ResponsiveGridLayout>
+          )}
+
+          {isCustomizing && activeStatsCards.length === 0 && (
+            <div className="flex justify-center">
+              <button
+                onClick={() => setShowConfigPanel(true)}
+                className="h-32 flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white dark:bg-gray-800 text-gray-500 hover:border-primary hover:text-primary transition-colors px-6"
+              >
+                <div className="flex flex-col items-center">
+                  <PlusIcon className="h-8 w-8 mb-2" />
+                  <span>Add Stat Cards</span>
+                </div>
+              </button>
+            </div>
           )}
         </div>
 
@@ -553,7 +758,7 @@ const Administration = () => {
           onClick={() => setShowConfigPanel(false)}
         >
           <div
-            className="relative w-full max-w-2xl p-6 rounded-lg shadow-xl"
+            className="relative w-full max-w-2xl p-6 rounded-lg shadow-xl max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
             style={{ background: gradients.content }}
           >
@@ -645,6 +850,21 @@ const Administration = () => {
                 ))}
               </div>
             </div>
+
+            {/* Layout Instructions */}
+            {isCustomizing && activeStatsCards.length > 0 && (
+              <div className="mb-6 p-3 bg-black/10 rounded-md">
+                <h3 className="text-sm font-medium text-gray-300 mb-2">
+                  Layout Tips
+                </h3>
+                <ul className="text-xs text-gray-400 list-disc list-inside space-y-1">
+                  <li>Drag the handle at the top of each card to move it</li>
+                  <li>Drag the bottom-right corner to resize cards</li>
+                  <li>Changes are saved automatically</li>
+                  <li>The layout adapts to different screen sizes</li>
+                </ul>
+              </div>
+            )}
 
             {/* Action Buttons */}
             <div className="flex justify-between">
