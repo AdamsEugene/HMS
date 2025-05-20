@@ -304,3 +304,117 @@ export interface NewUserRoleAssignment {
   roleId: string;
   expiresAt?: string;
 }
+
+// Interdepartmental Communication types
+export interface ReferralTemplate {
+  id: string;
+  name: string;
+  description: string;
+  sourceDepartment: string; // Department ID
+  targetDepartment: string; // Department ID
+  requiredFields: string[];
+  optionalFields: string[];
+  autoApprove: boolean;
+  status: "Active" | "Draft" | "Archived";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MessageTemplate {
+  id: string;
+  name: string;
+  description: string;
+  subject: string;
+  body: string;
+  availablePlaceholders: string[];
+  departmentAccess: string[]; // Department IDs
+  category: "Clinical" | "Administrative" | "Emergency" | "General";
+  status: "Active" | "Draft" | "Archived";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SharedCalendar {
+  id: string;
+  name: string;
+  description: string;
+  departments: string[]; // Department IDs
+  resourceTypes: ("Rooms" | "Equipment" | "Staff" | "Other")[];
+  permissions: {
+    departmentId: string;
+    canView: boolean;
+    canSchedule: boolean;
+    canModify: boolean;
+    canApprove: boolean;
+  }[];
+  color: string; // For calendar display
+  status: "Active" | "Inactive";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InterdepartmentalIntegration {
+  id: string;
+  name: string;
+  description: string;
+  sourceSystem: string;
+  targetSystem: string;
+  dataDirection: "Unidirectional" | "Bidirectional";
+  integrationMethod: "API" | "File" | "Database" | "Custom";
+  departments: string[]; // Department IDs
+  dataFields: {
+    name: string;
+    type: string;
+    required: boolean;
+  }[];
+  status: "Active" | "Testing" | "Inactive";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CommunicationPolicy {
+  id: string;
+  name: string;
+  description: string;
+  policyType: "Privacy" | "Security" | "Operational" | "Compliance";
+  departments: string[]; // Department IDs
+  effectiveDate: string;
+  expirationDate?: string;
+  reviewFrequency: "Monthly" | "Quarterly" | "Biannually" | "Annually";
+  affectedChannels: ("Email" | "Chat" | "Video" | "Phone" | "Document")[];
+  policyText: string;
+  status: "Active" | "Draft" | "Archived";
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Combined interdepartmental communication type
+export interface InterdepartmentalCommunication {
+  referralTemplates: ReferralTemplate[];
+  messageTemplates: MessageTemplate[];
+  sharedCalendars: SharedCalendar[];
+  integrations: InterdepartmentalIntegration[];
+  policies: CommunicationPolicy[];
+}
+
+// New form types
+export type NewReferralTemplate = Omit<
+  ReferralTemplate,
+  "id" | "createdAt" | "updatedAt"
+>;
+export type NewMessageTemplate = Omit<
+  MessageTemplate,
+  "id" | "createdAt" | "updatedAt"
+>;
+export type NewSharedCalendar = Omit<
+  SharedCalendar,
+  "id" | "createdAt" | "updatedAt"
+>;
+export type NewInterdepartmentalIntegration = Omit<
+  InterdepartmentalIntegration,
+  "id" | "createdAt" | "updatedAt"
+>;
+export type NewCommunicationPolicy = Omit<
+  CommunicationPolicy,
+  "id" | "createdAt" | "updatedAt"
+>;

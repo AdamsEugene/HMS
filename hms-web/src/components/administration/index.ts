@@ -7,4 +7,5 @@ export { default as DepartmentManagement } from "./DepartmentManagement";
 export { default as SystemConfiguration } from "./SystemConfiguration";
 export { default as MasterDataManagement } from "./MasterDataManagement";
 export { default as UserRoleManagement } from "./UserRoleManagement";
+export { default as InterdepartmentalCommunication } from "./InterdepartmentalCommunication";
 export * from "./types";
