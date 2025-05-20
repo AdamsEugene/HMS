@@ -123,3 +123,65 @@ export type NewWorkflow = Omit<Workflow, "id" | "steps"> & {
   steps: NewWorkflowStep[];
 };
 export type NewKeyPerformanceIndicator = Omit<KeyPerformanceIndicator, "id">;
+
+// System Configuration types
+export interface GeneralSettings {
+  systemName: string;
+  defaultLanguage: string;
+  timezone: string;
+  dateFormat: string;
+  timeFormat: string;
+  currency: string;
+  maintenanceMode: boolean;
+  maintenanceMessage: string;
+  enableNotifications: boolean;
+  enableAuditLogs: boolean;
+  sessionTimeout: number; // In minutes
+  passwordExpiryDays: number;
+  minimumPasswordLength: number;
+}
+
+export type DayOfWeek =
+  | "Monday"
+  | "Tuesday"
+  | "Wednesday"
+  | "Thursday"
+  | "Friday"
+  | "Saturday"
+  | "Sunday";
+
+export interface TimeSlot {
+  from: string; // Format: "HH:MM"
+  to: string; // Format: "HH:MM"
+}
+
+export interface OperationalHours {
+  dayOfWeek: DayOfWeek;
+  isOpen: boolean;
+  timeSlots: TimeSlot[];
+}
+
+export interface PricingModel {
+  id: string;
+  name: string;
+  description: string;
+  type: "Standard" | "Insurance" | "Discounted" | "Special";
+  active: boolean;
+  defaultModel: boolean;
+  appliesTo: ("Inpatient" | "Outpatient" | "Emergency" | "Procedures")[];
+  markupPercentage?: number;
+  discountPercentage?: number;
+  effectiveFrom: string; // ISO date string
+  effectiveTo?: string; // ISO date string, optional for indefinite models
+  notes?: string;
+}
+
+// Combined system configuration type
+export interface SystemConfiguration {
+  generalSettings: GeneralSettings;
+  operationalHours: OperationalHours[];
+  pricingModels: PricingModel[];
+}
+
+// New model form types
+export type NewPricingModel = Omit<PricingModel, "id">;
