@@ -14,9 +14,16 @@ interface StatItem {
 
 interface StatsOverviewCardProps {
   title: string;
-  stats: StatItem[];
+  stats?: StatItem[];
   patternType?: "dots" | "grid" | "waves" | "circles" | "hex";
   className?: string;
+  value?: string;
+  trend?: string;
+  trendLabel?: string;
+  trendType?: string;
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  chartData?: number[];
+  gradients?: any;
 }
 
 const StatsOverviewCard: React.FC<StatsOverviewCardProps> = ({
@@ -24,9 +31,16 @@ const StatsOverviewCard: React.FC<StatsOverviewCardProps> = ({
   stats,
   patternType = "dots",
   className = "",
+  value,
+  trend,
+  trendLabel,
+  trendType = "neutral",
+  icon: IconComponent,
+  chartData,
+  gradients,
 }) => {
   const { currentTheme, getGradientBackground } = useTheme();
-  const gradients = getGradientBackground(currentTheme);
+  const cardGradients = gradients || getGradientBackground(currentTheme);
 
   return (
     <div
@@ -57,47 +71,124 @@ const StatsOverviewCard: React.FC<StatsOverviewCardProps> = ({
       <div className="relative z-10 p-6">
         <h2 className="text-xl font-bold mb-6 text-white">{title}</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <div key={index} className="flex flex-col">
-              <div className="flex items-center mb-2">
-                {stat.icon && (
-                  <div
-                    className="mr-3 p-2 rounded-lg"
-                    style={{
-                      background: `${currentTheme.color}20`,
-                      color: currentTheme.color,
-                    }}
-                  >
-                    {stat.icon}
-                  </div>
-                )}
-                <span className="text-sm font-medium text-white/70">
-                  {stat.label}
-                </span>
+        {stats && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {stats.map((stat, index) => (
+              <div key={index} className="flex flex-col">
+                <div className="flex items-center mb-2">
+                  {stat.icon && (
+                    <div
+                      className="mr-3 p-2 rounded-lg"
+                      style={{
+                        background: `${currentTheme.color}20`,
+                        color: currentTheme.color,
+                      }}
+                    >
+                      {stat.icon}
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-white/70">
+                    {stat.label}
+                  </span>
+                </div>
+                <div className="flex items-end">
+                  <span className="text-2xl font-bold text-white">
+                    {stat.value}
+                  </span>
+                  {stat.change && (
+                    <div
+                      className={`ml-2 text-xs px-1.5 py-0.5 rounded-full font-medium flex items-center ${
+                        stat.change.isIncrease
+                          ? "bg-green-500/20 text-green-500"
+                          : "bg-red-500/20 text-red-500"
+                      }`}
+                    >
+                      <span className="mr-0.5">
+                        {stat.change.isIncrease ? "↑" : "↓"}
+                      </span>
+                      {stat.change.value}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex items-end">
-                <span className="text-2xl font-bold text-white">
-                  {stat.value}
-                </span>
-                {stat.change && (
-                  <div
-                    className={`ml-2 text-xs px-1.5 py-0.5 rounded-full font-medium flex items-center ${
-                      stat.change.isIncrease
-                        ? "bg-green-500/20 text-green-500"
-                        : "bg-red-500/20 text-red-500"
-                    }`}
-                  >
-                    <span className="mr-0.5">
-                      {stat.change.isIncrease ? "↑" : "↓"}
-                    </span>
-                    {stat.change.value}
+            ))}
+          </div>
+        )}
+
+        {value && (
+          <div className="flex justify-between items-center">
+            <div className="flex-1">
+              {IconComponent && (
+                <div className="flex mb-2">
+                  <div className="p-2 rounded-lg bg-white/10">
+                    <IconComponent className="h-5 w-5 text-white" />
+                  </div>
+                </div>
+              )}
+              <div className="flex flex-col">
+                <div className="text-3xl font-bold text-white mb-1">
+                  {value}
+                </div>
+                {trend && (
+                  <div className="flex items-center">
+                    <div
+                      className={`text-xs px-1.5 py-0.5 rounded-full font-medium flex items-center ${
+                        trendType === "up"
+                          ? "bg-green-500/20 text-green-500"
+                          : trendType === "down"
+                            ? "bg-red-500/20 text-red-500"
+                            : "bg-gray-500/20 text-gray-300"
+                      }`}
+                    >
+                      <span className="mr-1">
+                        {trendType === "up"
+                          ? "↑"
+                          : trendType === "down"
+                            ? "↓"
+                            : "•"}
+                      </span>
+                      {trend}
+                    </div>
+                    {trendLabel && (
+                      <span className="ml-2 text-xs text-white/60">
+                        {trendLabel}
+                      </span>
+                    )}
                   </div>
                 )}
               </div>
             </div>
-          ))}
-        </div>
+
+            {chartData && chartData.length > 0 && (
+              <div className="w-24 h-12">
+                <svg viewBox="0 0 100 30" className="w-full h-full">
+                  {chartData.map((value, i) => {
+                    const x = (i / (chartData.length - 1)) * 100;
+                    const y = 30 - (value / Math.max(...chartData)) * 30;
+                    return i === 0 ? (
+                      <path
+                        key="sparkline"
+                        d={`M ${x} ${y} ${chartData
+                          .map(
+                            (v, j) =>
+                              `L ${(j / (chartData.length - 1)) * 100} ${
+                                30 - (v / Math.max(...chartData)) * 30
+                              }`
+                          )
+                          .join(" ")}`}
+                        fill="none"
+                        stroke="white"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    ) : null;
+                  })}
+                </svg>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

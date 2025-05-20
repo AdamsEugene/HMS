@@ -4,11 +4,17 @@ import { useTheme } from "../../contexts/ThemeContext";
 interface DashboardBannerProps {
   userName?: string;
   hospitalName?: string;
+  title?: string;
+  subtitle?: string;
+  theme?: string;
 }
 
 const DashboardBanner: React.FC<DashboardBannerProps> = ({
   userName = "Dr. Admin",
   hospitalName = "MediHub Central",
+  title,
+  subtitle,
+  theme,
 }) => {
   const { currentTheme, getGradientBackground } = useTheme();
   const gradients = getGradientBackground(currentTheme);
@@ -98,9 +104,11 @@ const DashboardBanner: React.FC<DashboardBannerProps> = ({
       <div className="relative z-10 px-8 py-6 flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold mb-1">
-            {getGreeting()}, {userName}
+            {title || `${getGreeting()}, ${userName}`}
           </h1>
-          <p className="opacity-70">Welcome to {hospitalName} dashboard</p>
+          <p className="opacity-70">
+            {subtitle || `Welcome to ${hospitalName} dashboard`}
+          </p>
           <div className="mt-2 opacity-60 text-sm">
             {formatDate(currentTime)}
           </div>
