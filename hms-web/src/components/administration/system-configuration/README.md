@@ -56,6 +56,9 @@ const [hours, setHours] = useState<OperationalHours[]>(initialHours);
 
 A component for managing pricing models for patient billing and insurance reimbursement. Features include:
 - Viewing existing pricing models
+- Adding new pricing models
+- Editing existing pricing models
+- Deleting pricing models
 - Status indicators (active/inactive)
 - Pricing adjustments (markup/discount percentages)
 - Default model designation
@@ -74,6 +77,77 @@ const [models, setModels] = useState<PricingModel[]>(initialModels);
 />
 ```
 
+### PricingModelFormModal
+
+A modal component for adding and editing pricing models with form validation:
+- Model name, type, and description
+- Status and default model settings
+- Service application areas
+- Effective dates
+- Rate adjustments (markup or discount percentages)
+- Additional notes
+
+**Usage:**
+```tsx
+import { PricingModelFormModal } from './system-configuration';
+
+// In your component:
+const [isModalOpen, setIsModalOpen] = useState(false);
+const [selectedModel, setSelectedModel] = useState<PricingModel | null>(null);
+
+const handleSave = (model: NewPricingModel) => {
+  // Handle saving the model
+  setIsModalOpen(false);
+};
+
+// For adding new model
+<PricingModelFormModal
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  onSave={handleSave}
+  isEditing={false}
+/>
+
+// For editing existing model
+<PricingModelFormModal
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  onSave={handleSave}
+  initialModel={selectedModel}
+  isEditing={true}
+/>
+```
+
+### ConfirmationModal
+
+A reusable confirmation modal for actions that require user confirmation, such as deleting models:
+- Customizable title and message
+- Customizable button text and styling
+- Responsive design with accessibility features
+
+**Usage:**
+```tsx
+import { ConfirmationModal } from './system-configuration';
+
+// In your component:
+const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
+const handleConfirm = () => {
+  // Perform the confirmed action
+  setIsConfirmOpen(false);
+};
+
+<ConfirmationModal
+  isOpen={isConfirmOpen}
+  onClose={() => setIsConfirmOpen(false)}
+  onConfirm={handleConfirm}
+  title="Confirm Action"
+  message="Are you sure you want to perform this action?"
+  confirmButtonText="Confirm"
+  confirmButtonClass="bg-red-600 hover:bg-red-700"
+/>
+```
+
 ## Integration
 
 These components are designed to be used together in the SystemConfiguration component, but they can also be used individually in other parts of the application as needed.
@@ -87,6 +161,7 @@ The components use the following data types, which are defined in the `types.ts`
 - `TimeSlot`
 - `DayOfWeek`
 - `PricingModel`
+- `NewPricingModel`
 
 ## Styling
 

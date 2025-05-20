@@ -6,7 +6,9 @@ import {
   InformationCircleIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
-import type { PricingModel } from "../types";
+import type { PricingModel, NewPricingModel } from "../types";
+import PricingModelFormModal from "./PricingModelFormModal";
+import ConfirmationModal from "./ConfirmationModal";
 
 interface PricingModelsManagerProps {
   pricingModels: PricingModel[];
@@ -61,6 +63,10 @@ const PricingModelsManager: React.FC<PricingModelsManagerProps> = ({
         ]
   );
   const [isSaved, setIsSaved] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<PricingModel | null>(null);
 
   // Handle form submission to update models
   const handleSubmit = (e: React.FormEvent) => {
@@ -73,6 +79,79 @@ const PricingModelsManager: React.FC<PricingModelsManagerProps> = ({
     setTimeout(() => {
       setIsSaved(false);
     }, 3000);
+  };
+
+  // Add new pricing model
+  const handleAddModel = (newModel: NewPricingModel) => {
+    const modelId = `pm-${Date.now()}`; // Generate a unique ID
+    const modelToAdd: PricingModel = {
+      ...newModel,
+      id: modelId,
+    };
+
+    // If this is set as default, remove default flag from other models of same type
+    const updatedModels = [...models];
+    if (newModel.defaultModel) {
+      updatedModels.forEach((model) => {
+        if (model.type === newModel.type && model.id !== modelId) {
+          model.defaultModel = false;
+        }
+      });
+    }
+
+    // Add the new model
+    setModels([...updatedModels, modelToAdd]);
+    setIsAddModalOpen(false);
+  };
+
+  // Edit existing pricing model
+  const handleEditModel = (updatedModel: NewPricingModel) => {
+    if (!selectedModel) return;
+
+    // If this is set as default, remove default flag from other models of same type
+    const updatedModels = models.map((model) => {
+      if (model.id === selectedModel.id) {
+        return { ...model, ...updatedModel };
+      }
+
+      if (
+        updatedModel.defaultModel &&
+        model.type === updatedModel.type &&
+        model.id !== selectedModel.id
+      ) {
+        return { ...model, defaultModel: false };
+      }
+
+      return model;
+    });
+
+    setModels(updatedModels);
+    setIsEditModalOpen(false);
+    setSelectedModel(null);
+  };
+
+  // Delete pricing model
+  const handleDeleteModel = () => {
+    if (!selectedModel) return;
+
+    const updatedModels = models.filter(
+      (model) => model.id !== selectedModel.id
+    );
+    setModels(updatedModels);
+    setIsDeleteModalOpen(false);
+    setSelectedModel(null);
+  };
+
+  // Open edit modal
+  const openEditModal = (model: PricingModel) => {
+    setSelectedModel(model);
+    setIsEditModalOpen(true);
+  };
+
+  // Open delete modal
+  const openDeleteModal = (model: PricingModel) => {
+    setSelectedModel(model);
+    setIsDeleteModalOpen(true);
   };
 
   return (
@@ -89,9 +168,7 @@ const PricingModelsManager: React.FC<PricingModelsManagerProps> = ({
         </div>
         <button
           type="button"
-          onClick={() =>
-            alert("Add model functionality will be implemented soon")
-          }
+          onClick={() => setIsAddModalOpen(true)}
           className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark"
         >
           <PlusIcon className="h-4 w-4 mr-1" />
@@ -232,9 +309,7 @@ const PricingModelsManager: React.FC<PricingModelsManagerProps> = ({
                         <button
                           type="button"
                           className="text-primary hover:text-primary-dark"
-                          onClick={() =>
-                            alert(`Edit ${model.name} (To be implemented)`)
-                          }
+                          onClick={() => openEditModal(model)}
                           aria-label={`Edit ${model.name}`}
                         >
                           <PencilIcon className="h-4 w-4" />
@@ -242,9 +317,7 @@ const PricingModelsManager: React.FC<PricingModelsManagerProps> = ({
                         <button
                           type="button"
                           className="text-red-500 hover:text-red-700"
-                          onClick={() =>
-                            alert(`Delete ${model.name} (To be implemented)`)
-                          }
+                          onClick={() => openDeleteModal(model)}
                           aria-label={`Delete ${model.name}`}
                           disabled={model.defaultModel}
                         >
@@ -293,6 +366,43 @@ const PricingModelsManager: React.FC<PricingModelsManagerProps> = ({
           </button>
         </div>
       </form>
+
+      {/* Add Model Modal */}
+      <PricingModelFormModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={handleAddModel}
+        isEditing={false}
+      />
+
+      {/* Edit Model Modal */}
+      {selectedModel && (
+        <PricingModelFormModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setSelectedModel(null);
+          }}
+          onSave={handleEditModel}
+          initialModel={selectedModel}
+          isEditing={true}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {selectedModel && (
+        <ConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setSelectedModel(null);
+          }}
+          onConfirm={handleDeleteModel}
+          title="Delete Pricing Model"
+          message={`Are you sure you want to delete the "${selectedModel.name}" pricing model? This action cannot be undone.`}
+          confirmButtonText="Delete"
+        />
+      )}
     </div>
   );
 };
