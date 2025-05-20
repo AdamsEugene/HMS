@@ -11,11 +11,15 @@ import type {
   MasterData,
   DiagnosticCode,
   ProcedureCode,
-  // Will be used in future implementations
-  // Medication,
-  // MedicalSupply,
+  Medication,
+  MedicalSupply,
 } from "./types";
-import { DiagnosticCodesManager, ProcedureCodesManager } from "./master-data";
+import {
+  DiagnosticCodesManager,
+  ProcedureCodesManager,
+  MedicationsManager,
+  MedicalSuppliesManager,
+} from "./master-data";
 
 // Default master data for demonstration
 const defaultMasterData: MasterData = {
@@ -183,9 +187,6 @@ const MasterDataManagement: React.FC = () => {
     });
   };
 
-  // These will be used when we implement the medication and medical supply managers
-  // Keeping them as placeholders for future implementation
-  /* 
   // Update medications
   const updateMedications = (medications: Medication[]) => {
     setMasterData({
@@ -201,74 +202,85 @@ const MasterDataManagement: React.FC = () => {
       medicalSupplies,
     });
   };
-  */
 
   return (
-    <div className="bg-white dark:bg-gray-900 shadow rounded-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-        Master Data Management
-      </h2>
-      <p className="mb-6 text-gray-600 dark:text-gray-400">
-        Manage hospital-wide reference data including diagnostic codes,
-        procedure codes, medications, and medical supplies.
-      </p>
+    <div className="px-4 py-6 sm:px-0">
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          Master Data Management
+        </h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          Manage diagnostic codes, procedure codes, medications, and medical
+          supplies used across the system.
+        </p>
+      </div>
 
       <Tab.Group>
-        <Tab.List className="flex space-x-2 rounded-xl bg-primary-50 dark:bg-gray-800 p-1 mb-6">
+        <Tab.List className="flex rounded-xl bg-gray-100 dark:bg-gray-800 p-1">
           <Tab
             className={({ selected }) =>
               cn(
-                "w-full rounded-lg py-2.5 text-sm font-medium leading-5 flex items-center justify-center",
-                "ring-white ring-opacity-60 ring-offset-2 focus:outline-none",
+                "w-full py-2.5 text-sm font-medium leading-5 text-gray-700 dark:text-gray-300 rounded-lg",
+                "flex items-center justify-center",
+                "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60",
                 selected
-                  ? "bg-white dark:bg-gray-700 shadow text-primary dark:text-white"
-                  : "text-gray-600 dark:text-gray-400 hover:bg-white/[0.12] hover:text-primary"
+                  ? "bg-white dark:bg-gray-700 shadow dark:text-white"
+                  : "hover:bg-white/[0.12] hover:text-gray-700"
               )
             }
           >
-            <DocumentMagnifyingGlassIcon className="h-5 w-5 mr-2" />
+            <DocumentMagnifyingGlassIcon
+              className="w-5 h-5 mr-2"
+              aria-hidden="true"
+            />
             Diagnostic Codes
           </Tab>
           <Tab
             className={({ selected }) =>
               cn(
-                "w-full rounded-lg py-2.5 text-sm font-medium leading-5 flex items-center justify-center",
-                "ring-white ring-opacity-60 ring-offset-2 focus:outline-none",
+                "w-full py-2.5 text-sm font-medium leading-5 text-gray-700 dark:text-gray-300 rounded-lg",
+                "flex items-center justify-center",
+                "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60",
                 selected
-                  ? "bg-white dark:bg-gray-700 shadow text-primary dark:text-white"
-                  : "text-gray-600 dark:text-gray-400 hover:bg-white/[0.12] hover:text-primary"
+                  ? "bg-white dark:bg-gray-700 shadow dark:text-white"
+                  : "hover:bg-white/[0.12] hover:text-gray-700"
               )
             }
           >
-            <ClipboardDocumentCheckIcon className="h-5 w-5 mr-2" />
+            <ClipboardDocumentCheckIcon
+              className="w-5 h-5 mr-2"
+              aria-hidden="true"
+            />
             Procedure Codes
           </Tab>
           <Tab
             className={({ selected }) =>
               cn(
-                "w-full rounded-lg py-2.5 text-sm font-medium leading-5 flex items-center justify-center",
-                "ring-white ring-opacity-60 ring-offset-2 focus:outline-none",
+                "w-full py-2.5 text-sm font-medium leading-5 text-gray-700 dark:text-gray-300 rounded-lg",
+                "flex items-center justify-center",
+                "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60",
                 selected
-                  ? "bg-white dark:bg-gray-700 shadow text-primary dark:text-white"
-                  : "text-gray-600 dark:text-gray-400 hover:bg-white/[0.12] hover:text-primary"
+                  ? "bg-white dark:bg-gray-700 shadow dark:text-white"
+                  : "hover:bg-white/[0.12] hover:text-gray-700"
               )
             }
           >
-            <BeakerIcon className="h-5 w-5 mr-2" />
+            <BeakerIcon className="w-5 h-5 mr-2" aria-hidden="true" />
             Medications
           </Tab>
           <Tab
             className={({ selected }) =>
               cn(
-                "w-full rounded-lg py-2.5 text-sm font-medium leading-5 flex items-center justify-center",
-                "ring-white ring-opacity-60 ring-offset-2 focus:outline-none",
+                "w-full py-2.5 text-sm font-medium leading-5 text-gray-700 dark:text-gray-300 rounded-lg",
+                "flex items-center justify-center",
+                "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60",
                 selected
-                  ? "bg-white dark:bg-gray-700 shadow text-primary dark:text-white"
-                  : "text-gray-600 dark:text-gray-400 hover:bg-white/[0.12] hover:text-primary"
+                  ? "bg-white dark:bg-gray-700 shadow dark:text-white"
+                  : "hover:bg-white/[0.12] hover:text-gray-700"
               )
             }
           >
-            <ArchiveBoxIcon className="h-5 w-5 mr-2" />
+            <ArchiveBoxIcon className="w-5 h-5 mr-2" aria-hidden="true" />
             Medical Supplies
           </Tab>
         </Tab.List>
@@ -292,20 +304,18 @@ const MasterDataManagement: React.FC = () => {
 
           {/* Medications Panel */}
           <Tab.Panel>
-            <div className="text-center py-8">
-              <p className="text-gray-500 dark:text-gray-400">
-                Medication manager implementation in progress...
-              </p>
-            </div>
+            <MedicationsManager
+              medications={masterData.medications}
+              updateMedications={updateMedications}
+            />
           </Tab.Panel>
 
           {/* Medical Supplies Panel */}
           <Tab.Panel>
-            <div className="text-center py-8">
-              <p className="text-gray-500 dark:text-gray-400">
-                Medical supplies manager implementation in progress...
-              </p>
-            </div>
+            <MedicalSuppliesManager
+              medicalSupplies={masterData.medicalSupplies}
+              updateMedicalSupplies={updateMedicalSupplies}
+            />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

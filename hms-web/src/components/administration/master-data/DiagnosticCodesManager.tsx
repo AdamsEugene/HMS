@@ -139,17 +139,19 @@ const DiagnosticCodesManager: React.FC<DiagnosticCodesManagerProps> = ({
         </div>
 
         <div className="flex-shrink-0 flex space-x-2">
-          <select
-            value={searchField}
-            onChange={handleSearchFieldChange}
-            className="block w-40 py-2 px-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-            aria-label="Search field filter"
-          >
-            <option value="all">All Fields</option>
-            <option value="code">Code</option>
-            <option value="description">Description</option>
-            <option value="category">Category</option>
-          </select>
+          <div className="relative">
+            <select
+              value={searchField}
+              onChange={handleSearchFieldChange}
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 dark:text-white bg-white dark:bg-gray-700 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+              aria-label="Search field"
+            >
+              <option value="all">All Fields</option>
+              <option value="code">Code</option>
+              <option value="description">Description</option>
+              <option value="category">Category</option>
+            </select>
+          </div>
 
           <button
             type="button"
