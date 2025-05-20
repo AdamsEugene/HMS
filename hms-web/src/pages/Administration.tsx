@@ -18,6 +18,7 @@ import {
   DepartmentManagement,
   SystemConfiguration,
   MasterDataManagement,
+  UserRoleManagement,
 } from "../components/administration";
 // Import all styles
 import "../styles/dashboard.css";
@@ -193,6 +194,8 @@ const Administration = () => {
                     <SystemConfiguration />
                   ) : module.id === "master-data" ? (
                     <MasterDataManagement />
+                  ) : module.id === "user-role-management" ? (
+                    <UserRoleManagement />
                   ) : (
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 flex flex-col items-center justify-center text-center">
                       <module.icon className="h-16 w-16 text-gray-400 dark:text-gray-500 mb-4" />

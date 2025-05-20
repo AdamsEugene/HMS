@@ -259,3 +259,48 @@ export type NewDiagnosticCode = Omit<DiagnosticCode, "id">;
 export type NewProcedureCode = Omit<ProcedureCode, "id">;
 export type NewMedication = Omit<Medication, "id">;
 export type NewMedicalSupply = Omit<MedicalSupply, "id">;
+
+// User Role Management types
+export interface Permission {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  isActive: boolean;
+}
+
+export interface Role {
+  id: string;
+  name: string;
+  description: string;
+  permissions: Permission[];
+  isSystemRole: boolean; // Whether this is a default system role that cannot be deleted
+  createdAt: string;
+  updatedAt: string;
+  status: "Active" | "Inactive";
+}
+
+export interface UserRole {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  role: Role;
+  assignedAt: string;
+  assignedBy: string;
+  expiresAt?: string;
+  status: "Active" | "Suspended" | "Expired";
+}
+
+export interface NewRole {
+  name: string;
+  description: string;
+  permissions: string[]; // Permission IDs
+  status: "Active" | "Inactive";
+}
+
+export interface NewUserRoleAssignment {
+  userId: string;
+  roleId: string;
+  expiresAt?: string;
+}
