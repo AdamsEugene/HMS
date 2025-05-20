@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import type { ReactNode } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
 
 interface DashboardBannerProps {
@@ -7,6 +8,7 @@ interface DashboardBannerProps {
   title?: string;
   subtitle?: string;
   theme?: string;
+  actionButton?: ReactNode;
 }
 
 const DashboardBanner: React.FC<DashboardBannerProps> = ({
@@ -15,6 +17,7 @@ const DashboardBanner: React.FC<DashboardBannerProps> = ({
   title,
   subtitle,
   // theme,
+  actionButton,
 }) => {
   const { currentTheme } = useTheme();
   // const gradients = getGradientBackground(currentTheme);
@@ -115,7 +118,11 @@ const DashboardBanner: React.FC<DashboardBannerProps> = ({
         </div>
 
         <div className="flex flex-col items-end">
-          <div className="text-4xl font-bold">{formatTime(currentTime)}</div>
+          {actionButton ? (
+            <div className="mb-2">{actionButton}</div>
+          ) : (
+            <div className="text-4xl font-bold">{formatTime(currentTime)}</div>
+          )}
           <div className="mt-2 flex items-center">
             <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"></span>
             <span className="opacity-70">System Status: Operational</span>

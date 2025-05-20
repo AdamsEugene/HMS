@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
+import type { ElementType } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
 import DecorativePattern from "./DecorativePattern";
 
@@ -21,8 +22,8 @@ interface StatsOverviewCardProps {
   value?: string;
   trend?: string;
   trendLabel?: string;
-  trendType?: string;
-  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  trendType?: "up" | "down" | "neutral";
+  icon?: ElementType;
   chartData?: number[];
   gradients?: any;
 }
