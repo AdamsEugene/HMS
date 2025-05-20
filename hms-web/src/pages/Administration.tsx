@@ -12,8 +12,11 @@ import { cn } from "../utils/cn";
 import DecorativePattern from "../components/dashboard/DecorativePattern";
 import DashboardBanner from "../components/dashboard/DashboardBanner";
 import StatsOverviewCard from "../components/dashboard/StatsOverviewCard";
-// Import HospitalProfile component
-import { HospitalProfile } from "../components/administration";
+// Import administration components
+import {
+  HospitalProfile,
+  DepartmentManagement,
+} from "../components/administration";
 // Import all styles
 import "../styles/dashboard.css";
 import "../styles/customization.css";
@@ -182,6 +185,8 @@ const Administration = () => {
 
                   {module.id === "hospital-profile" ? (
                     <HospitalProfile />
+                  ) : module.id === "department-management" ? (
+                    <DepartmentManagement />
                   ) : (
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 flex flex-col items-center justify-center text-center">
                       <module.icon className="h-16 w-16 text-gray-400 dark:text-gray-500 mb-4" />
