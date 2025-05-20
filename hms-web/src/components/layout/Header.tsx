@@ -107,7 +107,7 @@ const Header = ({
   onSearch,
   organizationName = "MediHub Central",
   organizationLogo = "https://placehold.co/100x40/3B82F6/FFFFFF?text=MediHub",
-  organizationTagline,
+  // organizationTagline,
 }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
@@ -200,11 +200,11 @@ const Header = ({
                 <h1 className="text-lg font-semibold header-title">
                   {selectedOrg.name || organizationName}
                 </h1>
-                {organizationTagline && (
+                {/* {organizationTagline && (
                   <p className="text-xs header-subtitle italic">
                     {organizationTagline}
                   </p>
-                )}
+                )} */}
               </div>
 
               {/* Title area - Only show when no breadcrumbs */}

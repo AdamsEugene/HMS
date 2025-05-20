@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import type {
   Department,
   NewStaffMember,
@@ -10,12 +10,106 @@ import {
   UserGroupIcon,
   ArrowUturnLeftIcon,
   TrashIcon,
+  ExclamationTriangleIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { Dialog, Transition } from "@headlessui/react";
 import BasicInformation from "./tabs/BasicInformation";
 import StaffList from "./tabs/StaffList";
 import ResourceList from "./tabs/ResourceList";
 import WorkflowList from "./tabs/WorkflowList";
-import KPIList from "../../../../../src/components/administration/departments/tabs/KPIList";
+import KPIList from "./tabs/KPIList";
+
+interface DeleteConfirmationModalProps {
+  isOpen: boolean;
+  departmentName: string;
+  onClose: () => void;
+  onConfirm: () => void;
+}
+
+const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
+  isOpen,
+  departmentName,
+  onClose,
+  onConfirm,
+}) => {
+  return (
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={onClose}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black bg-opacity-25" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
+                <div className="flex items-center justify-between mb-4">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900 dark:text-white flex items-center"
+                  >
+                    <ExclamationTriangleIcon className="h-6 w-6 text-red-500 mr-2" />
+                    Delete Department
+                  </Dialog.Title>
+                  <button
+                    type="button"
+                    className="text-gray-400 hover:text-gray-500"
+                    onClick={onClose}
+                    aria-label="Close dialog"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </button>
+                </div>
+                <div className="mt-2">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Are you sure you want to delete{" "}
+                    <strong>{departmentName}</strong>? This action cannot be
+                    undone and will remove all staff, resources, workflows, and
+                    KPIs associated with this department.
+                  </p>
+                </div>
+
+                <div className="mt-6 flex justify-end space-x-3">
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={onClose}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-danger"
+                    onClick={onConfirm}
+                  >
+                    Delete Department
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
+  );
+};
 
 interface DepartmentDetailsProps {
   department: Department;
@@ -49,6 +143,9 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({
   // State for active tab
   const [activeTab, setActiveTab] = useState("basic");
 
+  // State for delete confirmation modal
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   // Function to update basic department fields
   const updateField = <K extends keyof Department>(
     field: K,
@@ -62,9 +159,13 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({
 
   // Handle department deletion
   const handleDeleteDepartment = () => {
-    if (window.confirm(`Are you sure you want to delete ${department.name}?`)) {
-      removeDepartment(department.id);
-    }
+    setIsDeleteModalOpen(true);
+  };
+
+  // Confirm department deletion
+  const confirmDeleteDepartment = () => {
+    removeDepartment(department.id);
+    setIsDeleteModalOpen(false);
   };
 
   return (
@@ -188,6 +289,14 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({
           />
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        departmentName={department.name}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={confirmDeleteDepartment}
+      />
     </div>
   );
 };
