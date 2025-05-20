@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Administration from "./pages/Administration";
+import PatientManagement from "./pages/PatientManagement";
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -27,6 +28,7 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="settings" element={<Settings />} />
               <Route path="administration" element={<Administration />} />
+              <Route path="patients" element={<PatientManagement />} />
 
               {/* Add more routes here as we build them */}
 
