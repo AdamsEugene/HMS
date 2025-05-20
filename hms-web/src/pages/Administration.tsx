@@ -17,6 +17,7 @@ import {
   HospitalProfile,
   DepartmentManagement,
   SystemConfiguration,
+  MasterDataManagement,
 } from "../components/administration";
 // Import all styles
 import "../styles/dashboard.css";
@@ -190,6 +191,8 @@ const Administration = () => {
                     <DepartmentManagement />
                   ) : module.id === "system-configuration" ? (
                     <SystemConfiguration />
+                  ) : module.id === "master-data" ? (
+                    <MasterDataManagement />
                   ) : (
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 flex flex-col items-center justify-center text-center">
                       <module.icon className="h-16 w-16 text-gray-400 dark:text-gray-500 mb-4" />

@@ -5,4 +5,5 @@ export { default as Accreditations } from "./Accreditations";
 export { default as Certifications } from "./Certifications";
 export { default as DepartmentManagement } from "./DepartmentManagement";
 export { default as SystemConfiguration } from "./SystemConfiguration";
+export { default as MasterDataManagement } from "./MasterDataManagement";
 export * from "./types";

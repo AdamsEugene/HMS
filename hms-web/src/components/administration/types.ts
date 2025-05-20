@@ -185,3 +185,77 @@ export interface SystemConfiguration {
 
 // New model form types
 export type NewPricingModel = Omit<PricingModel, "id">;
+
+// Master Data Management types
+export interface DiagnosticCode {
+  id: string;
+  code: string;
+  description: string;
+  category: string;
+  subCategory?: string;
+  version: string; // e.g., "ICD-10", "ICD-11", "SNOMED CT"
+  status: "Active" | "Inactive" | "Deprecated";
+  validFrom: string; // ISO date string
+  validTo?: string; // ISO date string, optional for codes without expiration
+  notes?: string;
+}
+
+export interface ProcedureCode {
+  id: string;
+  code: string;
+  description: string;
+  category: string;
+  subCategory?: string;
+  version: string; // e.g., "CPT", "HCPCS", "ICD-10-PCS"
+  status: "Active" | "Inactive" | "Deprecated";
+  validFrom: string; // ISO date string
+  validTo?: string; // ISO date string, optional for codes without expiration
+  defaultDuration?: number; // In minutes
+  requiresConsent: boolean;
+  notes?: string;
+}
+
+export interface Medication {
+  id: string;
+  name: string;
+  genericName: string;
+  brandNames: string[];
+  drugClass: string;
+  formulation: string; // e.g., "Tablet", "Injection", "Syrup"
+  strength: string; // e.g., "10mg", "250mg/5ml"
+  route: string; // e.g., "Oral", "Intravenous", "Topical"
+  code: string; // NDC (National Drug Code) or other code
+  status: "Active" | "Inactive" | "Recalled";
+  controlled: boolean;
+  controlledClass?: string; // e.g., "Schedule II", "Schedule IV"
+  requiresPriorAuth: boolean;
+  special: boolean; // Special medication requiring additional monitoring
+  notes?: string;
+}
+
+export interface MedicalSupply {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  code: string; // Supply code
+  unit: string; // Unit of measure
+  reusable: boolean;
+  sterile: boolean;
+  status: "Active" | "Inactive" | "Discontinued";
+  notes?: string;
+}
+
+// Combined master data management type
+export interface MasterData {
+  diagnosticCodes: DiagnosticCode[];
+  procedureCodes: ProcedureCode[];
+  medications: Medication[];
+  medicalSupplies: MedicalSupply[];
+}
+
+// New master data form types
+export type NewDiagnosticCode = Omit<DiagnosticCode, "id">;
+export type NewProcedureCode = Omit<ProcedureCode, "id">;
+export type NewMedication = Omit<Medication, "id">;
+export type NewMedicalSupply = Omit<MedicalSupply, "id">;
