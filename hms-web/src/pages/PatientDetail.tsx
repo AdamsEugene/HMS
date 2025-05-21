@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useTheme } from "../contexts/ThemeContext";
 import {
   UserIcon,
   ArrowLeftIcon,
@@ -9,12 +8,20 @@ import {
   HomeIcon,
   PencilSquareIcon,
   ChartBarIcon,
-  DocumentTextIcon,
   ChatBubbleLeftRightIcon,
   ClipboardDocumentListIcon,
   ClipboardDocumentCheckIcon,
   CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 // Patient status types
 type PatientStatus =
@@ -230,6 +237,74 @@ const medicalHistoryData = [
   },
 ];
 
+// Sample medication data
+const medicationsData = [
+  {
+    id: "M001",
+    name: "Lisinopril",
+    dosage: "10mg",
+    frequency: "Once daily",
+    startDate: "2022-10-15",
+    endDate: null,
+    prescribedBy: "Dr. Emily Johnson",
+    purpose: "Hypertension",
+    status: "Active",
+    instructions: "Take in the morning with or without food",
+    refillsRemaining: 2,
+    pharmacy: "HealthPlus Pharmacy",
+    sideEffects: ["Dizziness", "Dry cough", "Headache"],
+    interactions: ["NSAIDs", "Potassium supplements"],
+  },
+  {
+    id: "M002",
+    name: "Metformin",
+    dosage: "500mg",
+    frequency: "Twice daily with meals",
+    startDate: "2022-09-20",
+    endDate: null,
+    prescribedBy: "Dr. Emily Johnson",
+    purpose: "Type 2 Diabetes",
+    status: "Active",
+    instructions: "Take with breakfast and dinner",
+    refillsRemaining: 3,
+    pharmacy: "HealthPlus Pharmacy",
+    sideEffects: ["Nausea", "Diarrhea", "Abdominal discomfort"],
+    interactions: ["Certain contrast dyes", "Alcohol"],
+  },
+  {
+    id: "M003",
+    name: "Atorvastatin",
+    dosage: "20mg",
+    frequency: "Once daily at bedtime",
+    startDate: "2022-09-20",
+    endDate: null,
+    prescribedBy: "Dr. Emily Johnson",
+    purpose: "High Cholesterol",
+    status: "Active",
+    instructions: "Take at night",
+    refillsRemaining: 1,
+    pharmacy: "HealthPlus Pharmacy",
+    sideEffects: ["Muscle pain", "Liver problems"],
+    interactions: ["Grapefruit juice", "Certain antibiotics"],
+  },
+  {
+    id: "M004",
+    name: "Ibuprofen",
+    dosage: "200mg",
+    frequency: "As needed for pain, not to exceed 1200mg in 24 hours",
+    startDate: "2023-01-15",
+    endDate: "2023-02-15",
+    prescribedBy: "Dr. Michael Chen",
+    purpose: "Joint Pain",
+    status: "Completed",
+    instructions: "Take with food to reduce stomach upset",
+    refillsRemaining: 0,
+    pharmacy: "MedExpress Pharmacy",
+    sideEffects: ["Stomach upset", "Heartburn"],
+    interactions: ["Blood thinners", "Aspirin"],
+  },
+];
+
 // Tab definition
 interface TabType {
   id: string;
@@ -243,6 +318,9 @@ const PatientDetail = () => {
 
   const [activeTab, setActiveTab] = useState("overview");
   const [patient, setPatient] = useState<Patient | null>(null);
+  const [expandedMedication, setExpandedMedication] = useState<string | null>(
+    null
+  );
 
   // Tabs configuration
   const tabs: TabType[] = [
@@ -270,6 +348,19 @@ const PatientDetail = () => {
     const foundPatient = patientsData.find((p) => p.id === patientId);
     setPatient(foundPatient || null);
   }, [patientId]);
+
+  // Prepare data for vital signs chart
+  const prepareVitalSignsData = () => {
+    return medicalHistoryData
+      .map((record) => ({
+        date: record.date,
+        systolic: parseInt(record.vitals.bloodPressure.split("/")[0]),
+        diastolic: parseInt(record.vitals.bloodPressure.split("/")[1]),
+        heartRate: parseInt(record.vitals.heartRate.split(" ")[0]),
+        weight: parseInt(record.vitals.weight.split(" ")[0]),
+      }))
+      .reverse();
+  };
 
   if (!patient) {
     return (
@@ -513,10 +604,36 @@ const PatientDetail = () => {
                       <ChartBarIcon className="h-5 w-5 mr-2 text-primary" />
                       Vital Signs Trends
                     </h4>
-                    <div className="h-64 flex items-center justify-center bg-gray-50 dark:bg-gray-900/30 rounded">
-                      <p className="text-gray-500">
-                        Vital signs chart will be displayed here
-                      </p>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart
+                          data={prepareVitalSignsData()}
+                          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                        >
+                          <XAxis dataKey="date" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Line
+                            type="monotone"
+                            dataKey="systolic"
+                            stroke="#ef4444"
+                            name="Systolic BP"
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="diastolic"
+                            stroke="#3b82f6"
+                            name="Diastolic BP"
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="heartRate"
+                            stroke="#10b981"
+                            name="Heart Rate"
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
                     </div>
                   </div>
 
@@ -612,27 +729,401 @@ const PatientDetail = () => {
               {activeTab === "medications" && (
                 <div>
                   <h3 className="text-lg font-medium mb-4">Medications</h3>
-                  <p className="text-center text-gray-500 py-12">
-                    Medications will be displayed here
-                  </p>
+                  <div className="space-y-4">
+                    {medicationsData.map((medication) => (
+                      <div
+                        key={medication.id}
+                        className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4"
+                      >
+                        <div className="flex flex-wrap justify-between mb-2">
+                          <div>
+                            <h4 className="font-medium">
+                              {medication.name} ({medication.dosage})
+                            </h4>
+                            <p className="text-sm text-gray-500">
+                              {medication.frequency}
+                            </p>
+                          </div>
+                          <div>
+                            <span
+                              className={`px-2 py-1 text-xs rounded-full ${
+                                medication.status === "Active"
+                                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                                  : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                              }`}
+                            >
+                              {medication.status}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-x-8 gap-y-2 text-sm text-gray-600 dark:text-gray-300 mb-2">
+                          <div>
+                            <span className="font-medium">Start:</span>{" "}
+                            {medication.startDate}
+                          </div>
+                          {medication.endDate && (
+                            <div>
+                              <span className="font-medium">End:</span>{" "}
+                              {medication.endDate}
+                            </div>
+                          )}
+                          <div>
+                            <span className="font-medium">Prescribed by:</span>{" "}
+                            {medication.prescribedBy}
+                          </div>
+                          <div>
+                            <span className="font-medium">Purpose:</span>{" "}
+                            {medication.purpose}
+                          </div>
+                        </div>
+
+                        {/* Use string literals for aria-expanded */}
+                        {expandedMedication === medication.id ? (
+                          <button
+                            onClick={() => setExpandedMedication(null)}
+                            className="text-primary text-sm hover:text-primary/80"
+                            aria-expanded="true"
+                          >
+                            Show Less
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setExpandedMedication(medication.id)}
+                            className="text-primary text-sm hover:text-primary/80"
+                            aria-expanded="false"
+                          >
+                            Show More
+                          </button>
+                        )}
+
+                        {expandedMedication === medication.id && (
+                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                              <div>
+                                <h5 className="font-medium mb-1">
+                                  Instructions
+                                </h5>
+                                <p>{medication.instructions}</p>
+                              </div>
+                              <div>
+                                <h5 className="font-medium mb-1">Pharmacy</h5>
+                                <p>{medication.pharmacy}</p>
+                                <p className="mt-1">
+                                  Refills remaining:{" "}
+                                  {medication.refillsRemaining}
+                                </p>
+                              </div>
+                              <div>
+                                <h5 className="font-medium mb-1">
+                                  Side Effects
+                                </h5>
+                                <ul className="list-disc list-inside">
+                                  {medication.sideEffects.map(
+                                    (effect, index) => (
+                                      <li key={index}>{effect}</li>
+                                    )
+                                  )}
+                                </ul>
+                              </div>
+                              <div>
+                                <h5 className="font-medium mb-1">
+                                  Interactions
+                                </h5>
+                                <ul className="list-disc list-inside">
+                                  {medication.interactions.map(
+                                    (interaction, index) => (
+                                      <li key={index}>{interaction}</li>
+                                    )
+                                  )}
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
               {activeTab === "appointments" && (
                 <div>
                   <h3 className="text-lg font-medium mb-4">Appointments</h3>
-                  <p className="text-center text-gray-500 py-12">
-                    Appointments will be displayed here
-                  </p>
+                  <div className="flex justify-between mb-4">
+                    <div className="flex space-x-2">
+                      <button className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary/90">
+                        Upcoming
+                      </button>
+                      <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600">
+                        Past
+                      </button>
+                      <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600">
+                        Cancelled
+                      </button>
+                    </div>
+                    <button className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary/90 flex items-center">
+                      <CalendarDaysIcon className="h-4 w-4 mr-1" />
+                      Schedule New
+                    </button>
+                  </div>
+
+                  {/* Upcoming appointments */}
+                  <div className="space-y-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                      <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                        <div className="mb-2 md:mb-0">
+                          <h4 className="font-medium">
+                            Annual Physical Examination
+                          </h4>
+                          <div className="flex items-center text-sm text-gray-500 mt-1">
+                            <CalendarDaysIcon className="h-4 w-4 mr-1" />
+                            <span>June 20, 2023 | 10:30 AM - 11:30 AM</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <button className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-md text-sm">
+                            Check In
+                          </button>
+                          <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm">
+                            Reschedule
+                          </button>
+                          <button className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 rounded-md text-sm">
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <p className="text-sm text-gray-500 mb-1">
+                              Provider
+                            </p>
+                            <p className="text-sm">Dr. Emily Johnson</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500 mb-1">
+                              Department
+                            </p>
+                            <p className="text-sm">Internal Medicine</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500 mb-1">
+                              Location
+                            </p>
+                            <p className="text-sm">Main Hospital - Room 305</p>
+                          </div>
+                        </div>
+                        <div className="mt-3">
+                          <p className="text-sm text-gray-500 mb-1">Notes</p>
+                          <p className="text-sm">
+                            Please arrive 15 minutes early to complete
+                            paperwork. Fast for 8 hours before appointment for
+                            lab work.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                      <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                        <div className="mb-2 md:mb-0">
+                          <h4 className="font-medium">Diabetes Follow-up</h4>
+                          <div className="flex items-center text-sm text-gray-500 mt-1">
+                            <CalendarDaysIcon className="h-4 w-4 mr-1" />
+                            <span>July 15, 2023 | 2:00 PM - 2:30 PM</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <button className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-md text-sm">
+                            Check In
+                          </button>
+                          <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm">
+                            Reschedule
+                          </button>
+                          <button className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 rounded-md text-sm">
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <p className="text-sm text-gray-500 mb-1">
+                              Provider
+                            </p>
+                            <p className="text-sm">Dr. Robert Martinez</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500 mb-1">
+                              Department
+                            </p>
+                            <p className="text-sm">Endocrinology</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500 mb-1">
+                              Location
+                            </p>
+                            <p className="text-sm">
+                              Specialty Clinic - Suite 210
+                            </p>
+                          </div>
+                        </div>
+                        <div className="mt-3">
+                          <p className="text-sm text-gray-500 mb-1">Notes</p>
+                          <p className="text-sm">
+                            Bring glucose monitoring records. Insurance
+                            pre-authorization completed.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 
               {activeTab === "communication" && (
                 <div>
                   <h3 className="text-lg font-medium mb-4">Communication</h3>
-                  <p className="text-center text-gray-500 py-12">
-                    Communication history will be displayed here
-                  </p>
+                  <div className="flex justify-between mb-4">
+                    <div className="flex space-x-2">
+                      <button className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary/90">
+                        All Messages
+                      </button>
+                      <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600">
+                        Clinical
+                      </button>
+                      <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600">
+                        Administrative
+                      </button>
+                    </div>
+                    <button className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary/90 flex items-center">
+                      <ChatBubbleLeftRightIcon className="h-4 w-4 mr-1" />
+                      New Message
+                    </button>
+                  </div>
+
+                  {/* Communication history */}
+                  <div className="space-y-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                      <div className="flex justify-between mb-2">
+                        <h4 className="font-medium">
+                          Medication Refill Request
+                        </h4>
+                        <span className="text-sm text-gray-500">
+                          May 28, 2023
+                        </span>
+                      </div>
+                      <div className="flex items-start mb-3">
+                        <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center mr-3">
+                          <UserIcon className="h-4 w-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">
+                            John Smith (Patient)
+                          </p>
+                          <p className="text-sm mt-1">
+                            I need a refill for my Lisinopril medication. I'm
+                            down to my last few pills. Thank you.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start ml-6">
+                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                          <UserIcon className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">
+                            Dr. Emily Johnson
+                          </p>
+                          <p className="text-sm mt-1">
+                            I've approved your refill request. You can pick it
+                            up at your pharmacy tomorrow. Let me know if you
+                            have any questions.
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            May 28, 2023 at 3:45 PM
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                      <div className="flex justify-between mb-2">
+                        <h4 className="font-medium">
+                          Appointment Confirmation
+                        </h4>
+                        <span className="text-sm text-gray-500">
+                          May 15, 2023
+                        </span>
+                      </div>
+                      <div className="flex items-start mb-3">
+                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                          <UserIcon className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">
+                            Front Desk Staff
+                          </p>
+                          <p className="text-sm mt-1">
+                            This is to confirm your appointment with Dr. Emily
+                            Johnson on June 20, 2023 at 10:30 AM for your annual
+                            physical examination. Please arrive 15 minutes early
+                            to complete necessary paperwork.
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            May 15, 2023 at 10:15 AM
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start ml-6">
+                        <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center mr-3">
+                          <UserIcon className="h-4 w-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">
+                            John Smith (Patient)
+                          </p>
+                          <p className="text-sm mt-1">
+                            Thank you for the confirmation. I'll be there as
+                            scheduled.
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            May 15, 2023 at 11:30 AM
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                      <div className="flex justify-between mb-2">
+                        <h4 className="font-medium">Lab Results Available</h4>
+                        <span className="text-sm text-gray-500">
+                          April 18, 2023
+                        </span>
+                      </div>
+                      <div className="flex items-start">
+                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                          <UserIcon className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">
+                            Dr. Emily Johnson
+                          </p>
+                          <p className="text-sm mt-1">
+                            Your recent lab results are available for review.
+                            Overall, the results look good. Your blood pressure
+                            is slightly elevated, so let's discuss lifestyle
+                            modifications during your next visit. You can view
+                            the detailed results in your patient portal.
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            April 18, 2023 at 2:30 PM
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
