@@ -170,7 +170,7 @@ const Header = ({
   };
 
   return (
-    <header className="shadow-sm !z-[1100] header-container">
+    <header className="shadow-sm !z-[50] header-container">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side - Menu button, Organization Logo, Title & Breadcrumbs */}

@@ -13,6 +13,10 @@ import {
   ClipboardDocumentCheckIcon,
   CalendarDaysIcon,
   XMarkIcon,
+  DocumentTextIcon,
+  PhotoIcon,
+  DocumentIcon,
+  DocumentArrowDownIcon,
 } from "@heroicons/react/24/outline";
 import {
   LineChart,
@@ -278,11 +282,17 @@ const ecgData = [
   { time: 27, value: 0.0 },
 ];
 
-// Add lab results data
-const labResultsData = [
+// Add mock lab results data
+const labResultsData: LabResult[] = [
   {
+    id: "LR001",
     date: "2023-04-15",
     test: "Complete Blood Count",
+    category: "Hematology",
+    orderedBy: "Dr. Emily Johnson",
+    status: "Final",
+    documentIds: ["doc001", "doc002"],
+    imageIds: ["img001", "img002"],
     details: {
       hemoglobin: { value: 14.2, unit: "g/dL", normalRange: "13.5-17.5" },
       whiteBloodCells: { value: 7.5, unit: "10^3/µL", normalRange: "4.5-11.0" },
@@ -291,8 +301,14 @@ const labResultsData = [
     },
   },
   {
+    id: "LR002",
     date: "2023-04-15",
     test: "Lipid Panel",
+    category: "Biochemistry",
+    orderedBy: "Dr. Emily Johnson",
+    status: "Final",
+    documentIds: ["doc003"],
+    imageIds: [],
     details: {
       totalCholesterol: { value: 195, unit: "mg/dL", normalRange: "<200" },
       ldl: { value: 110, unit: "mg/dL", normalRange: "<100" },
@@ -301,8 +317,14 @@ const labResultsData = [
     },
   },
   {
+    id: "LR003",
     date: "2023-04-15",
     test: "Comprehensive Metabolic Panel",
+    category: "Biochemistry",
+    orderedBy: "Dr. Emily Johnson",
+    status: "Final",
+    documentIds: ["doc004"],
+    imageIds: [],
     details: {
       glucose: { value: 92, unit: "mg/dL", normalRange: "70-99" },
       bun: { value: 15, unit: "mg/dL", normalRange: "7-20" },
@@ -312,13 +334,127 @@ const labResultsData = [
     },
   },
   {
-    date: "2023-01-10",
-    test: "Hemoglobin A1C",
+    id: "LR004",
+    date: "2023-02-20",
+    test: "Urinalysis",
+    category: "Microbiology",
+    orderedBy: "Dr. Robert Martinez",
+    status: "Final",
+    documentIds: ["doc005"],
+    imageIds: [],
     details: {
-      a1c: { value: 5.8, unit: "%", normalRange: "<5.7" },
+      color: { value: "Yellow", normalRange: "Yellow" },
+      clarity: { value: "Clear", normalRange: "Clear" },
+      specificGravity: { value: 1.018, unit: "", normalRange: "1.005-1.030" },
+      pH: { value: 6.0, unit: "", normalRange: "4.5-8.0" },
+      glucose: { value: "Negative", normalRange: "Negative" },
+      protein: { value: "Negative", normalRange: "Negative" },
     },
   },
+  {
+    id: "LR005",
+    date: "2022-11-10",
+    test: "Chest X-Ray",
+    category: "Radiology",
+    orderedBy: "Dr. Emily Johnson",
+    status: "Final",
+    documentIds: [],
+    imageIds: ["img003"],
+    finding:
+      "The lungs are clear. No focal consolidation, pleural effusion, or pneumothorax is seen. The cardiomediastinal silhouette is normal. The hilar structures are unremarkable. The visualized bony structures are intact.",
+    impression: "Normal chest radiograph. No acute cardiopulmonary disease.",
+  },
+  {
+    id: "LR006",
+    date: "2022-09-05",
+    test: "MRI Abdomen",
+    category: "Radiology",
+    orderedBy: "Dr. Sarah Chen",
+    status: "Final",
+    documentIds: [],
+    imageIds: ["img004"],
+    finding:
+      "The liver is normal in size and contour. No focal hepatic lesion is seen. The gallbladder is normal. The biliary ducts are not dilated. The pancreas, spleen, and adrenal glands are unremarkable. The kidneys are normal in size and signal intensity, with no evidence of mass or hydronephrosis.",
+    impression: "Normal MRI of the abdomen. No evidence of pathology.",
+  },
+  {
+    id: "LR007",
+    date: "2022-06-18",
+    test: "Thyroid Ultrasound",
+    category: "Radiology",
+    orderedBy: "Dr. Robert Martinez",
+    status: "Final",
+    documentIds: [],
+    imageIds: ["img005"],
+    finding:
+      "The thyroid gland is normal in size and echogenicity. The right lobe measures 4.2 x 1.5 x 1.8 cm. The left lobe measures 4.0 x 1.4 x 1.7 cm. No focal nodules or masses are identified. No abnormal vascularity is seen on color Doppler imaging.",
+    impression:
+      "Normal thyroid ultrasound. No evidence of thyroid nodules or masses.",
+  },
 ];
+
+// Add mock lab documents data
+const labDocuments: Record<string, LabDocument> = {
+  doc001: {
+    name: "Complete Blood Count Report.pdf",
+    type: "PDF Document",
+    size: "1.2 MB",
+  },
+  doc002: {
+    name: "CBC Lab Analysis Notes.docx",
+    type: "Word Document",
+    size: "458 KB",
+  },
+  doc003: {
+    name: "Lipid Panel Report.pdf",
+    type: "PDF Document",
+    size: "980 KB",
+  },
+  doc004: {
+    name: "Comprehensive Metabolic Panel.pdf",
+    type: "PDF Document",
+    size: "1.5 MB",
+  },
+  doc005: {
+    name: "Urinalysis Report.pdf",
+    type: "PDF Document",
+    size: "876 KB",
+  },
+};
+
+// Add mock lab images data
+const labImages: Record<string, LabImage> = {
+  img001: {
+    name: "Blood Sample Microscopy",
+    type: "Image/JPEG",
+    size: "2.4 MB",
+    url: "https://images.unsplash.com/photo-1579154204601-01588f351e67?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+  },
+  img002: {
+    name: "Blood Smear Analysis",
+    type: "Image/PNG",
+    size: "3.2 MB",
+    url: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+  },
+  img003: {
+    name: "Chest X-Ray",
+    type: "Image/DICOM",
+    size: "4.7 MB",
+    url: "https://images.unsplash.com/photo-1516069677018-378971e2d9df?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+  },
+  img004: {
+    name: "MRI Scan - Abdomen",
+    type: "Image/DICOM",
+    size: "8.3 MB",
+    url: "https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+  },
+  img005: {
+    name: "Ultrasound - Thyroid",
+    type: "Image/JPEG",
+    size: "1.8 MB",
+    url: "https://images.unsplash.com/photo-1559757175-7cb246e63826?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+  },
+};
 
 // Add heart health records
 const heartHealthRecords = [
@@ -738,6 +874,729 @@ const messagesData = [
   },
 ];
 
+// Lab Report interface
+interface LabResult {
+  id: string;
+  date: string;
+  test: string;
+  category: string;
+  orderedBy: string;
+  status: string;
+  documentIds: string[];
+  imageIds: string[];
+  details?: Record<string, LabValueDetail>;
+  finding?: string;
+  impression?: string;
+}
+
+interface LabValueDetail {
+  value: number | string;
+  unit?: string;
+  normalRange: string;
+}
+
+interface LabDocument {
+  name: string;
+  type: string;
+  size: string;
+}
+
+interface LabImage {
+  name: string;
+  type: string;
+  size: string;
+  url: string;
+}
+
+// Lab Report Modal Component
+const LabReportModal = ({
+  isOpen,
+  onClose,
+  report,
+  documents,
+  images,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  report: LabResult;
+  documents: Record<string, LabDocument>;
+  images: Record<string, LabImage>;
+}) => {
+  const [activeTab, setActiveTab] = useState<
+    "details" | "documents" | "images"
+  >("details");
+  const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [transition, setTransition] = useState<"none" | "fade-in" | "fade-out">(
+    "none"
+  );
+
+  // Helper function to check if a lab value is within the normal range
+  const isValueNormal = (value: number | string, range: string): boolean => {
+    if (typeof value !== "number") return true;
+
+    if (range.startsWith("<")) {
+      const limit = parseFloat(range.substring(1));
+      return value < limit;
+    } else if (range.startsWith(">")) {
+      const limit = parseFloat(range.substring(1));
+      return value > limit;
+    } else if (range.includes("-")) {
+      const [min, max] = range.split("-").map(parseFloat);
+      return value >= min && value <= max;
+    }
+    return true;
+  };
+
+  // Find the index of the selected document in the report's documentIds array
+  const getSelectedDocumentIndex = () => {
+    if (!selectedDocument || !report.documentIds) return -1;
+    return report.documentIds.findIndex((id) => id === selectedDocument);
+  };
+
+  // Find the index of the selected image in the report's imageIds array
+  const getSelectedImageIndex = () => {
+    if (!selectedImage || !report.imageIds) return -1;
+    return report.imageIds.findIndex((id) => id === selectedImage);
+  };
+
+  // Navigate to the next document
+  const goToNextDocument = () => {
+    if (!report.documentIds || report.documentIds.length <= 1) return;
+
+    const currentIndex = getSelectedDocumentIndex();
+    if (currentIndex < report.documentIds.length - 1) {
+      setTransition("fade-out");
+      setTimeout(() => {
+        setSelectedDocument(report.documentIds[currentIndex + 1]);
+        setTransition("fade-in");
+      }, 200);
+      setTimeout(() => {
+        setTransition("none");
+      }, 400);
+    }
+  };
+
+  // Navigate to the previous document
+  const goToPrevDocument = () => {
+    if (!report.documentIds || report.documentIds.length <= 1) return;
+
+    const currentIndex = getSelectedDocumentIndex();
+    if (currentIndex > 0) {
+      setTransition("fade-out");
+      setTimeout(() => {
+        setSelectedDocument(report.documentIds[currentIndex - 1]);
+        setTransition("fade-in");
+      }, 200);
+      setTimeout(() => {
+        setTransition("none");
+      }, 400);
+    }
+  };
+
+  // Navigate to the next image
+  const goToNextImage = () => {
+    if (!report.imageIds || report.imageIds.length <= 1) return;
+
+    const currentIndex = getSelectedImageIndex();
+    if (currentIndex < report.imageIds.length - 1) {
+      setTransition("fade-out");
+      setTimeout(() => {
+        setSelectedImage(report.imageIds[currentIndex + 1]);
+        setTransition("fade-in");
+      }, 200);
+      setTimeout(() => {
+        setTransition("none");
+      }, 400);
+    }
+  };
+
+  // Navigate to the previous image
+  const goToPrevImage = () => {
+    if (!report.imageIds || report.imageIds.length <= 1) return;
+
+    const currentIndex = getSelectedImageIndex();
+    if (currentIndex > 0) {
+      setTransition("fade-out");
+      setTimeout(() => {
+        setSelectedImage(report.imageIds[currentIndex - 1]);
+        setTransition("fade-in");
+      }, 200);
+      setTimeout(() => {
+        setTransition("none");
+      }, 400);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  const selectedDocumentData = selectedDocument
+    ? documents[selectedDocument]
+    : null;
+  const selectedImageData = selectedImage ? images[selectedImage] : null;
+  const currentDocumentIndex = getSelectedDocumentIndex();
+  const currentImageIndex = getSelectedImageIndex();
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
+          <h3 className="text-lg font-medium">
+            {report.test} - {report.date}
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            aria-label="Close modal"
+          >
+            <XMarkIcon className="h-6 w-6" />
+          </button>
+        </div>
+
+        <div className="border-b border-gray-200 dark:border-gray-700 p-2 flex">
+          <button
+            className={`px-4 py-2 rounded-md text-sm font-medium ${
+              activeTab === "details"
+                ? "bg-primary text-white"
+                : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            }`}
+            onClick={() => setActiveTab("details")}
+          >
+            <DocumentTextIcon className="h-4 w-4 inline mr-2" />
+            Details
+          </button>
+          {report.documentIds && report.documentIds.length > 0 && (
+            <button
+              className={`px-4 py-2 rounded-md text-sm font-medium ml-2 ${
+                activeTab === "documents"
+                  ? "bg-primary text-white"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              }`}
+              onClick={() => setActiveTab("documents")}
+            >
+              <DocumentIcon className="h-4 w-4 inline mr-2" />
+              Documents ({report.documentIds.length})
+            </button>
+          )}
+          {report.imageIds && report.imageIds.length > 0 && (
+            <button
+              className={`px-4 py-2 rounded-md text-sm font-medium ml-2 ${
+                activeTab === "images"
+                  ? "bg-primary text-white"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              }`}
+              onClick={() => setActiveTab("images")}
+            >
+              <PhotoIcon className="h-4 w-4 inline mr-2" />
+              Images ({report.imageIds.length})
+            </button>
+          )}
+        </div>
+
+        <div className="p-4 overflow-y-auto flex-1">
+          {activeTab === "details" && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-medium text-sm text-gray-500 mb-1">
+                    Test
+                  </h4>
+                  <p>{report.test}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-gray-500 mb-1">
+                    Date
+                  </h4>
+                  <p>{report.date}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-gray-500 mb-1">
+                    Category
+                  </h4>
+                  <p>{report.category}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-gray-500 mb-1">
+                    Ordered By
+                  </h4>
+                  <p>{report.orderedBy}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-gray-500 mb-1">
+                    Status
+                  </h4>
+                  <p>
+                    <span
+                      className={`inline-block px-2 py-1 text-xs rounded-full ${
+                        report.status === "Final"
+                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                          : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                      }`}
+                    >
+                      {report.status}
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              {report.finding && (
+                <div className="mt-4">
+                  <h4 className="font-medium text-sm text-gray-500 mb-1">
+                    Findings
+                  </h4>
+                  <p className="text-sm">{report.finding}</p>
+                </div>
+              )}
+
+              {report.impression && (
+                <div className="mt-2">
+                  <h4 className="font-medium text-sm text-gray-500 mb-1">
+                    Impression
+                  </h4>
+                  <p className="text-sm">{report.impression}</p>
+                </div>
+              )}
+
+              {report.details && (
+                <div className="mt-4">
+                  <h4 className="font-medium mb-2">Test Results</h4>
+                  <div className="bg-gray-50 dark:bg-gray-900/30 rounded-lg overflow-hidden">
+                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                      <thead className="bg-gray-100 dark:bg-gray-800">
+                        <tr>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                          >
+                            Test
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                          >
+                            Result
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                          >
+                            Units
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                          >
+                            Normal Range
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white dark:bg-gray-900/20 divide-y divide-gray-200 dark:divide-gray-700">
+                        {Object.entries(report.details || {}).map(
+                          ([key, value]) => (
+                            <tr key={key}>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                {key.charAt(0).toUpperCase() +
+                                  key.slice(1).replace(/([A-Z])/g, " $1")}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                <span
+                                  className={
+                                    typeof value.value === "number" &&
+                                    value.normalRange
+                                      ? isValueNormal(
+                                          value.value,
+                                          value.normalRange
+                                        )
+                                        ? "text-green-600 dark:text-green-400 font-medium"
+                                        : "text-red-600 dark:text-red-400 font-medium"
+                                      : ""
+                                  }
+                                >
+                                  {value.value}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                {value.unit}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                {value.normalRange}
+                              </td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "documents" && (
+            <div className="space-y-4">
+              <h4 className="font-medium mb-2">Documents</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {report.documentIds.map((docId) => {
+                  const doc = documents[docId];
+                  return (
+                    <div
+                      key={docId}
+                      className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex items-start hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                      onClick={() => setSelectedDocument(docId)}
+                    >
+                      <div className="h-10 w-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mr-3">
+                        <DocumentIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div className="flex-1">
+                        <h5 className="font-medium">{doc.name}</h5>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                          {doc.type} · {doc.size}
+                        </p>
+                        <button
+                          className="inline-flex items-center text-sm text-primary hover:text-primary/80"
+                          aria-label={`Download ${doc.name}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            alert(`Downloading ${doc.name}`);
+                          }}
+                        >
+                          <DocumentArrowDownIcon className="h-4 w-4 mr-1" />
+                          Download
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "images" && (
+            <div className="space-y-4">
+              <h4 className="font-medium mb-2">Images</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {report.imageIds.map((imgId) => {
+                  const img = images[imgId];
+                  return (
+                    <div
+                      key={imgId}
+                      className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                      onClick={() => setSelectedImage(imgId)}
+                    >
+                      <img
+                        src={img.url}
+                        alt={img.name}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-3">
+                        <h5 className="font-medium">{img.name}</h5>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {img.type} · {img.size}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="border-t border-gray-200 dark:border-gray-700 p-4 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+
+      {/* Document Viewer Modal */}
+      {selectedDocument && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60]">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-5xl w-full h-[90vh] flex flex-col overflow-hidden relative">
+            <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <h3 className="text-lg font-medium">
+                  {selectedDocumentData?.name}
+                </h3>
+                {report.documentIds && report.documentIds.length > 1 && (
+                  <span className="ml-3 text-sm text-gray-500">
+                    {currentDocumentIndex + 1} of {report.documentIds.length}
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={() => setSelectedDocument(null)}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                aria-label="Close document viewer"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
+
+            {/* Navigation controls */}
+            {report.documentIds && report.documentIds.length > 1 && (
+              <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex justify-between px-4 z-10 pointer-events-none">
+                <button
+                  onClick={goToPrevDocument}
+                  className={`p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-opacity pointer-events-auto ${
+                    currentDocumentIndex === 0
+                      ? "opacity-30 cursor-not-allowed"
+                      : "opacity-70 hover:opacity-100"
+                  }`}
+                  disabled={currentDocumentIndex === 0}
+                  aria-label="Previous document"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+                <button
+                  onClick={goToNextDocument}
+                  className={`p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-opacity pointer-events-auto ${
+                    currentDocumentIndex === report.documentIds.length - 1
+                      ? "opacity-30 cursor-not-allowed"
+                      : "opacity-70 hover:opacity-100"
+                  }`}
+                  disabled={
+                    currentDocumentIndex === report.documentIds.length - 1
+                  }
+                  aria-label="Next document"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            <div className="flex-1 bg-gray-100 dark:bg-gray-900 p-4 overflow-auto">
+              <div
+                className={`transition-opacity duration-200 ${
+                  transition === "fade-out"
+                    ? "opacity-0"
+                    : transition === "fade-in"
+                      ? "opacity-100"
+                      : "opacity-100"
+                }`}
+              >
+                {selectedDocumentData?.type.includes("pdf") ? (
+                  <div className="flex items-center justify-center h-full">
+                    {/* This would be a PDF viewer in a real implementation */}
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-lg p-8 max-w-2xl w-full">
+                      <div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center">
+                            <DocumentIcon className="h-8 w-8 text-primary mr-3" />
+                            <h4 className="text-xl font-semibold">
+                              {selectedDocumentData?.name}
+                            </h4>
+                          </div>
+                          <span className="text-gray-500 text-sm">
+                            {selectedDocumentData?.size}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <p className="text-center text-gray-600 dark:text-gray-400">
+                          PDF preview would appear here.
+                        </p>
+                        <div className="flex items-center justify-center">
+                          <DocumentIcon className="h-24 w-24 text-gray-400" />
+                        </div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                          This is a simulation of a PDF document viewer. In a
+                          production environment, an actual PDF viewer component
+                          would be integrated here to display the document
+                          content.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-lg p-8 max-w-2xl w-full">
+                      <div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center">
+                            <DocumentIcon className="h-8 w-8 text-primary mr-3" />
+                            <h4 className="text-xl font-semibold">
+                              {selectedDocumentData?.name}
+                            </h4>
+                          </div>
+                          <span className="text-gray-500 text-sm">
+                            {selectedDocumentData?.size}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <p className="text-center text-gray-600 dark:text-gray-400">
+                          Document preview would appear here.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between">
+              <button
+                onClick={() =>
+                  alert(`Downloading ${selectedDocumentData?.name}`)
+                }
+                className="px-4 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary/90 flex items-center"
+              >
+                <DocumentArrowDownIcon className="h-4 w-4 mr-2" />
+                Download
+              </button>
+              <button
+                onClick={() => setSelectedDocument(null)}
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image Viewer Modal */}
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[60]">
+          <div className="max-w-[90vw] max-h-[90vh] relative">
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 bg-black/50 text-white rounded-full p-2 hover:bg-black/70 z-20"
+              aria-label="Close image viewer"
+            >
+              <XMarkIcon className="h-6 w-6" />
+            </button>
+
+            {/* Image counter */}
+            {report.imageIds && report.imageIds.length > 1 && (
+              <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm z-20">
+                {currentImageIndex + 1} / {report.imageIds.length}
+              </div>
+            )}
+
+            {/* Navigation controls */}
+            {report.imageIds && report.imageIds.length > 1 && (
+              <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex justify-between px-4 z-10">
+                <button
+                  onClick={goToPrevImage}
+                  className={`p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-opacity ${
+                    currentImageIndex === 0
+                      ? "opacity-30 cursor-not-allowed"
+                      : "opacity-70 hover:opacity-100"
+                  }`}
+                  disabled={currentImageIndex === 0}
+                  aria-label="Previous image"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+                <button
+                  onClick={goToNextImage}
+                  className={`p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-opacity ${
+                    currentImageIndex === report.imageIds.length - 1
+                      ? "opacity-30 cursor-not-allowed"
+                      : "opacity-70 hover:opacity-100"
+                  }`}
+                  disabled={currentImageIndex === report.imageIds.length - 1}
+                  aria-label="Next image"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            <div
+              className={`transition-opacity duration-200 ${
+                transition === "fade-out"
+                  ? "opacity-0"
+                  : transition === "fade-in"
+                    ? "opacity-100"
+                    : "opacity-100"
+              }`}
+            >
+              <img
+                src={selectedImageData?.url}
+                alt={selectedImageData?.name}
+                className="max-w-full max-h-[85vh] object-contain rounded"
+              />
+            </div>
+
+            <div className="bg-black/60 text-white p-4 absolute bottom-0 left-0 right-0 flex justify-between items-center">
+              <div>
+                <p className="font-medium">{selectedImageData?.name}</p>
+                <p className="text-sm text-gray-300">
+                  {selectedImageData?.type} · {selectedImageData?.size}
+                </p>
+              </div>
+              <button
+                onClick={() => alert(`Downloading ${selectedImageData?.name}`)}
+                className="px-4 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary/90 flex items-center"
+              >
+                <DocumentArrowDownIcon className="h-4 w-4 mr-2" />
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const PatientDetail = () => {
   const { patientId } = useParams<{ patientId: string }>();
   const navigate = useNavigate();
@@ -760,6 +1619,12 @@ const PatientDetail = () => {
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
   const [showReplyModal, setShowReplyModal] = useState(false);
 
+  // Add state for lab report modal
+  const [selectedLabReport, setSelectedLabReport] = useState<string | null>(
+    null
+  );
+  const [showLabReportModal, setShowLabReportModal] = useState(false);
+
   // Tabs configuration
   const tabs: TabType[] = [
     { id: "overview", label: "Overview", icon: UserIcon },
@@ -767,6 +1632,11 @@ const PatientDetail = () => {
       id: "medical",
       label: "Medical Records",
       icon: ClipboardDocumentListIcon,
+    },
+    {
+      id: "lab-reports",
+      label: "Lab Reports",
+      icon: ChartBarIcon,
     },
     {
       id: "medications",
@@ -818,7 +1688,9 @@ const PatientDetail = () => {
   };
 
   // Add a helper function to check if a lab value is within the normal range
-  const isNormalValue = (value: number, range: string) => {
+  const isNormalValue = (value: number | string, range: string): boolean => {
+    if (typeof value !== "number") return true;
+
     if (range.startsWith("<")) {
       const limit = parseFloat(range.substring(1));
       return value < limit;
@@ -956,6 +1828,14 @@ const PatientDetail = () => {
   const getFilteredMessages = () => {
     if (messageFilter === "all") return messagesData;
     return messagesData.filter((msg) => msg.type === messageFilter);
+  };
+
+  // Get selected lab report data
+  const getSelectedLabReport = (): LabResult | null => {
+    if (!selectedLabReport) return null;
+    return (
+      labResultsData.find((report) => report.id === selectedLabReport) || null
+    );
   };
 
   if (!patient) {
@@ -1640,6 +2520,103 @@ const PatientDetail = () => {
                       ))}
                     </div>
                   </div>
+
+                  {/* Lab Results Summary */}
+                  <div className="space-y-4">
+                    {labResultsData.slice(0, 1).map((labResult) => (
+                      <div key={labResult.id}>
+                        <div className="flex justify-between mb-3">
+                          <h4 className="font-medium">{labResult.test}</h4>
+                          <button
+                            onClick={() => setActiveTab("lab-reports")}
+                            className="text-primary text-sm hover:text-primary/80"
+                          >
+                            View All Lab Reports
+                          </button>
+                        </div>
+                        {labResult.details && (
+                          <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                              <thead className="bg-gray-50 dark:bg-gray-800">
+                                <tr>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                                  >
+                                    Test
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                                  >
+                                    Result
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                                  >
+                                    Range
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                                  >
+                                    Status
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                                {Object.entries(labResult.details).map(
+                                  ([name, detail]) => (
+                                    <tr key={name}>
+                                      <td className="px-6 py-2 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                        {name.charAt(0).toUpperCase() +
+                                          name
+                                            .slice(1)
+                                            .replace(/([A-Z])/g, " $1")}
+                                      </td>
+                                      <td className="px-6 py-2 whitespace-nowrap text-sm">
+                                        {detail.value} {detail.unit}
+                                      </td>
+                                      <td className="px-6 py-2 whitespace-nowrap text-sm">
+                                        {detail.normalRange}
+                                      </td>
+                                      <td className="px-6 py-2 whitespace-nowrap text-sm">
+                                        <span
+                                          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                            typeof detail.value === "number"
+                                              ? isNormalValue(
+                                                  detail.value,
+                                                  detail.normalRange
+                                                )
+                                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                                                : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                                              : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                                          }`}
+                                        >
+                                          {typeof detail.value === "number"
+                                            ? isNormalValue(
+                                                detail.value,
+                                                detail.normalRange
+                                              )
+                                              ? "Normal"
+                                              : "Attention"
+                                            : "Normal"}
+                                        </span>
+                                      </td>
+                                    </tr>
+                                  )
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                        <div className="text-center text-sm text-gray-500 mt-2">
+                          Last Updated: {labResult.date || "Unknown"}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -1690,6 +2667,70 @@ const PatientDetail = () => {
                               {record.vitals.weight}
                             </div>
                           </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "lab-reports" && (
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Lab Reports</h3>
+                  <div className="space-y-4">
+                    {labResultsData.map((report) => (
+                      <div
+                        key={report.id}
+                        className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4"
+                      >
+                        <div className="flex justify-between mb-2">
+                          <h4 className="font-medium">{report.test}</h4>
+                          <span className="text-sm text-gray-500">
+                            {report.date}
+                          </span>
+                        </div>
+                        <div className="flex items-start mb-3">
+                          <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center mr-3">
+                            <ChartBarIcon className="h-4 w-4 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">
+                              {report.category}
+                            </p>
+                            <p className="text-sm mt-1">{report.orderedBy}</p>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2 justify-end">
+                          <button
+                            className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-md text-sm hover:bg-blue-200 dark:hover:bg-blue-800"
+                            onClick={() => {
+                              setSelectedLabReport(report.id);
+                              setShowLabReportModal(true);
+                            }}
+                            aria-label="View lab report"
+                          >
+                            View Report
+                          </button>
+                          <button
+                            className="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600"
+                            onClick={() =>
+                              alert(
+                                `Report marked as ${report.status === "Final" ? "unread" : "read"}`
+                              )
+                            }
+                            aria-label={`Mark report as ${report.status === "Final" ? "unread" : "read"}`}
+                          >
+                            {report.status === "Final"
+                              ? "Mark as Unread"
+                              : "Mark as Read"}
+                          </button>
+                          <button
+                            className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 rounded-md text-sm hover:bg-red-200 dark:hover:bg-red-800"
+                            onClick={() => alert("Report deleted")}
+                            aria-label="Delete report"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -2427,6 +3468,17 @@ const PatientDetail = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Add Lab Report Modal */}
+      {showLabReportModal && getSelectedLabReport() && (
+        <LabReportModal
+          isOpen={showLabReportModal}
+          onClose={() => setShowLabReportModal(false)}
+          report={getSelectedLabReport() as LabResult}
+          documents={labDocuments}
+          images={labImages}
+        />
       )}
     </div>
   );
