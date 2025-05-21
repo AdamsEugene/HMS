@@ -12,6 +12,7 @@ import {
   ClipboardDocumentListIcon,
   ClipboardDocumentCheckIcon,
   CalendarDaysIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
   LineChart,
@@ -191,6 +192,168 @@ const patientsData: Patient[] = [
   },
 ];
 
+// Add detailed sample vital signs data
+const vitalSignsData = [
+  {
+    date: "2023-04-15",
+    systolic: 130,
+    diastolic: 85,
+    heartRate: 72,
+    temperature: 98.6,
+    respirationRate: 16,
+    oxygenSaturation: 98,
+    weight: 185,
+  },
+  {
+    date: "2023-01-10",
+    systolic: 125,
+    diastolic: 80,
+    heartRate: 82,
+    temperature: 100.2,
+    respirationRate: 20,
+    oxygenSaturation: 97,
+    weight: 183,
+  },
+  {
+    date: "2022-09-20",
+    systolic: 128,
+    diastolic: 82,
+    heartRate: 68,
+    temperature: 98.4,
+    respirationRate: 14,
+    oxygenSaturation: 99,
+    weight: 180,
+  },
+  {
+    date: "2022-06-15",
+    systolic: 135,
+    diastolic: 88,
+    heartRate: 74,
+    temperature: 98.2,
+    respirationRate: 16,
+    oxygenSaturation: 98,
+    weight: 188,
+  },
+  {
+    date: "2022-03-10",
+    systolic: 132,
+    diastolic: 84,
+    heartRate: 70,
+    temperature: 98.8,
+    respirationRate: 15,
+    oxygenSaturation: 98,
+    weight: 192,
+  },
+];
+
+// Add mock ECG data
+const ecgData = [
+  { time: 0, value: 0.1 },
+  { time: 1, value: 0.2 },
+  { time: 2, value: 0.5 },
+  { time: 3, value: 0.7 },
+  { time: 4, value: 1.0 },
+  { time: 5, value: 0.5 },
+  { time: 6, value: 0.0 },
+  { time: 7, value: -0.5 },
+  { time: 8, value: -0.2 },
+  { time: 9, value: 0.0 },
+  { time: 10, value: 0.3 },
+  { time: 11, value: 0.7 },
+  { time: 12, value: 1.2 },
+  { time: 13, value: 0.5 },
+  { time: 14, value: 0.0 },
+  { time: 15, value: -0.5 },
+  { time: 16, value: -0.3 },
+  { time: 17, value: 0.0 },
+  { time: 18, value: 0.1 },
+  { time: 19, value: 0.2 },
+  { time: 20, value: 0.5 },
+  { time: 21, value: 0.7 },
+  { time: 22, value: 1.0 },
+  { time: 23, value: 0.5 },
+  { time: 24, value: 0.0 },
+  { time: 25, value: -0.5 },
+  { time: 26, value: -0.2 },
+  { time: 27, value: 0.0 },
+];
+
+// Add lab results data
+const labResultsData = [
+  {
+    date: "2023-04-15",
+    test: "Complete Blood Count",
+    details: {
+      hemoglobin: { value: 14.2, unit: "g/dL", normalRange: "13.5-17.5" },
+      whiteBloodCells: { value: 7.5, unit: "10^3/µL", normalRange: "4.5-11.0" },
+      platelets: { value: 250, unit: "10^3/µL", normalRange: "150-450" },
+      hematocrit: { value: 42, unit: "%", normalRange: "41-50" },
+    },
+  },
+  {
+    date: "2023-04-15",
+    test: "Lipid Panel",
+    details: {
+      totalCholesterol: { value: 195, unit: "mg/dL", normalRange: "<200" },
+      ldl: { value: 110, unit: "mg/dL", normalRange: "<100" },
+      hdl: { value: 45, unit: "mg/dL", normalRange: ">40" },
+      triglycerides: { value: 150, unit: "mg/dL", normalRange: "<150" },
+    },
+  },
+  {
+    date: "2023-04-15",
+    test: "Comprehensive Metabolic Panel",
+    details: {
+      glucose: { value: 92, unit: "mg/dL", normalRange: "70-99" },
+      bun: { value: 15, unit: "mg/dL", normalRange: "7-20" },
+      creatinine: { value: 0.9, unit: "mg/dL", normalRange: "0.6-1.2" },
+      sodium: { value: 140, unit: "mmol/L", normalRange: "135-145" },
+      potassium: { value: 4.0, unit: "mmol/L", normalRange: "3.5-5.0" },
+    },
+  },
+  {
+    date: "2023-01-10",
+    test: "Hemoglobin A1C",
+    details: {
+      a1c: { value: 5.8, unit: "%", normalRange: "<5.7" },
+    },
+  },
+];
+
+// Add heart health records
+const heartHealthRecords = [
+  {
+    date: "2023-03-20",
+    type: "Echocardiogram",
+    provider: "Dr. James Wilson",
+    results:
+      "Normal left ventricular size and function. Ejection fraction 65%. No significant valvular abnormalities.",
+    recommendations: "No follow-up required unless symptoms develop.",
+  },
+  {
+    date: "2022-11-15",
+    type: "ECG",
+    provider: "Dr. Emily Johnson",
+    results: "Normal sinus rhythm. No ST-T wave changes. Normal intervals.",
+    recommendations: "Annual follow-up recommended.",
+  },
+  {
+    date: "2022-08-05",
+    type: "Stress Test",
+    provider: "Dr. James Wilson",
+    results:
+      "Patient completed Bruce protocol for 10 minutes. No chest pain or arrhythmias. Normal blood pressure response.",
+    recommendations: "Continue current exercise program and medications.",
+  },
+];
+
+// Tab definition
+interface TabType {
+  id: string;
+  label: string;
+  icon: React.ElementType;
+}
+
 // Sample medical history data
 const medicalHistoryData = [
   {
@@ -305,12 +468,156 @@ const medicationsData = [
   },
 ];
 
-// Tab definition
-interface TabType {
-  id: string;
-  label: string;
-  icon: React.ElementType;
-}
+// Add the appointment modal component at the top of the file, before PatientDetail
+// AppointmentModal Component
+const AppointmentModal = ({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-auto">
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-medium">Schedule New Appointment</h3>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              aria-label="Close modal"
+            >
+              <XMarkIcon className="h-5 w-5" />
+            </button>
+          </div>
+
+          <form>
+            <div className="space-y-4">
+              <div>
+                <label
+                  htmlFor="appointment-type"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Appointment Type
+                </label>
+                <select
+                  id="appointment-type"
+                  className="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-primary focus:ring-primary"
+                >
+                  <option value="">Select appointment type</option>
+                  <option value="check-up">Regular Check-up</option>
+                  <option value="follow-up">Follow-up Visit</option>
+                  <option value="specialist">Specialist Consultation</option>
+                  <option value="lab-work">Lab Work</option>
+                  <option value="imaging">Imaging</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="provider"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Provider
+                </label>
+                <select
+                  id="provider"
+                  className="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-primary focus:ring-primary"
+                >
+                  <option value="">Select provider</option>
+                  <option value="dr-johnson">Dr. Emily Johnson</option>
+                  <option value="dr-chen">Dr. Michael Chen</option>
+                  <option value="dr-martinez">Dr. Robert Martinez</option>
+                  <option value="dr-williams">Dr. Sarah Williams</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="date"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Date
+                </label>
+                <input
+                  type="date"
+                  id="date"
+                  className="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-primary focus:ring-primary"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="time"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Time
+                </label>
+                <select
+                  id="time"
+                  className="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-primary focus:ring-primary"
+                >
+                  <option value="">Select time</option>
+                  <option value="9:00">9:00 AM</option>
+                  <option value="9:30">9:30 AM</option>
+                  <option value="10:00">10:00 AM</option>
+                  <option value="10:30">10:30 AM</option>
+                  <option value="11:00">11:00 AM</option>
+                  <option value="11:30">11:30 AM</option>
+                  <option value="1:00">1:00 PM</option>
+                  <option value="1:30">1:30 PM</option>
+                  <option value="2:00">2:00 PM</option>
+                  <option value="2:30">2:30 PM</option>
+                  <option value="3:00">3:00 PM</option>
+                  <option value="3:30">3:30 PM</option>
+                  <option value="4:00">4:00 PM</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="reason"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Reason for Visit
+                </label>
+                <textarea
+                  id="reason"
+                  rows={3}
+                  className="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-primary focus:ring-primary"
+                  placeholder="Briefly describe the reason for this appointment..."
+                ></textarea>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  alert("Appointment scheduled successfully!");
+                  onClose();
+                }}
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90"
+              >
+                Schedule Appointment
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const PatientDetail = () => {
   const { patientId } = useParams<{ patientId: string }>();
@@ -321,6 +628,13 @@ const PatientDetail = () => {
   const [expandedMedication, setExpandedMedication] = useState<string | null>(
     null
   );
+
+  // New state variables
+  const [activeChartType, setActiveChartType] = useState("vitals");
+  const [filterTimeRange, setFilterTimeRange] = useState("6months");
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [appointmentFilter, setAppointmentFilter] = useState("upcoming");
+  const [messageFilter, setMessageFilter] = useState("all");
 
   // Tabs configuration
   const tabs: TabType[] = [
@@ -349,17 +663,49 @@ const PatientDetail = () => {
     setPatient(foundPatient || null);
   }, [patientId]);
 
-  // Prepare data for vital signs chart
+  // Update the prepareVitalSignsData function to support time range filtering
   const prepareVitalSignsData = () => {
-    return medicalHistoryData
-      .map((record) => ({
-        date: record.date,
-        systolic: parseInt(record.vitals.bloodPressure.split("/")[0]),
-        diastolic: parseInt(record.vitals.bloodPressure.split("/")[1]),
-        heartRate: parseInt(record.vitals.heartRate.split(" ")[0]),
-        weight: parseInt(record.vitals.weight.split(" ")[0]),
-      }))
-      .reverse();
+    let filteredData = [...vitalSignsData];
+
+    // Apply time filter
+    if (filterTimeRange !== "all") {
+      const now = new Date();
+      const monthsToSubtract =
+        filterTimeRange === "6months"
+          ? 6
+          : filterTimeRange === "1year"
+            ? 12
+            : filterTimeRange === "3years"
+              ? 36
+              : 0;
+
+      if (monthsToSubtract > 0) {
+        const cutoffDate = new Date();
+        cutoffDate.setMonth(now.getMonth() - monthsToSubtract);
+
+        filteredData = filteredData.filter((record) => {
+          const recordDate = new Date(record.date);
+          return recordDate >= cutoffDate;
+        });
+      }
+    }
+
+    return filteredData.reverse();
+  };
+
+  // Add a helper function to check if a lab value is within the normal range
+  const isNormalValue = (value: number, range: string) => {
+    if (range.startsWith("<")) {
+      const limit = parseFloat(range.substring(1));
+      return value < limit;
+    } else if (range.startsWith(">")) {
+      const limit = parseFloat(range.substring(1));
+      return value > limit;
+    } else if (range.includes("-")) {
+      const [min, max] = range.split("-").map(parseFloat);
+      return value >= min && value <= max;
+    }
+    return true;
   };
 
   if (!patient) {
@@ -598,42 +944,278 @@ const PatientDetail = () => {
                     </div>
                   </div>
 
-                  {/* Chart Placeholder */}
+                  {/* Chart Selection and Controls */}
                   <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-6">
-                    <h4 className="font-medium mb-3 flex items-center">
-                      <ChartBarIcon className="h-5 w-5 mr-2 text-primary" />
-                      Vital Signs Trends
-                    </h4>
-                    <div className="h-64">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart
-                          data={prepareVitalSignsData()}
-                          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                    <div className="flex justify-between items-center mb-4">
+                      <h4 className="font-medium flex items-center">
+                        <ChartBarIcon className="h-5 w-5 mr-2 text-primary" />
+                        Medical Data Visualization
+                      </h4>
+                      <div className="flex space-x-2">
+                        <select
+                          className="text-sm border border-gray-300 dark:border-gray-700 rounded-md px-2 py-1"
+                          value={activeChartType}
+                          onChange={(e) => setActiveChartType(e.target.value)}
+                          aria-label="Chart type"
                         >
-                          <XAxis dataKey="date" />
-                          <YAxis />
-                          <Tooltip />
-                          <Legend />
-                          <Line
-                            type="monotone"
-                            dataKey="systolic"
-                            stroke="#ef4444"
-                            name="Systolic BP"
-                          />
-                          <Line
-                            type="monotone"
-                            dataKey="diastolic"
-                            stroke="#3b82f6"
-                            name="Diastolic BP"
-                          />
-                          <Line
-                            type="monotone"
-                            dataKey="heartRate"
-                            stroke="#10b981"
-                            name="Heart Rate"
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
+                          <option value="vitals">Vital Signs</option>
+                          <option value="ecg">ECG Data</option>
+                          <option value="lab">Lab Results</option>
+                          <option value="weight">Weight History</option>
+                        </select>
+                        <select
+                          className="text-sm border border-gray-300 dark:border-gray-700 rounded-md px-2 py-1"
+                          value={filterTimeRange}
+                          onChange={(e) => setFilterTimeRange(e.target.value)}
+                          aria-label="Time range"
+                        >
+                          <option value="6months">6 Months</option>
+                          <option value="1year">1 Year</option>
+                          <option value="3years">3 Years</option>
+                          <option value="all">All Data</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Vital Signs Chart */}
+                    {activeChartType === "vitals" && (
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart
+                            data={prepareVitalSignsData()}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                          >
+                            <XAxis dataKey="date" />
+                            <YAxis
+                              yAxisId="left"
+                              orientation="left"
+                              stroke="#ef4444"
+                            />
+                            <YAxis
+                              yAxisId="right"
+                              orientation="right"
+                              stroke="#3b82f6"
+                            />
+                            <Tooltip />
+                            <Legend />
+                            <Line
+                              yAxisId="left"
+                              type="monotone"
+                              dataKey="systolic"
+                              stroke="#ef4444"
+                              name="Systolic BP"
+                              activeDot={{ r: 8 }}
+                            />
+                            <Line
+                              yAxisId="left"
+                              type="monotone"
+                              dataKey="diastolic"
+                              stroke="#3b82f6"
+                              name="Diastolic BP"
+                            />
+                            <Line
+                              yAxisId="right"
+                              type="monotone"
+                              dataKey="heartRate"
+                              stroke="#10b981"
+                              name="Heart Rate"
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+
+                    {/* ECG Chart */}
+                    {activeChartType === "ecg" && (
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart
+                            data={ecgData}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                          >
+                            <XAxis
+                              dataKey="time"
+                              label={{
+                                value: "Time (ms)",
+                                position: "insideBottomRight",
+                                offset: -10,
+                              }}
+                            />
+                            <YAxis
+                              label={{
+                                value: "Amplitude (mV)",
+                                angle: -90,
+                                position: "insideLeft",
+                              }}
+                            />
+                            <Tooltip
+                              formatter={(value) => [
+                                `${value} mV`,
+                                "Amplitude",
+                              ]}
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="value"
+                              stroke="#ef4444"
+                              dot={false}
+                              name="ECG"
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                        <div className="text-center text-sm text-gray-500 mt-2">
+                          ECG recording from{" "}
+                          {heartHealthRecords.find((r) => r.type === "ECG")
+                            ?.date || "Unknown Date"}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Lab Results Chart */}
+                    {activeChartType === "lab" && (
+                      <div className="h-64">
+                        <div className="h-full flex flex-col justify-center items-center">
+                          <h5 className="text-lg font-medium mb-4">
+                            Lab Results
+                          </h5>
+                          <div className="w-full max-w-2xl">
+                            <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead className="bg-gray-50 dark:bg-gray-900">
+                                  <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                      Test
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                      Value
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                      Normal Range
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                      Status
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                  {labResultsData[0]?.details &&
+                                    Object.entries(
+                                      labResultsData[0].details
+                                    ).map(([key, detail], index) => (
+                                      <tr
+                                        key={index}
+                                        className={
+                                          index % 2 === 0
+                                            ? "bg-gray-50 dark:bg-gray-900/50"
+                                            : ""
+                                        }
+                                      >
+                                        <td className="px-6 py-2 whitespace-nowrap text-sm font-medium">
+                                          {key
+                                            .replace(/([A-Z])/g, " $1")
+                                            .replace(/^./, (str) =>
+                                              str.toUpperCase()
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-2 whitespace-nowrap text-sm">
+                                          {detail.value} {detail.unit}
+                                        </td>
+                                        <td className="px-6 py-2 whitespace-nowrap text-sm">
+                                          {detail.normalRange}
+                                        </td>
+                                        <td className="px-6 py-2 whitespace-nowrap text-sm">
+                                          <span
+                                            className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                              isNormalValue(
+                                                detail.value,
+                                                detail.normalRange
+                                              )
+                                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                                                : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                                            }`}
+                                          >
+                                            {isNormalValue(
+                                              detail.value,
+                                              detail.normalRange
+                                            )
+                                              ? "Normal"
+                                              : "Attention"}
+                                          </span>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                </tbody>
+                              </table>
+                            </div>
+                            <div className="text-center text-sm text-gray-500 mt-2">
+                              Last Updated:{" "}
+                              {labResultsData[0]?.date || "Unknown"}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Weight Chart */}
+                    {activeChartType === "weight" && (
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart
+                            data={prepareVitalSignsData()}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                          >
+                            <XAxis dataKey="date" />
+                            <YAxis domain={["dataMin - 10", "dataMax + 10"]} />
+                            <Tooltip />
+                            <Legend />
+                            <Line
+                              type="monotone"
+                              dataKey="weight"
+                              stroke="#8884d8"
+                              name="Weight (lbs)"
+                              activeDot={{ r: 8 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Heart Health Records */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-6">
+                    <div className="flex justify-between mb-3">
+                      <h4 className="font-medium">Heart Health Records</h4>
+                      <button
+                        onClick={() => setActiveTab("medical")}
+                        className="text-primary text-sm hover:text-primary/80"
+                      >
+                        View All Records
+                      </button>
+                    </div>
+                    <div className="space-y-4">
+                      {heartHealthRecords.slice(0, 2).map((record, index) => (
+                        <div
+                          key={index}
+                          className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4"
+                        >
+                          <div className="flex justify-between mb-2">
+                            <h5 className="font-medium">{record.type}</h5>
+                            <span className="text-sm text-gray-500">
+                              {record.date}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                            {record.provider}
+                          </p>
+                          <p className="text-sm mb-2">{record.results}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">
+                            <span className="font-medium">
+                              Recommendations:
+                            </span>{" "}
+                            {record.recommendations}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
@@ -644,7 +1226,6 @@ const PatientDetail = () => {
                       <button
                         onClick={() => setActiveTab("medical")}
                         className="text-primary text-sm hover:text-primary/80"
-                        aria-label="View all medical records"
                       >
                         View All
                       </button>
@@ -852,132 +1433,330 @@ const PatientDetail = () => {
                   <h3 className="text-lg font-medium mb-4">Appointments</h3>
                   <div className="flex justify-between mb-4">
                     <div className="flex space-x-2">
-                      <button className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary/90">
+                      <button
+                        className={`px-3 py-1 ${appointmentFilter === "upcoming" ? "bg-primary text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"} rounded-md text-sm hover:bg-primary/90`}
+                        onClick={() => setAppointmentFilter("upcoming")}
+                      >
                         Upcoming
                       </button>
-                      <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600">
+                      <button
+                        className={`px-3 py-1 ${appointmentFilter === "past" ? "bg-primary text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"} rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600`}
+                        onClick={() => setAppointmentFilter("past")}
+                      >
                         Past
                       </button>
-                      <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600">
+                      <button
+                        className={`px-3 py-1 ${appointmentFilter === "cancelled" ? "bg-primary text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"} rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600`}
+                        onClick={() => setAppointmentFilter("cancelled")}
+                      >
                         Cancelled
                       </button>
                     </div>
-                    <button className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary/90 flex items-center">
+                    <button
+                      className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary/90 flex items-center"
+                      onClick={() => setShowAppointmentModal(true)}
+                    >
                       <CalendarDaysIcon className="h-4 w-4 mr-1" />
                       Schedule New
                     </button>
                   </div>
 
-                  {/* Upcoming appointments */}
+                  {/* Render appointments based on filter */}
                   <div className="space-y-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-                      <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-                        <div className="mb-2 md:mb-0">
-                          <h4 className="font-medium">
-                            Annual Physical Examination
-                          </h4>
-                          <div className="flex items-center text-sm text-gray-500 mt-1">
-                            <CalendarDaysIcon className="h-4 w-4 mr-1" />
-                            <span>June 20, 2023 | 10:30 AM - 11:30 AM</span>
+                    {appointmentFilter === "upcoming" && (
+                      <>
+                        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                          <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                            <div className="mb-2 md:mb-0">
+                              <h4 className="font-medium">
+                                Annual Physical Examination
+                              </h4>
+                              <div className="flex items-center text-sm text-gray-500 mt-1">
+                                <CalendarDaysIcon className="h-4 w-4 mr-1" />
+                                <span>June 20, 2023 | 10:30 AM - 11:30 AM</span>
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <button className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-md text-sm">
+                                Check In
+                              </button>
+                              <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm">
+                                Reschedule
+                              </button>
+                              <button className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 rounded-md text-sm">
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div>
+                                <p className="text-sm text-gray-500 mb-1">
+                                  Provider
+                                </p>
+                                <p className="text-sm">Dr. Emily Johnson</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500 mb-1">
+                                  Department
+                                </p>
+                                <p className="text-sm">Internal Medicine</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500 mb-1">
+                                  Location
+                                </p>
+                                <p className="text-sm">
+                                  Main Hospital - Room 305
+                                </p>
+                              </div>
+                            </div>
+                            <div className="mt-3">
+                              <p className="text-sm text-gray-500 mb-1">
+                                Notes
+                              </p>
+                              <p className="text-sm">
+                                Please arrive 15 minutes early to complete
+                                paperwork. Fast for 8 hours before appointment
+                                for lab work.
+                              </p>
+                            </div>
                           </div>
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                          <button className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-md text-sm">
-                            Check In
-                          </button>
-                          <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm">
-                            Reschedule
-                          </button>
-                          <button className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 rounded-md text-sm">
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                      <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div>
-                            <p className="text-sm text-gray-500 mb-1">
-                              Provider
-                            </p>
-                            <p className="text-sm">Dr. Emily Johnson</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500 mb-1">
-                              Department
-                            </p>
-                            <p className="text-sm">Internal Medicine</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500 mb-1">
-                              Location
-                            </p>
-                            <p className="text-sm">Main Hospital - Room 305</p>
-                          </div>
-                        </div>
-                        <div className="mt-3">
-                          <p className="text-sm text-gray-500 mb-1">Notes</p>
-                          <p className="text-sm">
-                            Please arrive 15 minutes early to complete
-                            paperwork. Fast for 8 hours before appointment for
-                            lab work.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
 
-                    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-                      <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-                        <div className="mb-2 md:mb-0">
-                          <h4 className="font-medium">Diabetes Follow-up</h4>
-                          <div className="flex items-center text-sm text-gray-500 mt-1">
-                            <CalendarDaysIcon className="h-4 w-4 mr-1" />
-                            <span>July 15, 2023 | 2:00 PM - 2:30 PM</span>
+                        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                          <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                            <div className="mb-2 md:mb-0">
+                              <h4 className="font-medium">
+                                Diabetes Follow-up
+                              </h4>
+                              <div className="flex items-center text-sm text-gray-500 mt-1">
+                                <CalendarDaysIcon className="h-4 w-4 mr-1" />
+                                <span>July 15, 2023 | 2:00 PM - 2:30 PM</span>
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <button className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-md text-sm">
+                                Check In
+                              </button>
+                              <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm">
+                                Reschedule
+                              </button>
+                              <button className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 rounded-md text-sm">
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div>
+                                <p className="text-sm text-gray-500 mb-1">
+                                  Provider
+                                </p>
+                                <p className="text-sm">Dr. Robert Martinez</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500 mb-1">
+                                  Department
+                                </p>
+                                <p className="text-sm">Endocrinology</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500 mb-1">
+                                  Location
+                                </p>
+                                <p className="text-sm">
+                                  Specialty Clinic - Suite 210
+                                </p>
+                              </div>
+                            </div>
+                            <div className="mt-3">
+                              <p className="text-sm text-gray-500 mb-1">
+                                Notes
+                              </p>
+                              <p className="text-sm">
+                                Bring glucose monitoring records. Insurance
+                                pre-authorization completed.
+                              </p>
+                            </div>
                           </div>
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                          <button className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-md text-sm">
-                            Check In
-                          </button>
-                          <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm">
-                            Reschedule
-                          </button>
-                          <button className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 rounded-md text-sm">
-                            Cancel
-                          </button>
+                      </>
+                    )}
+
+                    {appointmentFilter === "past" && (
+                      <>
+                        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                          <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                            <div className="mb-2 md:mb-0">
+                              <h4 className="font-medium">
+                                Quarterly Blood Work
+                              </h4>
+                              <div className="flex items-center text-sm text-gray-500 mt-1">
+                                <CalendarDaysIcon className="h-4 w-4 mr-1" />
+                                <span>April 15, 2023 | 8:00 AM - 9:00 AM</span>
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 rounded-full text-xs">
+                                Completed
+                              </span>
+                            </div>
+                          </div>
+                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div>
+                                <p className="text-sm text-gray-500 mb-1">
+                                  Provider
+                                </p>
+                                <p className="text-sm">Dr. Emily Johnson</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500 mb-1">
+                                  Department
+                                </p>
+                                <p className="text-sm">Laboratory Services</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500 mb-1">
+                                  Location
+                                </p>
+                                <p className="text-sm">
+                                  Main Hospital - Lab Wing
+                                </p>
+                              </div>
+                            </div>
+                            <div className="mt-3">
+                              <p className="text-sm text-gray-500 mb-1">
+                                Notes
+                              </p>
+                              <p className="text-sm">
+                                Routine blood work for diabetes and cholesterol
+                                monitoring. Results available in patient portal.
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div>
-                            <p className="text-sm text-gray-500 mb-1">
-                              Provider
-                            </p>
-                            <p className="text-sm">Dr. Robert Martinez</p>
+
+                        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                          <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                            <div className="mb-2 md:mb-0">
+                              <h4 className="font-medium">Urgent Care Visit</h4>
+                              <div className="flex items-center text-sm text-gray-500 mt-1">
+                                <CalendarDaysIcon className="h-4 w-4 mr-1" />
+                                <span>
+                                  January 10, 2023 | 3:15 PM - 4:00 PM
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 rounded-full text-xs">
+                                Completed
+                              </span>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-sm text-gray-500 mb-1">
-                              Department
-                            </p>
-                            <p className="text-sm">Endocrinology</p>
+                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div>
+                                <p className="text-sm text-gray-500 mb-1">
+                                  Provider
+                                </p>
+                                <p className="text-sm">Dr. Michael Chen</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500 mb-1">
+                                  Department
+                                </p>
+                                <p className="text-sm">Urgent Care</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500 mb-1">
+                                  Location
+                                </p>
+                                <p className="text-sm">
+                                  Medical Plaza - First Floor
+                                </p>
+                              </div>
+                            </div>
+                            <div className="mt-3">
+                              <p className="text-sm text-gray-500 mb-1">
+                                Notes
+                              </p>
+                              <p className="text-sm">
+                                Treated for flu-like symptoms. Diagnosed with
+                                viral upper respiratory infection.
+                              </p>
+                            </div>
                           </div>
-                          <div>
+                        </div>
+                      </>
+                    )}
+
+                    {appointmentFilter === "cancelled" && (
+                      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                          <div className="mb-2 md:mb-0">
+                            <h4 className="font-medium">
+                              Dermatology Consultation
+                            </h4>
+                            <div className="flex items-center text-sm text-gray-500 mt-1">
+                              <CalendarDaysIcon className="h-4 w-4 mr-1" />
+                              <span>March 5, 2023 | 11:00 AM - 11:45 AM</span>
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <span className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 rounded-full text-xs">
+                              Cancelled
+                            </span>
+                          </div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                              <p className="text-sm text-gray-500 mb-1">
+                                Provider
+                              </p>
+                              <p className="text-sm">Dr. Sarah Williams</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500 mb-1">
+                                Department
+                              </p>
+                              <p className="text-sm">Dermatology</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500 mb-1">
+                                Location
+                              </p>
+                              <p className="text-sm">
+                                Specialty Clinic - Suite 305
+                              </p>
+                            </div>
+                          </div>
+                          <div className="mt-3">
                             <p className="text-sm text-gray-500 mb-1">
-                              Location
+                              Cancellation Reason
                             </p>
                             <p className="text-sm">
-                              Specialty Clinic - Suite 210
+                              Patient requested cancellation. Reason: Schedule
+                              conflict.
                             </p>
                           </div>
                         </div>
-                        <div className="mt-3">
-                          <p className="text-sm text-gray-500 mb-1">Notes</p>
-                          <p className="text-sm">
-                            Bring glucose monitoring records. Insurance
-                            pre-authorization completed.
-                          </p>
-                        </div>
                       </div>
-                    </div>
+                    )}
+
+                    {/* No appointments message */}
+                    {((appointmentFilter === "upcoming" &&
+                      appointmentFilter.length === 0) ||
+                      (appointmentFilter === "past" &&
+                        appointmentFilter.length === 0) ||
+                      (appointmentFilter === "cancelled" &&
+                        appointmentFilter.length === 0)) && (
+                      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                        No {appointmentFilter} appointments found.
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -987,13 +1766,22 @@ const PatientDetail = () => {
                   <h3 className="text-lg font-medium mb-4">Communication</h3>
                   <div className="flex justify-between mb-4">
                     <div className="flex space-x-2">
-                      <button className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary/90">
+                      <button
+                        className={`px-3 py-1 ${messageFilter === "all" ? "bg-primary text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"} rounded-md text-sm hover:bg-primary/90`}
+                        onClick={() => setMessageFilter("all")}
+                      >
                         All Messages
                       </button>
-                      <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600">
+                      <button
+                        className={`px-3 py-1 ${messageFilter === "clinical" ? "bg-primary text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"} rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600`}
+                        onClick={() => setMessageFilter("clinical")}
+                      >
                         Clinical
                       </button>
-                      <button className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600">
+                      <button
+                        className={`px-3 py-1 ${messageFilter === "administrative" ? "bg-primary text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"} rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600`}
+                        onClick={() => setMessageFilter("administrative")}
+                      >
                         Administrative
                       </button>
                     </div>
@@ -1130,6 +1918,14 @@ const PatientDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Appointment scheduling modal */}
+      {showAppointmentModal && (
+        <AppointmentModal
+          isOpen={showAppointmentModal}
+          onClose={() => setShowAppointmentModal(false)}
+        />
+      )}
     </div>
   );
 };
