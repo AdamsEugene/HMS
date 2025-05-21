@@ -619,6 +619,125 @@ const AppointmentModal = ({
   );
 };
 
+// Add glucose monitoring data
+const glucoseData = [
+  { date: "2023-05-20", fasting: 95, postMeal: 145, beforeBed: 110 },
+  { date: "2023-05-10", fasting: 92, postMeal: 150, beforeBed: 105 },
+  { date: "2023-04-30", fasting: 97, postMeal: 160, beforeBed: 120 },
+  { date: "2023-04-15", fasting: 94, postMeal: 155, beforeBed: 115 },
+  { date: "2023-03-25", fasting: 90, postMeal: 140, beforeBed: 108 },
+  { date: "2023-03-05", fasting: 88, postMeal: 138, beforeBed: 102 },
+  { date: "2023-02-15", fasting: 91, postMeal: 143, beforeBed: 106 },
+  { date: "2023-01-30", fasting: 98, postMeal: 165, beforeBed: 125 },
+];
+
+// Add blood pressure history data
+const bpHistoryData = [
+  { date: "2023-05-20", systolic: 128, diastolic: 82 },
+  { date: "2023-05-01", systolic: 130, diastolic: 84 },
+  { date: "2023-04-15", systolic: 132, diastolic: 86 },
+  { date: "2023-03-30", systolic: 135, diastolic: 87 },
+  { date: "2023-03-15", systolic: 133, diastolic: 85 },
+  { date: "2023-03-01", systolic: 129, diastolic: 83 },
+  { date: "2023-02-15", systolic: 131, diastolic: 84 },
+  { date: "2023-02-01", systolic: 134, diastolic: 86 },
+  { date: "2023-01-15", systolic: 136, diastolic: 88 },
+  { date: "2023-01-01", systolic: 132, diastolic: 85 },
+];
+
+// Add cholesterol history data
+const cholesterolData = [
+  {
+    date: "2023-04-15",
+    totalCholesterol: 195,
+    ldl: 110,
+    hdl: 45,
+    triglycerides: 150,
+  },
+  {
+    date: "2022-10-20",
+    totalCholesterol: 205,
+    ldl: 125,
+    hdl: 42,
+    triglycerides: 170,
+  },
+  {
+    date: "2022-04-25",
+    totalCholesterol: 210,
+    ldl: 130,
+    hdl: 40,
+    triglycerides: 180,
+  },
+  {
+    date: "2021-10-30",
+    totalCholesterol: 215,
+    ldl: 135,
+    hdl: 38,
+    triglycerides: 195,
+  },
+  {
+    date: "2021-04-15",
+    totalCholesterol: 220,
+    ldl: 140,
+    hdl: 36,
+    triglycerides: 200,
+  },
+];
+
+// Add A1C history data
+const a1cData = [
+  { date: "2023-04-15", value: 5.8 },
+  { date: "2022-10-20", value: 6.0 },
+  { date: "2022-04-25", value: 6.2 },
+  { date: "2021-10-30", value: 6.5 },
+  { date: "2021-04-15", value: 6.8 },
+  { date: "2020-10-20", value: 7.1 },
+];
+
+// Add sample message data
+const messagesData = [
+  {
+    id: "msg1",
+    date: "2023-05-28",
+    subject: "Medication Refill Request",
+    from: "John Smith (Patient)",
+    content:
+      "I need a refill for my Lisinopril medication. I'm down to my last few pills. Thank you.",
+    replied: true,
+    type: "clinical",
+  },
+  {
+    id: "msg2",
+    date: "2023-05-25",
+    subject: "Lab Results Available",
+    from: "Dr. Emily Johnson",
+    content:
+      "Your recent lab results are available for review. Overall, the results look good. Your blood pressure is slightly elevated, so let's discuss lifestyle modifications during your next visit. You can view the detailed results in your patient portal.",
+    replied: false,
+    type: "clinical",
+  },
+  {
+    id: "msg3",
+    date: "2023-05-15",
+    subject: "Appointment Confirmation",
+    from: "Scheduling Department",
+    content:
+      "This is a confirmation of your upcoming appointment on June 20, 2023 at 10:00 AM with Dr. Emily Johnson. Please arrive 15 minutes early to complete any necessary paperwork. Let us know if you need to reschedule.",
+    replied: false,
+    type: "administrative",
+  },
+  {
+    id: "msg4",
+    date: "2023-05-10",
+    subject: "Insurance Update Needed",
+    from: "Billing Department",
+    content:
+      "Our records show that your insurance information may have changed. Please provide us with your updated insurance card at your next visit, or upload it through the patient portal at your earliest convenience.",
+    replied: true,
+    type: "administrative",
+  },
+];
+
 const PatientDetail = () => {
   const { patientId } = useParams<{ patientId: string }>();
   const navigate = useNavigate();
@@ -635,6 +754,11 @@ const PatientDetail = () => {
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [appointmentFilter, setAppointmentFilter] = useState("upcoming");
   const [messageFilter, setMessageFilter] = useState("all");
+
+  // Add new state variables
+  const [showNewMessageModal, setShowNewMessageModal] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
+  const [showReplyModal, setShowReplyModal] = useState(false);
 
   // Tabs configuration
   const tabs: TabType[] = [
@@ -706,6 +830,132 @@ const PatientDetail = () => {
       return value >= min && value <= max;
     }
     return true;
+  };
+
+  // Add a function to prepare glucose data
+  const prepareGlucoseData = () => {
+    let filteredData = [...glucoseData];
+
+    // Apply time filter
+    if (filterTimeRange !== "all") {
+      const now = new Date();
+      const monthsToSubtract =
+        filterTimeRange === "6months"
+          ? 6
+          : filterTimeRange === "1year"
+            ? 12
+            : filterTimeRange === "3years"
+              ? 36
+              : 0;
+
+      if (monthsToSubtract > 0) {
+        const cutoffDate = new Date();
+        cutoffDate.setMonth(now.getMonth() - monthsToSubtract);
+
+        filteredData = filteredData.filter((record) => {
+          const recordDate = new Date(record.date);
+          return recordDate >= cutoffDate;
+        });
+      }
+    }
+
+    return filteredData.reverse();
+  };
+
+  // Add a function to prepare BP history data
+  const prepareBPHistoryData = () => {
+    let filteredData = [...bpHistoryData];
+
+    // Apply time filter
+    if (filterTimeRange !== "all") {
+      const now = new Date();
+      const monthsToSubtract =
+        filterTimeRange === "6months"
+          ? 6
+          : filterTimeRange === "1year"
+            ? 12
+            : filterTimeRange === "3years"
+              ? 36
+              : 0;
+
+      if (monthsToSubtract > 0) {
+        const cutoffDate = new Date();
+        cutoffDate.setMonth(now.getMonth() - monthsToSubtract);
+
+        filteredData = filteredData.filter((record) => {
+          const recordDate = new Date(record.date);
+          return recordDate >= cutoffDate;
+        });
+      }
+    }
+
+    return filteredData.reverse();
+  };
+
+  // Add a function to prepare cholesterol data
+  const prepareCholesterolData = () => {
+    let filteredData = [...cholesterolData];
+
+    // Apply time filter
+    if (filterTimeRange !== "all") {
+      const now = new Date();
+      const monthsToSubtract =
+        filterTimeRange === "6months"
+          ? 6
+          : filterTimeRange === "1year"
+            ? 12
+            : filterTimeRange === "3years"
+              ? 36
+              : 0;
+
+      if (monthsToSubtract > 0) {
+        const cutoffDate = new Date();
+        cutoffDate.setMonth(now.getMonth() - monthsToSubtract);
+
+        filteredData = filteredData.filter((record) => {
+          const recordDate = new Date(record.date);
+          return recordDate >= cutoffDate;
+        });
+      }
+    }
+
+    return filteredData.reverse();
+  };
+
+  // Add a function to prepare A1C data
+  const prepareA1CData = () => {
+    let filteredData = [...a1cData];
+
+    // Apply time filter
+    if (filterTimeRange !== "all") {
+      const now = new Date();
+      const monthsToSubtract =
+        filterTimeRange === "6months"
+          ? 6
+          : filterTimeRange === "1year"
+            ? 12
+            : filterTimeRange === "3years"
+              ? 36
+              : 0;
+
+      if (monthsToSubtract > 0) {
+        const cutoffDate = new Date();
+        cutoffDate.setMonth(now.getMonth() - monthsToSubtract);
+
+        filteredData = filteredData.filter((record) => {
+          const recordDate = new Date(record.date);
+          return recordDate >= cutoffDate;
+        });
+      }
+    }
+
+    return filteredData.reverse();
+  };
+
+  // Add a function to filter messages
+  const getFilteredMessages = () => {
+    if (messageFilter === "all") return messagesData;
+    return messagesData.filter((msg) => msg.type === messageFilter);
   };
 
   if (!patient) {
@@ -959,6 +1209,12 @@ const PatientDetail = () => {
                           aria-label="Chart type"
                         >
                           <option value="vitals">Vital Signs</option>
+                          <option value="bp">Blood Pressure History</option>
+                          <option value="glucose">Glucose Monitoring</option>
+                          <option value="a1c">A1C History</option>
+                          <option value="cholesterol">
+                            Cholesterol Levels
+                          </option>
                           <option value="ecg">ECG Data</option>
                           <option value="lab">Lab Results</option>
                           <option value="weight">Weight History</option>
@@ -1019,6 +1275,140 @@ const PatientDetail = () => {
                               dataKey="heartRate"
                               stroke="#10b981"
                               name="Heart Rate"
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+
+                    {/* Blood Pressure History Chart */}
+                    {activeChartType === "bp" && (
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart
+                            data={prepareBPHistoryData()}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                          >
+                            <XAxis dataKey="date" />
+                            <YAxis domain={[70, "dataMax + 10"]} />
+                            <Tooltip />
+                            <Legend />
+                            <Line
+                              type="monotone"
+                              dataKey="systolic"
+                              stroke="#ef4444"
+                              name="Systolic"
+                              activeDot={{ r: 8 }}
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="diastolic"
+                              stroke="#3b82f6"
+                              name="Diastolic"
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+
+                    {/* Glucose Monitoring Chart */}
+                    {activeChartType === "glucose" && (
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart
+                            data={prepareGlucoseData()}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                          >
+                            <XAxis dataKey="date" />
+                            <YAxis domain={[60, 180]} />
+                            <Tooltip />
+                            <Legend />
+                            <Line
+                              type="monotone"
+                              dataKey="fasting"
+                              stroke="#10b981"
+                              name="Fasting Glucose"
+                              activeDot={{ r: 8 }}
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="postMeal"
+                              stroke="#f59e0b"
+                              name="Post-Meal Glucose"
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="beforeBed"
+                              stroke="#8b5cf6"
+                              name="Before Bed Glucose"
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+
+                    {/* A1C History Chart */}
+                    {activeChartType === "a1c" && (
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart
+                            data={prepareA1CData()}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                          >
+                            <XAxis dataKey="date" />
+                            <YAxis domain={[5, 8]} />
+                            <Tooltip
+                              formatter={(value) => [`${value}%`, "A1C"]}
+                            />
+                            <Legend />
+                            <Line
+                              type="monotone"
+                              dataKey="value"
+                              stroke="#8b5cf6"
+                              name="A1C"
+                              activeDot={{ r: 8 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+
+                    {/* Cholesterol Chart */}
+                    {activeChartType === "cholesterol" && (
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart
+                            data={prepareCholesterolData()}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                          >
+                            <XAxis dataKey="date" />
+                            <YAxis domain={[0, 250]} />
+                            <Tooltip />
+                            <Legend />
+                            <Line
+                              type="monotone"
+                              dataKey="totalCholesterol"
+                              stroke="#8b5cf6"
+                              name="Total Cholesterol"
+                              activeDot={{ r: 8 }}
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="ldl"
+                              stroke="#ef4444"
+                              name="LDL"
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="hdl"
+                              stroke="#10b981"
+                              name="HDL"
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="triglycerides"
+                              stroke="#f59e0b"
+                              name="Triglycerides"
                             />
                           </LineChart>
                         </ResponsiveContainer>
@@ -1785,7 +2175,11 @@ const PatientDetail = () => {
                         Administrative
                       </button>
                     </div>
-                    <button className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary/90 flex items-center">
+                    <button
+                      className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary/90 flex items-center"
+                      onClick={() => setShowNewMessageModal(true)}
+                      aria-label="Create new message"
+                    >
                       <ChatBubbleLeftRightIcon className="h-4 w-4 mr-1" />
                       New Message
                     </button>
@@ -1793,124 +2187,68 @@ const PatientDetail = () => {
 
                   {/* Communication history */}
                   <div className="space-y-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-                      <div className="flex justify-between mb-2">
-                        <h4 className="font-medium">
-                          Medication Refill Request
-                        </h4>
-                        <span className="text-sm text-gray-500">
-                          May 28, 2023
-                        </span>
-                      </div>
-                      <div className="flex items-start mb-3">
-                        <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center mr-3">
-                          <UserIcon className="h-4 w-4 text-primary" />
+                    {getFilteredMessages().map((message) => (
+                      <div
+                        key={message.id}
+                        className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4"
+                      >
+                        <div className="flex justify-between mb-2">
+                          <h4 className="font-medium">{message.subject}</h4>
+                          <span className="text-sm text-gray-500">
+                            {message.date}
+                          </span>
                         </div>
-                        <div>
-                          <p className="text-sm font-medium">
-                            John Smith (Patient)
-                          </p>
-                          <p className="text-sm mt-1">
-                            I need a refill for my Lisinopril medication. I'm
-                            down to my last few pills. Thank you.
-                          </p>
+                        <div className="flex items-start mb-3">
+                          <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center mr-3">
+                            <UserIcon className="h-4 w-4 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">
+                              {message.from}
+                            </p>
+                            <p className="text-sm mt-1">{message.content}</p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-start ml-6">
-                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                          <UserIcon className="h-4 w-4 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">
-                            Dr. Emily Johnson
-                          </p>
-                          <p className="text-sm mt-1">
-                            I've approved your refill request. You can pick it
-                            up at your pharmacy tomorrow. Let me know if you
-                            have any questions.
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            May 28, 2023 at 3:45 PM
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-                      <div className="flex justify-between mb-2">
-                        <h4 className="font-medium">
-                          Appointment Confirmation
-                        </h4>
-                        <span className="text-sm text-gray-500">
-                          May 15, 2023
-                        </span>
-                      </div>
-                      <div className="flex items-start mb-3">
-                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                          <UserIcon className="h-4 w-4 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">
-                            Front Desk Staff
-                          </p>
-                          <p className="text-sm mt-1">
-                            This is to confirm your appointment with Dr. Emily
-                            Johnson on June 20, 2023 at 10:30 AM for your annual
-                            physical examination. Please arrive 15 minutes early
-                            to complete necessary paperwork.
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            May 15, 2023 at 10:15 AM
-                          </p>
+                        <div className="flex space-x-2 justify-end">
+                          <button
+                            className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-md text-sm hover:bg-blue-200 dark:hover:bg-blue-800"
+                            onClick={() => {
+                              setSelectedMessage(message.id);
+                              setShowReplyModal(true);
+                            }}
+                            aria-label="Reply to message"
+                          >
+                            Reply
+                          </button>
+                          <button
+                            className="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-gray-600"
+                            onClick={() =>
+                              alert(
+                                `Message marked as ${message.replied ? "unread" : "read"}`
+                              )
+                            }
+                            aria-label={`Mark message as ${message.replied ? "unread" : "read"}`}
+                          >
+                            {message.replied
+                              ? "Mark as Unread"
+                              : "Mark as Read"}
+                          </button>
+                          <button
+                            className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 rounded-md text-sm hover:bg-red-200 dark:hover:bg-red-800"
+                            onClick={() => alert("Message deleted")}
+                            aria-label="Delete message"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </div>
-                      <div className="flex items-start ml-6">
-                        <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center mr-3">
-                          <UserIcon className="h-4 w-4 text-primary" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">
-                            John Smith (Patient)
-                          </p>
-                          <p className="text-sm mt-1">
-                            Thank you for the confirmation. I'll be there as
-                            scheduled.
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            May 15, 2023 at 11:30 AM
-                          </p>
-                        </div>
+                    ))}
+                    {getFilteredMessages().length === 0 && (
+                      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                        No {messageFilter !== "all" ? messageFilter : ""}{" "}
+                        messages found.
                       </div>
-                    </div>
-
-                    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-                      <div className="flex justify-between mb-2">
-                        <h4 className="font-medium">Lab Results Available</h4>
-                        <span className="text-sm text-gray-500">
-                          April 18, 2023
-                        </span>
-                      </div>
-                      <div className="flex items-start">
-                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                          <UserIcon className="h-4 w-4 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">
-                            Dr. Emily Johnson
-                          </p>
-                          <p className="text-sm mt-1">
-                            Your recent lab results are available for review.
-                            Overall, the results look good. Your blood pressure
-                            is slightly elevated, so let's discuss lifestyle
-                            modifications during your next visit. You can view
-                            the detailed results in your patient portal.
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            April 18, 2023 at 2:30 PM
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -1925,6 +2263,170 @@ const PatientDetail = () => {
           isOpen={showAppointmentModal}
           onClose={() => setShowAppointmentModal(false)}
         />
+      )}
+
+      {/* New Message Modal */}
+      {showNewMessageModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-medium">New Message</h3>
+              <button
+                onClick={() => setShowNewMessageModal(false)}
+                className="text-gray-400 hover:text-gray-500"
+                aria-label="Close new message form"
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  alert("Message sent successfully!");
+                  setShowNewMessageModal(false);
+                }}
+              >
+                <div className="space-y-4">
+                  <div>
+                    <label
+                      htmlFor="subject"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                    >
+                      Subject
+                    </label>
+                    <input
+                      type="text"
+                      id="subject"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="recipient"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                    >
+                      Recipient
+                    </label>
+                    <select
+                      id="recipient"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                      required
+                    >
+                      <option value="">Select recipient</option>
+                      <option value="dr-johnson">Dr. Emily Johnson</option>
+                      <option value="dr-chen">Dr. Michael Chen</option>
+                      <option value="billing">Billing Department</option>
+                      <option value="scheduling">Scheduling Department</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="message"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                    >
+                      Message
+                    </label>
+                    <textarea
+                      id="message"
+                      rows={6}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                      required
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="mt-6 flex justify-end space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowNewMessageModal(false)}
+                    className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90"
+                  >
+                    Send Message
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reply Message Modal */}
+      {showReplyModal && selectedMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-medium">Reply to Message</h3>
+              <button
+                onClick={() => {
+                  setShowReplyModal(false);
+                  setSelectedMessage(null);
+                }}
+                className="text-gray-400 hover:text-gray-500"
+                aria-label="Close reply form"
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
+                <p className="text-sm font-medium mb-1">
+                  {messagesData.find((m) => m.id === selectedMessage)?.subject}
+                </p>
+                <p className="text-sm">
+                  {messagesData.find((m) => m.id === selectedMessage)?.content}
+                </p>
+              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  alert("Reply sent successfully!");
+                  setShowReplyModal(false);
+                  setSelectedMessage(null);
+                }}
+              >
+                <div>
+                  <label
+                    htmlFor="reply"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
+                    Your Reply
+                  </label>
+                  <textarea
+                    id="reply"
+                    rows={6}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    required
+                  ></textarea>
+                </div>
+                <div className="mt-6 flex justify-end space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowReplyModal(false);
+                      setSelectedMessage(null);
+                    }}
+                    className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90"
+                  >
+                    Send Reply
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
