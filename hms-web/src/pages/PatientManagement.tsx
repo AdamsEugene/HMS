@@ -13,12 +13,17 @@ import {
   Cog6ToothIcon,
   XMarkIcon,
   PlusIcon,
+  ArrowTrendingUpIcon,
+  UsersIcon,
+  TableCellsIcon,
+  FunnelIcon,
 } from "@heroicons/react/24/outline";
 import "../styles/dashboard.css";
 import "../styles/customization.css";
 import { useTheme } from "../contexts/ThemeContext";
 import DashboardBanner from "../components/dashboard/DashboardBanner";
 import DecorativePattern from "../components/dashboard/DecorativePattern";
+import { useNavigate } from "react-router-dom";
 
 // Set up responsive grid
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -87,6 +92,20 @@ interface LayoutPreset {
   layout?: { [key: string]: LayoutItem[] };
 }
 
+// Add type definitions for the demographics and activity data
+interface PatientDemographics {
+  gender: { [key: string]: number };
+  ageGroups: { [key: string]: number };
+  insuranceTypes: { [key: string]: number };
+  statusDistribution: { [key: string]: number };
+}
+
+interface PatientActivityData {
+  monthlyPatients: { month: string; count: number }[];
+  appointmentTypes: { [key: string]: number };
+  visitTimes: { [key: string]: number };
+}
+
 // Widget definitions
 const patientWidgets: Widget[] = [
   {
@@ -128,6 +147,30 @@ const patientWidgets: Widget[] = [
     defaultWidth: 2,
     defaultHeight: 1,
     icon: ClipboardDocumentCheckIcon,
+  },
+  {
+    id: "patient-stats",
+    title: "Patient Statistics",
+    description: "View patient demographic statistics and key metrics",
+    defaultWidth: 2,
+    defaultHeight: 2,
+    icon: UsersIcon,
+  },
+  {
+    id: "patient-activity",
+    title: "Patient Activity",
+    description: "Monitor patient visit frequency and trends",
+    defaultWidth: 2,
+    defaultHeight: 2,
+    icon: ArrowTrendingUpIcon,
+  },
+  {
+    id: "patient-table",
+    title: "Patient Data Table",
+    description: "View comprehensive patient list with details",
+    defaultWidth: 4,
+    defaultHeight: 3,
+    icon: TableCellsIcon,
   },
 ];
 
@@ -180,6 +223,43 @@ const layoutPresets: LayoutPreset[] = [
     },
   },
 ];
+
+// Add sample patient demographics data
+const patientDemographics = {
+  gender: { Male: 45, Female: 52, Other: 3 },
+  ageGroups: { "0-18": 12, "19-35": 24, "36-50": 31, "51-65": 18, "65+": 15 },
+  insuranceTypes: { "Blue Cross": 35, Medicare: 28, Aetna: 22, Other: 15 },
+  statusDistribution: {
+    Active: 75,
+    Scheduled: 15,
+    Waiting: 5,
+    InProgress: 3,
+    Discharged: 2,
+  },
+};
+
+// Add sample patient activity data
+const patientActivityData = {
+  monthlyPatients: [
+    { month: "Jan", count: 120 },
+    { month: "Feb", count: 140 },
+    { month: "Mar", count: 135 },
+    { month: "Apr", count: 155 },
+    { month: "May", count: 170 },
+    { month: "Jun", count: 190 },
+  ],
+  appointmentTypes: {
+    "Follow-up": 42,
+    "New Patient": 25,
+    "Annual Physical": 18,
+    "Specialist Referral": 15,
+  },
+  visitTimes: {
+    "Morning (8-12)": 40,
+    "Afternoon (12-5)": 35,
+    "Evening (5-8)": 25,
+  },
+};
 
 // Sample patient data
 const samplePatients: Patient[] = [
@@ -246,9 +326,89 @@ const samplePatients: Patient[] = [
   },
 ];
 
+// Extend the sample patients data
+const extendedPatients: Patient[] = [
+  ...samplePatients,
+  {
+    id: "P004",
+    name: "Emily Rodriguez",
+    age: 28,
+    gender: "Female",
+    contactNumber: "(555) 789-1234",
+    email: "emily.rodriguez@example.com",
+    address: "321 Elm St, Somewhere, CA 90210",
+    insuranceProvider: "Aetna",
+    insuranceNumber: "AE123456789",
+    medicalRecordNumber: "MRN004",
+    status: "Scheduled",
+    lastVisit: "2023-04-22",
+    upcomingAppointment: "2023-06-12",
+    dateOfBirth: "1995-03-17",
+    bloodType: "A+",
+    allergies: ["Dust", "Pollen"],
+    chronicConditions: ["Asthma"],
+  },
+  {
+    id: "P005",
+    name: "David Kim",
+    age: 52,
+    gender: "Male",
+    contactNumber: "(555) 567-8901",
+    email: "david.kim@example.com",
+    address: "456 Maple Ave, Anystate, NY 12345",
+    insuranceProvider: "Blue Cross",
+    insuranceNumber: "BC987654321",
+    medicalRecordNumber: "MRN005",
+    status: "Active",
+    lastVisit: "2023-05-05",
+    upcomingAppointment: "2023-06-25",
+    dateOfBirth: "1971-11-08",
+    bloodType: "O-",
+    allergies: ["Sulfa"],
+    chronicConditions: ["Hypertension", "High Cholesterol"],
+  },
+  {
+    id: "P006",
+    name: "Sophia Martinez",
+    age: 35,
+    gender: "Female",
+    contactNumber: "(555) 234-5678",
+    email: "sophia.martinez@example.com",
+    address: "789 Oak St, Othertown, FL 33456",
+    insuranceProvider: "Medicare",
+    insuranceNumber: "MC123789456",
+    medicalRecordNumber: "MRN006",
+    status: "Waiting",
+    lastVisit: "2023-05-15",
+    dateOfBirth: "1988-07-22",
+    bloodType: "B-",
+    allergies: [],
+    chronicConditions: ["Migraine"],
+  },
+  {
+    id: "P007",
+    name: "James Wilson",
+    age: 72,
+    gender: "Male",
+    contactNumber: "(555) 345-6789",
+    email: "james.wilson@example.com",
+    address: "123 Cherry Ln, Somewhere, CA 95123",
+    insuranceProvider: "Medicare",
+    insuranceNumber: "MC654321987",
+    medicalRecordNumber: "MRN007",
+    status: "Discharged",
+    lastVisit: "2023-05-01",
+    dateOfBirth: "1951-02-14",
+    bloodType: "AB+",
+    allergies: ["Penicillin", "Morphine"],
+    chronicConditions: ["Diabetes Type 2", "COPD", "Arthritis"],
+  },
+];
+
 const PatientManagement = () => {
   const { currentTheme, getGradientBackground } = useTheme();
   const gradients = getGradientBackground(currentTheme);
+  const navigate = useNavigate();
 
   // State for customization
   const [isCustomizing, setIsCustomizing] = useState(false);
@@ -259,9 +419,30 @@ const PatientManagement = () => {
   const [currentBreakpoint, setCurrentBreakpoint] = useState("lg");
   const [userLayouts, setUserLayouts] = useState<LayoutPreset[]>([]);
 
-  // Patient state
-  const [patients] = useState<Patient[]>(samplePatients);
+  // Patient state - using the extended patients dataset
+  const [patients] = useState<Patient[]>(extendedPatients);
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<PatientStatus | "All">(
+    "All"
+  );
+
+  // Add a layout preset that includes all the new chart widgets
+  const analyticsPreset: LayoutPreset = {
+    id: "analytics",
+    name: "Analytics Dashboard",
+    description: "Focus on patient statistics and activity trends",
+    widgets: ["patient-stats", "patient-activity", "patient-table"],
+    layout: {
+      lg: [
+        { i: "patient-stats", x: 0, y: 0, w: 2, h: 2 },
+        { i: "patient-activity", x: 2, y: 0, w: 2, h: 2 },
+        { i: "patient-table", x: 0, y: 2, w: 4, h: 3 },
+      ],
+    },
+  };
+
+  // Add the analytics preset to layout presets
+  const allLayoutPresets = [...layoutPresets, analyticsPreset];
 
   // Load saved layout from local storage
   useEffect(() => {
@@ -525,15 +706,21 @@ const PatientManagement = () => {
     setShowConfigPanel(false);
   };
 
-  // Filter patients based on search query
+  // Filter patients based on search query and status filter
   const filteredPatients = patients.filter(
     (patient) =>
-      patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      patient.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      patient.medicalRecordNumber
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
+      (statusFilter === "All" || patient.status === statusFilter) &&
+      (patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        patient.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        patient.medicalRecordNumber
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()))
   );
+
+  // Add function to handle patient click
+  const handlePatientClick = (patientId: string) => {
+    navigate(`/patient/${patientId}`);
+  };
 
   return (
     <div className="p-0 md:p-6 pt-0 md:pt-0 h-full">
@@ -572,20 +759,42 @@ const PatientManagement = () => {
       />
 
       <div className="container mx-auto px-4 py-6">
-        {/* Search Bar and Add Patient Button */}
+        {/* Search Bar, Status Filter, and Add Patient Button */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-          <div className="relative w-full md:w-1/2">
+          <div className="relative w-full md:w-1/3">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
             </div>
             <input
               type="text"
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out"
-              placeholder="Search patients by name, ID, or medical record number"
+              placeholder="Search patients by name, ID, or MRN"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
+
+          <div className="relative w-full md:w-1/3">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FunnelIcon className="h-5 w-5 text-gray-400" />
+            </div>
+            <select
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out"
+              value={statusFilter}
+              onChange={(e) =>
+                setStatusFilter(e.target.value as PatientStatus | "All")
+              }
+              aria-label="Filter patients by status"
+            >
+              <option value="All">All Statuses</option>
+              <option value="Active">Active</option>
+              <option value="Scheduled">Scheduled</option>
+              <option value="Waiting">Waiting</option>
+              <option value="InProgress">In Progress</option>
+              <option value="Discharged">Discharged</option>
+            </select>
+          </div>
+
           <button className="flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
             <UserPlusIcon className="h-5 w-5 mr-2" />
             Add New Patient
@@ -643,6 +852,7 @@ const PatientManagement = () => {
                               <div
                                 key={patient.id}
                                 className="p-2 bg-black/10 rounded-md hover:bg-black/20 cursor-pointer"
+                                onClick={() => handlePatientClick(patient.id)}
                               >
                                 <div className="flex justify-between">
                                   <span className="font-medium">
@@ -664,6 +874,19 @@ const PatientManagement = () => {
                             No patients match your search criteria
                           </div>
                         )
+                      ) : widgetId === "patient-stats" ? (
+                        <PatientStatsWidget
+                          demographics={patientDemographics}
+                        />
+                      ) : widgetId === "patient-activity" ? (
+                        <PatientActivityWidget
+                          activityData={patientActivityData}
+                        />
+                      ) : widgetId === "patient-table" ? (
+                        <PatientTableWidget
+                          patients={filteredPatients}
+                          onPatientClick={handlePatientClick}
+                        />
                       ) : (
                         <div className="text-center text-gray-400">
                           Widget content will be implemented here
@@ -720,7 +943,7 @@ const PatientManagement = () => {
                   Layout Presets
                 </h3>
                 <div className="space-y-2">
-                  {[...layoutPresets, ...userLayouts].map((preset) => (
+                  {[...allLayoutPresets, ...userLayouts].map((preset) => (
                     <div
                       key={preset.id}
                       className={`p-3 rounded-md cursor-pointer transition-colors ${
@@ -800,6 +1023,340 @@ const PatientManagement = () => {
           </div>
         )}
       </div>
+    </div>
+  );
+};
+
+// New components for the patient widgets
+const PatientStatsWidget = ({
+  demographics,
+}: {
+  demographics: PatientDemographics;
+}) => {
+  return (
+    <div className="space-y-4">
+      <div>
+        <h3 className="text-sm font-medium mb-2">Gender Distribution</h3>
+        <div className="flex h-8 rounded-md overflow-hidden">
+          {Object.entries(demographics.gender).map(([gender, count], index) => {
+            const percentage = (
+              (count /
+                Object.values(demographics.gender).reduce((a, b) => a + b, 0)) *
+              100
+            ).toFixed(0);
+            const colors = ["bg-blue-500", "bg-pink-500", "bg-purple-500"];
+            return (
+              <div
+                key={gender}
+                className={`${colors[index]} flex items-center justify-center`}
+                style={{ width: `${percentage}%` }}
+                title={`${gender}: ${percentage}%`}
+              >
+                <span className="text-xs text-white font-medium">
+                  {percentage}%
+                </span>
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex justify-center mt-2 space-x-4">
+          {Object.entries(demographics.gender).map(([gender, count], index) => {
+            const colors = [
+              "text-blue-500",
+              "text-pink-500",
+              "text-purple-500",
+            ];
+            return (
+              <div key={gender} className="flex items-center">
+                <div
+                  className={`w-3 h-3 ${colors[index].replace("text", "bg")} rounded-full mr-1`}
+                ></div>
+                <span className="text-xs">
+                  {gender} ({count})
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-sm font-medium mb-2">Age Distribution</h3>
+        <div className="grid grid-cols-5 gap-1 h-24">
+          {Object.entries(demographics.ageGroups).map(([range, count]) => {
+            const maxCount = Math.max(...Object.values(demographics.ageGroups));
+            const height = ((count / maxCount) * 100).toFixed(0);
+
+            return (
+              <div key={range} className="flex flex-col items-center">
+                <div className="flex-grow w-full flex items-end">
+                  <div
+                    className="w-full bg-primary/80 rounded-t-sm"
+                    style={{ height: `${height}%` }}
+                  ></div>
+                </div>
+                <span className="text-xs mt-1">{range}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-sm font-medium mb-2">Patient Status</h3>
+        <div className="flex flex-wrap gap-2">
+          {Object.entries(demographics.statusDistribution).map(
+            ([status, count]) => {
+              const colors: { [key: string]: string } = {
+                Active: "bg-green-500",
+                Scheduled: "bg-blue-500",
+                Waiting: "bg-yellow-500",
+                InProgress: "bg-purple-500",
+                Discharged: "bg-gray-500",
+              };
+
+              return (
+                <div key={status} className="flex items-center space-x-1">
+                  <div
+                    className={`${colors[status] || "bg-gray-500"} w-2 h-2 rounded-full`}
+                  ></div>
+                  <span className="text-xs">
+                    {status}: {count}
+                  </span>
+                </div>
+              );
+            }
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PatientActivityWidget = ({
+  activityData,
+}: {
+  activityData: PatientActivityData;
+}) => {
+  return (
+    <div className="space-y-4">
+      <div>
+        <h3 className="text-sm font-medium mb-2">Monthly Patient Visits</h3>
+        <div className="h-32">
+          <div className="flex items-end h-24 space-x-1">
+            {activityData.monthlyPatients.map((data) => {
+              const maxCount = Math.max(
+                ...activityData.monthlyPatients.map((d) => d.count)
+              );
+              const height = ((data.count / maxCount) * 100).toFixed(0);
+
+              return (
+                <div
+                  key={data.month}
+                  className="flex-1 flex flex-col items-center"
+                >
+                  <div
+                    className="w-full bg-primary/80 rounded-t-sm hover:bg-primary transition-colors"
+                    style={{ height: `${height}%` }}
+                    title={`${data.month}: ${data.count} visits`}
+                  ></div>
+                  <span className="text-xs mt-1">{data.month}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-sm font-medium mb-2">Appointment Types</h3>
+        <div className="flex flex-wrap gap-2">
+          {Object.entries(activityData.appointmentTypes).map(
+            ([type, count], index) => {
+              const colors = [
+                "bg-blue-500",
+                "bg-green-500",
+                "bg-yellow-500",
+                "bg-purple-500",
+                "bg-red-500",
+              ];
+              return (
+                <div key={type} className="flex items-center space-x-1">
+                  <div
+                    className={`${colors[index % colors.length]} w-2 h-2 rounded-full`}
+                  ></div>
+                  <span className="text-xs">
+                    {type}: {count}%
+                  </span>
+                </div>
+              );
+            }
+          )}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-sm font-medium mb-2">Visit Time Distribution</h3>
+        <div className="flex items-center h-8 rounded-md overflow-hidden">
+          {Object.entries(activityData.visitTimes).map(
+            ([time, percent], index) => {
+              const colors = ["bg-yellow-400", "bg-blue-400", "bg-indigo-400"];
+              return (
+                <div
+                  key={time}
+                  className={`${colors[index]} h-full flex items-center justify-center`}
+                  style={{ width: `${percent}%` }}
+                >
+                  <span className="text-xs text-gray-800 font-medium">
+                    {percent}%
+                  </span>
+                </div>
+              );
+            }
+          )}
+        </div>
+        <div className="flex justify-center mt-2 space-x-4">
+          {Object.entries(activityData.visitTimes).map(([time], index) => {
+            const colors = [
+              "text-yellow-400",
+              "text-blue-400",
+              "text-indigo-400",
+            ];
+            return (
+              <div key={time} className="flex items-center">
+                <div
+                  className={`w-3 h-3 ${colors[index].replace("text", "bg")} rounded-full mr-1`}
+                ></div>
+                <span className="text-xs">{time}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PatientTableWidget = ({
+  patients,
+  onPatientClick,
+}: {
+  patients: Patient[];
+  onPatientClick: (patientId: string) => void;
+}) => {
+  return (
+    <div className="overflow-auto h-full max-h-[400px] custom-scrollbar">
+      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+        <thead className="bg-gray-100 dark:bg-gray-800 sticky top-0">
+          <tr>
+            <th
+              scope="col"
+              className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+            >
+              Patient
+            </th>
+            <th
+              scope="col"
+              className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+            >
+              Demographics
+            </th>
+            <th
+              scope="col"
+              className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+            >
+              Contact
+            </th>
+            <th
+              scope="col"
+              className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+            >
+              Insurance
+            </th>
+            <th
+              scope="col"
+              className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+            >
+              Medical
+            </th>
+            <th
+              scope="col"
+              className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+            >
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+          {patients.map((patient) => (
+            <tr
+              key={patient.id}
+              className="hover:bg-gray-100 dark:hover:bg-gray-800/60 cursor-pointer"
+              onClick={() => onPatientClick(patient.id)}
+            >
+              <td className="px-3 py-2 whitespace-nowrap">
+                <div className="flex items-center">
+                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
+                    <UserIcon className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="ml-2">
+                    <div className="text-sm font-medium">{patient.name}</div>
+                    <div className="text-xs text-gray-500">{patient.id}</div>
+                  </div>
+                </div>
+              </td>
+              <td className="px-3 py-2 whitespace-nowrap">
+                <div className="text-sm">
+                  {patient.gender}, {patient.age}
+                </div>
+                <div className="text-xs text-gray-500">
+                  DOB: {patient.dateOfBirth}
+                </div>
+              </td>
+              <td className="px-3 py-2 whitespace-nowrap">
+                <div className="text-sm">{patient.contactNumber}</div>
+                <div className="text-xs text-gray-500">{patient.email}</div>
+              </td>
+              <td className="px-3 py-2 whitespace-nowrap">
+                <div className="text-sm">
+                  {patient.insuranceProvider || "N/A"}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {patient.insuranceNumber || "N/A"}
+                </div>
+              </td>
+              <td className="px-3 py-2 whitespace-nowrap text-sm">
+                <div className="text-sm">
+                  MRN: {patient.medicalRecordNumber}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {patient.chronicConditions.length > 0
+                    ? `${patient.chronicConditions.length} conditions`
+                    : "No conditions"}
+                </div>
+              </td>
+              <td className="px-3 py-2 whitespace-nowrap">
+                <span
+                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                  ${patient.status === "Active" ? "bg-green-100 text-green-800" : ""}
+                  ${patient.status === "Scheduled" ? "bg-blue-100 text-blue-800" : ""}
+                  ${patient.status === "Waiting" ? "bg-yellow-100 text-yellow-800" : ""}
+                  ${patient.status === "InProgress" ? "bg-purple-100 text-purple-800" : ""}
+                  ${patient.status === "Discharged" ? "bg-gray-100 text-gray-800" : ""}
+                `}
+                >
+                  {patient.status}
+                </span>
+                <div className="text-xs text-gray-500 mt-1">
+                  {patient.lastVisit
+                    ? `Last: ${patient.lastVisit}`
+                    : "No visits"}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

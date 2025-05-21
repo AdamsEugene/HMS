@@ -7,6 +7,7 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Administration from "./pages/Administration";
 import PatientManagement from "./pages/PatientManagement";
+import PatientDetail from "./pages/PatientDetail";
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -29,6 +30,7 @@ function App() {
               <Route path="settings" element={<Settings />} />
               <Route path="administration" element={<Administration />} />
               <Route path="patients" element={<PatientManagement />} />
+              <Route path="patient/:patientId" element={<PatientDetail />} />
 
               {/* Add more routes here as we build them */}
 
